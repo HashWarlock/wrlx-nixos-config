@@ -133,6 +133,7 @@
     docker
     pkgs.docker-compose
   ];
+  virtualisation.docker.enable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
