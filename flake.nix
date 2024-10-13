@@ -32,10 +32,10 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
+  outputs = inputs @ { self, nixpkgs, home-manager, ... }: {
     # Please replace my-nixos with your hostname
     nixosConfigurations = {
-      wrlx-nixos = let
+      asus-g512lw = let
         username = "hashwarlock";
         specialArgs = {inherit username;};
       in
