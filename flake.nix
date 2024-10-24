@@ -26,13 +26,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hyprland.url = "github:hyprwm/Hyprland";
     catppuccin-bat = {
       url = "github:catppuccin/bat";
       flake = false;
     };
   };
 
-  outputs = inputs @ { self, nixpkgs, home-manager, ... }: {
+  outputs = inputs @ { self, nixpkgs, home-manager, hyprland, ... }: {
     # Please replace my-nixos with your hostname
     nixosConfigurations = {
       asus-g512lw = let
@@ -47,7 +48,13 @@
           # so the old configuration file still takes effect
           ./hosts/asus-g512lw
           ./users/${username}/nixos.nix
-
+          {
+            wayland.windowManager.hyprland = {
+            enable = true;
+            # set the flake package
+            package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+            };
+          }
           # make home-manager as a module of nixos
           # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
           home-manager.nixosModules.home-manager
