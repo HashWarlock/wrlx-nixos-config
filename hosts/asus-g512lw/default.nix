@@ -2,14 +2,14 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports =
     [
       ../../modules/system.nix
-      ../../modules/i3.nix
-
+      ../../modules/hyprland.nix
+      ../../modules/gnome.nix
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];

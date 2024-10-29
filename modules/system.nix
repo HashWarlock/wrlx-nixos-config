@@ -1,4 +1,5 @@
 {
+  outputs,
   pkgs,
   lib,
   username,
@@ -21,21 +22,8 @@
   nix.settings = {
     # enable flakes globally
     experimental-features = ["nix-command" "flakes"];
-
-    substituters = [
-      # cache mirror located in China
-      # status: https://mirror.sjtu.edu.cn/
-      "https://mirror.sjtu.edu.cn/nix-channels/store"
-      # status: https://mirrors.ustc.edu.cn/status/
-      # "https://mirrors.ustc.edu.cn/nix-channels/store"
-
-      "https://cache.nixos.org"
-    ];
-
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    ];
-    builders-use-substitutes = true;
+    # Nix settings
+    auto-optimise-store = true;
   };
 
   # do garbage collection weekly to keep disk usage low
@@ -46,7 +34,12 @@
   };
 
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    overlays = [
+      outputs.overlays.unstable-packages
+    ];
+    config.allowUnfree = true;
+  };
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
@@ -67,38 +60,18 @@
   };
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  services.printing.enable = false;
 
-  fonts = {
-    packages = with pkgs; [
-      # icon fonts
-      material-design-icons
+  security.rtkit.enable = true;
 
-      # normal fonts
-      noto-fonts
-      noto-fonts-cjk
-      noto-fonts-emoji
+  # Fonts configuration
+  fonts.packages = with pkgs; [
+    (nerdfonts.override {fonts = ["Meslo" "JetBrainsMono"];})
+    roboto
+  ];
 
-      # nerdfonts
-      (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
-    ];
-
-    # use fonts specified by user rather than default ones
-    enableDefaultPackages = false;
-
-    # user defined fonts
-    # the reason there's Noto Color Emoji everywhere is to override DejaVu's
-    # B&W emojis that would sometimes show instead of some Color emojis
-    fontconfig.defaultFonts = {
-      serif = ["Noto Serif" "Noto Color Emoji"];
-      sansSerif = ["Noto Sans" "Noto Color Emoji"];
-      monospace = ["JetBrainsMono Nerd Font" "Noto Color Emoji"];
-      emoji = ["Noto Color Emoji"];
-    };
-  };
-
-  programs.dconf.enable = true;
-
+  #programs.dconf.enable = true;
+  programs.zsh.enable = true;
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
@@ -107,22 +80,41 @@
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
-    settings = {
-      X11Forwarding = true;
-      PermitRootLogin = "no"; # disable root login
-      PasswordAuthentication = false; # disable password login
-    };
+   # settings = {
+   #   X11Forwarding = true;
+   #   PermitRootLogin = "no"; # disable root login
+   #   PasswordAuthentication = false; # disable password login
+   # };
     openFirewall = true;
   };
 
+  # Input settings
+  services.libinput.enable = true;
+
+  # X11 Settings
+  services.xserver ={
+    enable = true;
+    xkb.layout = "pl";
+    xkb.variant = "";
+    excludePackages = with pkgs; [xterm];
+    displayManager.gdm.enable = true;
+  };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    (python3.withPackages (ps: with ps; [pip virtualenv]))
     helix # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     curl
+    gcc
+    glib
+    gnumake
     git
+    jq
+    kubectl
+    brave
     sysstat
+    kitty
     lm_sensors # for `sensors` command
     # minimal screen capture tool, used by i3 blur lock to take a screenshot
     # print screen key is also bound to this tool in i3 config
@@ -130,32 +122,26 @@
     neofetch
     xfce.thunar # xfce4's file manager
     nnn # terminal file manager
-    docker
-    pkgs.docker-compose
+    lazydocker
+    docker-compose
+    pipenv
+    qt6.qtwayland
     # virtualisation
     virt-manager
     virt-viewer
     spice 
     spice-gtk
     spice-protocol
+    telegram-desktop
     win-virtio
     win-spice
-    gnome.adwaita-icon-theme
   ];
 
-  virtualisation = {
-    libvirtd = {
-      enable = true;
-      qemu = {
-        swtpm.enable = true;
-        ovmf.enable = true;
-        ovmf.packages = [ pkgs.OVMFFull.fd ];
-      };
-    };
-    spiceUSBRedirection.enable = true;
-  };
-  services.spice-vdagentd.enable = true;
+
+  # Docker configuration
   virtualisation.docker.enable = true;
+  virtualisation.docker.rootless.enable = true;
+  virtualisation.docker.rootless.setSocketVariable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -163,26 +149,14 @@
   services.power-profiles-daemon = {
     enable = true;
   };
-  security.polkit.enable = true;
 
-  services = {
-    dbus.packages = [pkgs.gcr];
-
-    geoclue2.enable = true;
-
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-      # If you want to use JACK applications, uncomment this
-      jack.enable = true;
-
-      # use the example session manager (no others are packaged yet so this is enabled by default,
-      # no need to redefine it in your config for now)
-      #media-session.enable = true;
-    };
-
-    udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
   };
+  
+  
 }
