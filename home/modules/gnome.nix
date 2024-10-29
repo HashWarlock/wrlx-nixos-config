@@ -77,9 +77,9 @@ in
 
       "org/gnome/desktop/input-sources" = {
         "current" = mkUint32 0;
-        "mru-sources" = [(mkTuple ["xkb" "pl"]) (mkTuple ["xkb" "ru"])];
+        "mru-sources" = [(mkTuple ["xkb" "en"])];
         "show-all-sources" = false;
-        "sources" = [(mkTuple ["xkb" "pl"]) (mkTuple ["xkb" "ru"])];
+        "sources" = [(mkTuple ["xkb" "en"])];
         "xkb-options" = ["terminate:ctrl_alt_bksp"];
       };
 

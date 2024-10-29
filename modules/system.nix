@@ -94,7 +94,7 @@
   # X11 Settings
   services.xserver ={
     enable = true;
-    xkb.layout = "pl";
+    xkb.layout = "en";
     xkb.variant = "";
     excludePackages = with pkgs; [xterm];
     displayManager.gdm.enable = true;
