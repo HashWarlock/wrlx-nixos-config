@@ -64,15 +64,9 @@ fi
 
 # Setup D-Bus session config
 echo "Setting up D-Bus configuration..."
-mkdir -p /etc/dbus-1
-if [ ! -f /etc/dbus-1/session.conf ]; then
-    # Find D-Bus config from nix store
-    DBUS_CONF=$(find /nix/store -name "session.conf" 2>/dev/null | grep dbus | head -1)
-    if [ -n "$DBUS_CONF" ]; then
-        cp "$DBUS_CONF" /etc/dbus-1/session.conf
-    else
-        # Create minimal session.conf
-        cat > /etc/dbus-1/session.conf << 'EOF'
+mkdir -p /etc/dbus-1/session.d /etc/dbus-1/system.d
+# Always create a minimal session.conf to avoid circular inclusion issues
+cat > /etc/dbus-1/session.conf << 'EOF'
 <!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
 <busconfig>
@@ -85,8 +79,6 @@ if [ ! -f /etc/dbus-1/session.conf ]; then
   </policy>
 </busconfig>
 EOF
-    fi
-fi
 
 # Start D-Bus session
 echo "Starting D-Bus session..."
