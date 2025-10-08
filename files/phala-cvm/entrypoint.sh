@@ -27,7 +27,8 @@ nix-env -iA \
     nixpkgs.bash \
     nixpkgs.hostname \
     nixpkgs.fontconfig \
-    nixpkgs.coreutils
+    nixpkgs.coreutils \
+    nixpkgs.gnused
 
 # Install noVNC
 if ! command -v novnc > /dev/null 2>&1; then
