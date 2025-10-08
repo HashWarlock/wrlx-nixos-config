@@ -19,6 +19,7 @@ nix-env -iA \
     nixpkgs.xorg.xorgserver \
     nixpkgs.xfce.xfce4-session \
     nixpkgs.xfce.xfce4-panel \
+    nixpkgs.xfce.xfconf \
     nixpkgs.xfce.thunar \
     nixpkgs.dbus \
     nixpkgs.openssh \
@@ -86,6 +87,11 @@ echo "Starting D-Bus session..."
 eval $(dbus-launch --sh-syntax)
 export DBUS_SESSION_BUS_ADDRESS
 export DBUS_SESSION_BUS_PID
+
+# Start xfconfd (XFCE configuration daemon)
+echo "Starting xfconfd..."
+xfconfd &
+sleep 1
 
 # Start XFCE session
 echo "Starting XFCE session..."
