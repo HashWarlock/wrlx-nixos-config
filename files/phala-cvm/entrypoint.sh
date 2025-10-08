@@ -19,6 +19,11 @@ nix-env -iA \
     nixpkgs.xorg.xorgserver \
     nixpkgs.xfce.xfce4-session \
     nixpkgs.xfce.xfce4-panel \
+    nixpkgs.xfce.xfwm4 \
+    nixpkgs.xfce.xfdesktop \
+    nixpkgs.xfce.xfce4-settings \
+    nixpkgs.xfce.xfce4-terminal \
+    nixpkgs.xfce.xfce4-appfinder \
     nixpkgs.xfce.xfconf \
     nixpkgs.xfce.thunar \
     nixpkgs.dbus \
@@ -127,7 +132,8 @@ PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
 ChallengeResponseAuthentication no
-UsePAM yes
+UsePAM no
+UsePrivilegeSeparation no
 X11Forwarding yes
 PrintMotd no
 AcceptEnv LANG LC_*

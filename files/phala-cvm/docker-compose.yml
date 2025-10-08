@@ -10,8 +10,8 @@ services:
     # Environment variables
     environment:
       # Git repository configuration
-      - GITHUB_REPO=${GITHUB_REPO:-https://github.com/yourusername/wrlx-nixos-config.git}
-      - GIT_COMMIT_HASH=${GIT_COMMIT_HASH:-main}
+      - GITHUB_REPO=${GITHUB_REPO:-https://github.com/HashWarlock/wrlx-nixos-config.git}
+      - GIT_COMMIT_HASH=${GIT_COMMIT_HASH:-HEAD}
       - UPDATE_CODE=${UPDATE_CODE:-false}
 
       # Display and VNC configuration
@@ -43,6 +43,9 @@ services:
 
     # Privileged mode may be needed for systemd and full NixOS functionality
     privileged: true
+
+    # Shared memory size for desktop environment (prevents browser crashes)
+    shm_size: '256m'
 
     # Keep container running
     tty: true
