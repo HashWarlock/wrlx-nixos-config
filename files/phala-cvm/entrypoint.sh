@@ -52,6 +52,42 @@ sleep 2
 # Export display
 export DISPLAY=:1
 
+# Setup machine-id for D-Bus
+echo "Setting up machine-id..."
+mkdir -p /var/lib/dbus /etc
+if [ ! -f /var/lib/dbus/machine-id ]; then
+    dbus-uuidgen --ensure=/var/lib/dbus/machine-id
+fi
+if [ ! -f /etc/machine-id ]; then
+    ln -s /var/lib/dbus/machine-id /etc/machine-id || cp /var/lib/dbus/machine-id /etc/machine-id
+fi
+
+# Setup D-Bus session config
+echo "Setting up D-Bus configuration..."
+mkdir -p /etc/dbus-1
+if [ ! -f /etc/dbus-1/session.conf ]; then
+    # Find D-Bus config from nix store
+    DBUS_CONF=$(find /nix/store -name "session.conf" 2>/dev/null | grep dbus | head -1)
+    if [ -n "$DBUS_CONF" ]; then
+        cp "$DBUS_CONF" /etc/dbus-1/session.conf
+    else
+        # Create minimal session.conf
+        cat > /etc/dbus-1/session.conf << 'EOF'
+<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+  <type>session</type>
+  <listen>unix:tmpdir=/tmp</listen>
+  <policy context="default">
+    <allow send_destination="*" eavesdrop="true"/>
+    <allow eavesdrop="true"/>
+    <allow own="*"/>
+  </policy>
+</busconfig>
+EOF
+    fi
+fi
+
 # Start D-Bus session
 echo "Starting D-Bus session..."
 eval $(dbus-launch --sh-syntax)
@@ -75,13 +111,36 @@ NOVNC_PID=$!
 
 # Start SSH daemon
 echo "Starting SSH daemon..."
-mkdir -p /run/sshd
+mkdir -p /run/sshd /etc/ssh
+
 # Generate host keys if they don't exist
 if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
     echo "Generating SSH host keys..."
-    mkdir -p /etc/ssh
     ssh-keygen -A 2>/dev/null || true
 fi
+
+# Create sshd_config if it doesn't exist
+if [ ! -f /etc/ssh/sshd_config ]; then
+    echo "Creating sshd_config..."
+    cat > /etc/ssh/sshd_config << 'EOF'
+Port 22
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp /nix/store/*/libexec/sftp-server
+EOF
+    # Fix sftp-server path
+    SFTP_SERVER=$(find /nix/store -name "sftp-server" 2>/dev/null | head -1)
+    if [ -n "$SFTP_SERVER" ]; then
+        sed -i "s|/nix/store/\*/libexec/sftp-server|$SFTP_SERVER|" /etc/ssh/sshd_config
+    fi
+fi
+
 # Use which to find sshd binary
 SSHD_BIN=$(which sshd)
 if [ -n "$SSHD_BIN" ]; then
