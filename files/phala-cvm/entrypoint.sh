@@ -105,10 +105,14 @@ if [ -n "$XFCE_SESSION_DIR" ]; then
     echo "Added XFCE session directory: ${XFCE_SESSION_DIR}/etc"
 fi
 
-# Start xfconfd (XFCE configuration daemon)
-echo "Starting xfconfd..."
-xfconfd &
-sleep 1
+# Start xfconfd (XFCE configuration daemon) if available
+if command -v xfconfd > /dev/null 2>&1; then
+    echo "Starting xfconfd..."
+    xfconfd &
+    sleep 1
+else
+    echo "xfconfd not found, skipping..."
+fi
 
 # Start XFCE session
 echo "Starting XFCE session..."
@@ -143,9 +147,7 @@ Port 22
 PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
-ChallengeResponseAuthentication no
 UsePAM no
-UsePrivilegeSeparation no
 X11Forwarding yes
 PrintMotd no
 AcceptEnv LANG LC_*
