@@ -38,12 +38,12 @@
 
   };
 
-  outputs = { 
+  outputs = {
     self,
     catppuccin,
     nixpkgs,
     home-manager,
-     ... 
+     ...
   } @ inputs: {
     # Please replace my-nixos with your hostname
     nixosConfigurations = {
@@ -65,6 +65,37 @@
           catppuccin.nixosModules.catppuccin
           # make home-manager as a module of nixos
           # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = false;
+            home-manager.useUserPackages = true;
+
+            home-manager.extraSpecialArgs = inputs // specialArgs;
+            home-manager.users.${username} = {
+              imports = [
+                ./users/${username}/home.nix
+                catppuccin.homeManagerModules.catppuccin
+              ];
+            };
+          }
+        ];
+      };
+
+      # Phala Cloud Confidential VM Configuration
+      phala-cvm = let
+        username = "confidant";
+        specialArgs = {
+          inherit username;
+          inherit (self) outputs;
+        };
+      in
+        nixpkgs.lib.nixosSystem {
+        inherit specialArgs;
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/phala-cvm
+          ./users/${username}/nixos.nix
+          catppuccin.nixosModules.catppuccin
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = false;

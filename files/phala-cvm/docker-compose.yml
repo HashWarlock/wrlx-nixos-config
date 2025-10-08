@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  phala-nixos-cvm:
+    image: nixos/nix:latest
+    platform: linux/amd64
+    container_name: phala-cvm
+    hostname: phala-cvm
+
+    # Environment variables
+    environment:
+      # Git repository configuration
+      - GITHUB_REPO=${GITHUB_REPO:-https://github.com/yourusername/wrlx-nixos-config.git}
+      - GIT_COMMIT_HASH=${GIT_COMMIT_HASH:-main}
+      - UPDATE_CODE=${UPDATE_CODE:-false}
+
+      # Display and VNC configuration
+      - DISPLAY=:1
+      - VNC_PASSWORD=${VNC_PASSWORD:-changeme}
+      - VNC_RESOLUTION=${VNC_RESOLUTION:-1920x1080}
+
+      # SSH configuration
+      - SSH_PORT=${SSH_PORT:-22}
+
+      # Phala Cloud domain (auto-populated in CVM)
+      - AGENT_DOMAIN=${AGENT_DOMAIN}
+      - DSTACK_APP_ID=${DSTACK_APP_ID}
+      - DSTACK_GATEWAY_DOMAIN=${DSTACK_GATEWAY_DOMAIN}
+
+    # Volumes for persistence and dstack socket
+    volumes:
+      - app_data:/app
+      - nixos-config:/etc/nixos
+      - nix-store:/nix
+      - home-data:/home
+      - /var/run/dstack.sock:/var/run/dstack.sock
+
+    # Port mappings
+    ports:
+      - "2222:22"      # SSH access
+      - "6080:6080"    # noVNC web interface
+      - "5900:5900"    # VNC direct connection (optional)
+
+    # Privileged mode may be needed for systemd and full NixOS functionality
+    privileged: true
+
+    # Keep container running
+    tty: true
+    stdin_open: true
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Command to clone repo and run entrypoint
+    command: >
+      bash -c "
+        echo '=== Phala CVM NixOS Initialization ===' &&
+        echo 'Installing git if not present...' &&
+        if ! command -v git > /dev/null 2>&1; then
+          nix-env -iA nixpkgs.git &&
+          echo 'Git installed successfully';
+        else
+          echo 'Git already available';
+        fi &&
+        mkdir -p /app/.state &&
+        if [ ! -f /app/.state/initialized ] || [ \"$$UPDATE_CODE\" = \"true\" ]; then
+          echo 'Cloning/updating NixOS configuration repository...' &&
+          echo 'Repository: '$$GITHUB_REPO &&
+          echo 'Commit: '$$GIT_COMMIT_HASH &&
+          cd /tmp &&
+          git clone $$GITHUB_REPO repo &&
+          cd repo &&
+          git checkout $$GIT_COMMIT_HASH &&
+          cp -r /tmp/repo/* /app/ &&
+          cp -r /tmp/repo/.* /app/ 2>/dev/null || true &&
+          rm -rf /tmp/repo &&
+          touch /app/.state/initialized &&
+          echo 'Repository initialized/updated successfully';
+        else
+          echo 'Repository already initialized (set UPDATE_CODE=true to force update)';
+        fi &&
+        cd /app &&
+        if [ -f /app/files/phala-cvm/entrypoint.sh ]; then
+          echo 'Starting entrypoint script...' &&
+          exec bash /app/files/phala-cvm/entrypoint.sh;
+        else
+          echo 'ERROR: entrypoint.sh not found in repository!' &&
+          echo 'Expected location: /app/files/phala-cvm/entrypoint.sh' &&
+          echo 'Directory contents:' &&
+          ls -la /app &&
+          tail -f /dev/null;
+        fi
+      "
+
+volumes:
+  app_data:
+  nixos-config:
+  nix-store:
+  home-data:
