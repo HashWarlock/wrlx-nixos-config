@@ -114,10 +114,20 @@ else
     echo "xfconfd not found, skipping..."
 fi
 
-# Start XFCE session
-echo "Starting XFCE session..."
-xfce4-session &
-sleep 3
+# Start window manager first (required for _NET_* properties)
+echo "Starting xfwm4 window manager..."
+xfwm4 --daemon &
+sleep 2
+
+# Start desktop manager
+echo "Starting xfdesktop..."
+xfdesktop &
+sleep 1
+
+# Start XFCE panel
+echo "Starting xfce4-panel..."
+xfce4-panel &
+sleep 1
 
 # Start VNC server
 echo "Starting VNC server on display :1..."
