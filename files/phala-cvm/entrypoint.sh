@@ -93,6 +93,18 @@ eval $(dbus-launch --sh-syntax)
 export DBUS_SESSION_BUS_ADDRESS
 export DBUS_SESSION_BUS_PID
 
+# Set XDG environment variables for XFCE
+echo "Setting up XDG environment variables..."
+export XDG_DATA_DIRS="/nix/var/nix/profiles/default/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+export XDG_CONFIG_DIRS="/nix/var/nix/profiles/default/etc/xdg:${XDG_CONFIG_DIRS:-/etc/xdg}"
+
+# Find and add XFCE session directory to XDG_CONFIG_DIRS
+XFCE_SESSION_DIR=$(find /nix/store -name "xfce4-session-*" -type d 2>/dev/null | head -1)
+if [ -n "$XFCE_SESSION_DIR" ]; then
+    export XDG_CONFIG_DIRS="${XFCE_SESSION_DIR}/etc:${XDG_CONFIG_DIRS}"
+    echo "Added XFCE session directory: ${XFCE_SESSION_DIR}/etc"
+fi
+
 # Start xfconfd (XFCE configuration daemon)
 echo "Starting xfconfd..."
 xfconfd &
