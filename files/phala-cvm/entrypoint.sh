@@ -36,6 +36,14 @@ nix-env -iA \
     nixpkgs.coreutils \
     nixpkgs.gnused
 
+# GUI automation tools
+echo "Installing GUI automation tools..."
+nix-env -iA \
+    nixpkgs.xdotool \
+    nixpkgs.scrot \
+    nixpkgs.at-spi2-core \
+    nixpkgs.python3Packages.pyatspi
+
 # Install noVNC
 if ! command -v novnc > /dev/null 2>&1; then
     echo "Installing noVNC..."
