@@ -44,6 +44,10 @@ nix-env -iA \
     nixpkgs.at-spi2-core \
     nixpkgs.python3Packages.pyatspi
 
+# Voice transcription
+echo "Installing voice transcription tools..."
+nix-env -iA nixpkgs.whisper-cpp
+
 # Install noVNC
 if ! command -v novnc > /dev/null 2>&1; then
     echo "Installing noVNC..."
@@ -271,6 +275,30 @@ else
     echo "Run 'npm run build' in the web-ui directory to build it"
 fi
 
+# =========================
+# Whisper Server Setup
+# =========================
+echo "Starting Whisper server for voice transcription..."
+WHISPER_MODEL=${WHISPER_MODEL:-base}
+WHISPER_MODEL_PATH="/nix/store/*/share/whisper-cpp/models/ggml-${WHISPER_MODEL}.bin"
+
+# Find the actual model path
+ACTUAL_MODEL=$(ls $WHISPER_MODEL_PATH 2>/dev/null | head -1)
+WHISPER_PID=""
+if [ -n "$ACTUAL_MODEL" ]; then
+    whisper-server --model "$ACTUAL_MODEL" --port 8082 &
+    WHISPER_PID=$!
+    sleep 2
+    if kill -0 $WHISPER_PID 2>/dev/null; then
+        echo "Whisper server started on port 8082 (model: $WHISPER_MODEL)"
+    else
+        echo "WARNING: Whisper server failed to start"
+        WHISPER_PID=""
+    fi
+else
+    echo "WARNING: Whisper model not found, voice input disabled"
+fi
+
 echo "=== CVM Services Started Successfully ==="
 echo "Repository: $GITHUB_REPO"
 echo "Commit: $GIT_COMMIT_HASH"
@@ -284,6 +312,9 @@ fi
 if [ -n "$WEB_UI_PID" ]; then
     echo "Web UI: http://localhost:8081"
 fi
+if [ -n "$WHISPER_PID" ]; then
+    echo "Whisper: http://localhost:8082 (model: $WHISPER_MODEL)"
+fi
 if [ -n "$AGENT_DOMAIN" ]; then
     echo "Phala Cloud Domain: $AGENT_DOMAIN"
 fi
@@ -292,6 +323,7 @@ echo "==="
 # Trap signals for graceful shutdown
 cleanup() {
     echo "Shutting down..."
+    [ -n "$WHISPER_PID" ] && kill $WHISPER_PID 2>/dev/null
     [ -n "$WEB_UI_PID" ] && kill $WEB_UI_PID 2>/dev/null
     [ -n "$AGENT_PID" ] && kill $AGENT_PID 2>/dev/null
     [ -n "$SSH_PID" ] && kill $SSH_PID 2>/dev/null
@@ -308,4 +340,5 @@ WAIT_PIDS="$XVFB_PID $VNC_PID $NOVNC_PID"
 [ -n "$SSH_PID" ] && WAIT_PIDS="$WAIT_PIDS $SSH_PID"
 [ -n "$AGENT_PID" ] && WAIT_PIDS="$WAIT_PIDS $AGENT_PID"
 [ -n "$WEB_UI_PID" ] && WAIT_PIDS="$WAIT_PIDS $WEB_UI_PID"
+[ -n "$WHISPER_PID" ] && WAIT_PIDS="$WAIT_PIDS $WHISPER_PID"
 wait $WAIT_PIDS

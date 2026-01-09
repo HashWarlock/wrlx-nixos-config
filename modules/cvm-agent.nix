@@ -24,6 +24,18 @@ in
       description = "Port for the web UI";
     };
 
+    whisperModel = mkOption {
+      type = types.str;
+      default = "base";
+      description = "Whisper model size (tiny, base, small, medium)";
+    };
+
+    whisperPort = mkOption {
+      type = types.port;
+      default = 8082;
+      description = "Port for Whisper server";
+    };
+
     environment = mkOption {
       type = types.attrsOf types.str;
       default = {};
@@ -97,10 +109,25 @@ in
       };
     };
 
+    # Whisper transcription server
+    systemd.services.whisper-server = {
+      description = "Whisper Transcription Server";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
+
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.whisper-cpp}/bin/whisper-server --model ${pkgs.whisper-cpp}/share/whisper-cpp/models/ggml-${cfg.whisperModel}.bin --port ${toString cfg.whisperPort}";
+        Restart = "always";
+        RestartSec = "5s";
+      };
+    };
+
     # Open firewall ports (only if firewall is enabled)
     networking.firewall.allowedTCPPorts = mkIf config.networking.firewall.enable [
       cfg.port
       cfg.webPort
+      cfg.whisperPort
     ];
   };
 }

@@ -27,6 +27,9 @@ services:
       - REDPILL_BASE_URL=${REDPILL_BASE_URL:-https://api.redpill.ai}
       - REDPILL_MODEL=${REDPILL_MODEL:-claude-3-5-sonnet-20241022}
 
+      # Whisper voice transcription configuration
+      - WHISPER_MODEL=${WHISPER_MODEL:-base}
+
       # Phala Cloud domain (auto-populated in CVM)
       - AGENT_DOMAIN=${AGENT_DOMAIN}
       - DSTACK_APP_ID=${DSTACK_APP_ID}
@@ -47,6 +50,7 @@ services:
       - "5900:5900"    # VNC direct connection (optional)
       - "8080:8080"    # Agent API (gRPC)
       - "8081:8081"    # Web UI
+      - "8082:8082"    # Whisper server (voice)
 
     # Privileged mode may be needed for systemd and full NixOS functionality
     privileged: true
