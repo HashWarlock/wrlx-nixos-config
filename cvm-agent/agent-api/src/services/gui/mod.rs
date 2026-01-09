@@ -16,4 +16,5 @@ mod service;
 pub use screenshot::ScreenshotCapture;
 pub use atspi::{ATSPIClient, ATSPIElement, ATSPIQueryFilter, ATSPITreeNode};
 pub use xdotool::{XDoTool, MouseButton, MousePosition};
+pub use vision::{VisionService, VisionConfig, IdentifiedElement};
 pub use service::GUIServiceImpl;
