@@ -1,6 +1,7 @@
 mod llm;
 mod risk;
 mod services;
+mod skills;
 
 use std::net::SocketAddr;
 use std::sync::Arc;
