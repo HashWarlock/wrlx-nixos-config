@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package agent;
+
+// Placeholder proto file - will be populated in a later task
