@@ -2,15 +2,15 @@
 // @generated from file agent.proto (package cvm.agent, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file agent.proto.
  */
 export const file_agent: GenFile = /*@__PURE__*/
-  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZTJNCg1IZWFsdGhTZXJ2aWNlEjwKBUNoZWNrEhguY3ZtLmFnZW50LkhlYWx0aFJlcXVlc3QaGS5jdm0uYWdlbnQuSGVhbHRoUmVzcG9uc2UyTwoLQ2hhdFNlcnZpY2USQAoLU2VuZE1lc3NhZ2USFi5jdm0uYWdlbnQuQ2hhdFJlcXVlc3QaFy5jdm0uYWdlbnQuQ2hhdFJlc3BvbnNlMAEyTAoMU2hlbGxTZXJ2aWNlEjwKB0V4ZWN1dGUSFy5jdm0uYWdlbnQuU2hlbGxSZXF1ZXN0GhYuY3ZtLmFnZW50LlNoZWxsT3V0cHV0MAFiBnByb3RvMw");
+  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJGCg5SZWJ1aWxkUmVxdWVzdBISCgpmbGFrZV9wYXRoGAEgASgJEhAKCGhvc3RuYW1lGAIgASgJEg4KBmFjdGlvbhgDIAEoCSKBAQoNUmVidWlsZE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBARISCgVwaGFzZRgEIAEoCUgCiAEBQggKBm91dHB1dEIMCgpfZXhpdF9jb2RlQggKBl9waGFzZSI5Cg9Sb2xsYmFja1JlcXVlc3QSFwoKZ2VuZXJhdGlvbhgBIAEoBUgAiAEBQg0KC19nZW5lcmF0aW9uIicKFkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QSDQoFbGltaXQYASABKAUiSQoXTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USLgoLZ2VuZXJhdGlvbnMYASADKAsyGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8iGgoYQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0Io4BCg5HZW5lcmF0aW9uSW5mbxIOCgZudW1iZXIYASABKAUSDAoEZGF0ZRgCIAEoCRIVCg1uaXhvc192ZXJzaW9uGAMgASgJEhYKDmtlcm5lbF92ZXJzaW9uGAQgASgJEh4KFmNvbmZpZ3VyYXRpb25fcmV2aXNpb24YBSABKAkSDwoHY3VycmVudBgGIAEoCCIlChBHaXRTdGF0dXNSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCSLSAQoRR2l0U3RhdHVzUmVzcG9uc2USDgoGYnJhbmNoGAEgASgJEicKCG1vZGlmaWVkGAIgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSJQoGc3RhZ2VkGAMgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSKAoJdW50cmFja2VkGAQgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSFAoMaGFzX3Vwc3RyZWFtGAUgASgIEg0KBWFoZWFkGAYgASgFEg4KBmJlaGluZBgHIAEoBSIqCgpGaWxlU3RhdHVzEgwKBHBhdGgYASABKAkSDgoGc3RhdHVzGAIgASgJIkIKDkdpdERpZmZSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCRIOCgZzdGFnZWQYAyABKAgiNQoPR2l0RGlmZlJlc3BvbnNlEiIKBWRpZmZzGAEgAygLMhMuY3ZtLmFnZW50LkZpbGVEaWZmIlAKCEZpbGVEaWZmEgwKBHBhdGgYASABKAkSDAoEZGlmZhgCIAEoCRIoCgpyaXNrX2xldmVsGAMgASgOMhQuY3ZtLmFnZW50LlJpc2tMZXZlbCIxCg1HaXRBZGRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCSI3Cg5HaXRBZGRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhQKDHN0YWdlZF9wYXRocxgCIAMoCSI2ChBHaXRDb21taXRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIkgKEUdpdENvbW1pdFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSEwoLY29tbWl0X2hhc2gYAiABKAkSDQoFZXJyb3IYAyABKAkiQwoOR2l0UHVzaFJlcXVlc3QSEQoJcmVwb19wYXRoGAEgASgJEg4KBnJlbW90ZRgCIAEoCRIOCgZicmFuY2gYAyABKAkiYwoNR2l0UHVzaE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSpMCglSaXNrTGV2ZWwSDAoIUklTS19MT1cQABIPCgtSSVNLX01FRElVTRABEg0KCVJJU0tfSElHSBACEhEKDVJJU0tfQ1JJVElDQUwQAzJNCg1IZWFsdGhTZXJ2aWNlEjwKBUNoZWNrEhguY3ZtLmFnZW50LkhlYWx0aFJlcXVlc3QaGS5jdm0uYWdlbnQuSGVhbHRoUmVzcG9uc2UyTwoLQ2hhdFNlcnZpY2USQAoLU2VuZE1lc3NhZ2USFi5jdm0uYWdlbnQuQ2hhdFJlcXVlc3QaFy5jdm0uYWdlbnQuQ2hhdFJlc3BvbnNlMAEyTAoMU2hlbGxTZXJ2aWNlEjwKB0V4ZWN1dGUSFy5jdm0uYWdlbnQuU2hlbGxSZXF1ZXN0GhYuY3ZtLmFnZW50LlNoZWxsT3V0cHV0MAEyxAIKDU5peE9wc1NlcnZpY2USQAoHUmVidWlsZBIZLmN2bS5hZ2VudC5SZWJ1aWxkUmVxdWVzdBoYLmN2bS5hZ2VudC5SZWJ1aWxkT3V0cHV0MAESQgoIUm9sbGJhY2sSGi5jdm0uYWdlbnQuUm9sbGJhY2tSZXF1ZXN0GhguY3ZtLmFnZW50LlJlYnVpbGRPdXRwdXQwARJYCg9MaXN0R2VuZXJhdGlvbnMSIS5jdm0uYWdlbnQuTGlzdEdlbmVyYXRpb25zUmVxdWVzdBoiLmN2bS5hZ2VudC5MaXN0R2VuZXJhdGlvbnNSZXNwb25zZRJTChFDdXJyZW50R2VuZXJhdGlvbhIjLmN2bS5hZ2VudC5DdXJyZW50R2VuZXJhdGlvblJlcXVlc3QaGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8y0wIKDUdpdE9wc1NlcnZpY2USQwoGU3RhdHVzEhsuY3ZtLmFnZW50LkdpdFN0YXR1c1JlcXVlc3QaHC5jdm0uYWdlbnQuR2l0U3RhdHVzUmVzcG9uc2USPQoERGlmZhIZLmN2bS5hZ2VudC5HaXREaWZmUmVxdWVzdBoaLmN2bS5hZ2VudC5HaXREaWZmUmVzcG9uc2USOgoDQWRkEhguY3ZtLmFnZW50LkdpdEFkZFJlcXVlc3QaGS5jdm0uYWdlbnQuR2l0QWRkUmVzcG9uc2USQwoGQ29tbWl0EhsuY3ZtLmFnZW50LkdpdENvbW1pdFJlcXVlc3QaHC5jdm0uYWdlbnQuR2l0Q29tbWl0UmVzcG9uc2USPQoEUHVzaBIZLmN2bS5hZ2VudC5HaXRQdXNoUmVxdWVzdBoYLmN2bS5hZ2VudC5HaXRQdXNoT3V0cHV0MAFiBnByb3RvMw");
 
 /**
  * @generated from message cvm.agent.HealthRequest
@@ -169,6 +169,548 @@ export const ShellOutputSchema: GenMessage<ShellOutput> = /*@__PURE__*/
   messageDesc(file_agent, 5);
 
 /**
+ * @generated from message cvm.agent.RebuildRequest
+ */
+export type RebuildRequest = Message<"cvm.agent.RebuildRequest"> & {
+  /**
+   * Path to flake (default: current dir)
+   *
+   * @generated from field: string flake_path = 1;
+   */
+  flakePath: string;
+
+  /**
+   * Target hostname
+   *
+   * @generated from field: string hostname = 2;
+   */
+  hostname: string;
+
+  /**
+   * "switch", "boot", "test", "build"
+   *
+   * @generated from field: string action = 3;
+   */
+  action: string;
+};
+
+/**
+ * Describes the message cvm.agent.RebuildRequest.
+ * Use `create(RebuildRequestSchema)` to create a new message.
+ */
+export const RebuildRequestSchema: GenMessage<RebuildRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 6);
+
+/**
+ * @generated from message cvm.agent.RebuildOutput
+ */
+export type RebuildOutput = Message<"cvm.agent.RebuildOutput"> & {
+  /**
+   * @generated from oneof cvm.agent.RebuildOutput.output
+   */
+  output: {
+    /**
+     * @generated from field: string stdout = 1;
+     */
+    value: string;
+    case: "stdout";
+  } | {
+    /**
+     * @generated from field: string stderr = 2;
+     */
+    value: string;
+    case: "stderr";
+  } | { case: undefined; value?: undefined };
+
+  /**
+   * @generated from field: optional int32 exit_code = 3;
+   */
+  exitCode?: number;
+
+  /**
+   * "evaluating", "building", "activating"
+   *
+   * @generated from field: optional string phase = 4;
+   */
+  phase?: string;
+};
+
+/**
+ * Describes the message cvm.agent.RebuildOutput.
+ * Use `create(RebuildOutputSchema)` to create a new message.
+ */
+export const RebuildOutputSchema: GenMessage<RebuildOutput> = /*@__PURE__*/
+  messageDesc(file_agent, 7);
+
+/**
+ * @generated from message cvm.agent.RollbackRequest
+ */
+export type RollbackRequest = Message<"cvm.agent.RollbackRequest"> & {
+  /**
+   * Specific generation, or previous if not set
+   *
+   * @generated from field: optional int32 generation = 1;
+   */
+  generation?: number;
+};
+
+/**
+ * Describes the message cvm.agent.RollbackRequest.
+ * Use `create(RollbackRequestSchema)` to create a new message.
+ */
+export const RollbackRequestSchema: GenMessage<RollbackRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 8);
+
+/**
+ * @generated from message cvm.agent.ListGenerationsRequest
+ */
+export type ListGenerationsRequest = Message<"cvm.agent.ListGenerationsRequest"> & {
+  /**
+   * Max generations to return (default: 10)
+   *
+   * @generated from field: int32 limit = 1;
+   */
+  limit: number;
+};
+
+/**
+ * Describes the message cvm.agent.ListGenerationsRequest.
+ * Use `create(ListGenerationsRequestSchema)` to create a new message.
+ */
+export const ListGenerationsRequestSchema: GenMessage<ListGenerationsRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 9);
+
+/**
+ * @generated from message cvm.agent.ListGenerationsResponse
+ */
+export type ListGenerationsResponse = Message<"cvm.agent.ListGenerationsResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.GenerationInfo generations = 1;
+   */
+  generations: GenerationInfo[];
+};
+
+/**
+ * Describes the message cvm.agent.ListGenerationsResponse.
+ * Use `create(ListGenerationsResponseSchema)` to create a new message.
+ */
+export const ListGenerationsResponseSchema: GenMessage<ListGenerationsResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 10);
+
+/**
+ * @generated from message cvm.agent.CurrentGenerationRequest
+ */
+export type CurrentGenerationRequest = Message<"cvm.agent.CurrentGenerationRequest"> & {
+};
+
+/**
+ * Describes the message cvm.agent.CurrentGenerationRequest.
+ * Use `create(CurrentGenerationRequestSchema)` to create a new message.
+ */
+export const CurrentGenerationRequestSchema: GenMessage<CurrentGenerationRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 11);
+
+/**
+ * @generated from message cvm.agent.GenerationInfo
+ */
+export type GenerationInfo = Message<"cvm.agent.GenerationInfo"> & {
+  /**
+   * @generated from field: int32 number = 1;
+   */
+  number: number;
+
+  /**
+   * @generated from field: string date = 2;
+   */
+  date: string;
+
+  /**
+   * @generated from field: string nixos_version = 3;
+   */
+  nixosVersion: string;
+
+  /**
+   * @generated from field: string kernel_version = 4;
+   */
+  kernelVersion: string;
+
+  /**
+   * @generated from field: string configuration_revision = 5;
+   */
+  configurationRevision: string;
+
+  /**
+   * @generated from field: bool current = 6;
+   */
+  current: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.GenerationInfo.
+ * Use `create(GenerationInfoSchema)` to create a new message.
+ */
+export const GenerationInfoSchema: GenMessage<GenerationInfo> = /*@__PURE__*/
+  messageDesc(file_agent, 12);
+
+/**
+ * @generated from message cvm.agent.GitStatusRequest
+ */
+export type GitStatusRequest = Message<"cvm.agent.GitStatusRequest"> & {
+  /**
+   * Repository path (default: /app)
+   *
+   * @generated from field: string repo_path = 1;
+   */
+  repoPath: string;
+};
+
+/**
+ * Describes the message cvm.agent.GitStatusRequest.
+ * Use `create(GitStatusRequestSchema)` to create a new message.
+ */
+export const GitStatusRequestSchema: GenMessage<GitStatusRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 13);
+
+/**
+ * @generated from message cvm.agent.GitStatusResponse
+ */
+export type GitStatusResponse = Message<"cvm.agent.GitStatusResponse"> & {
+  /**
+   * @generated from field: string branch = 1;
+   */
+  branch: string;
+
+  /**
+   * @generated from field: repeated cvm.agent.FileStatus modified = 2;
+   */
+  modified: FileStatus[];
+
+  /**
+   * @generated from field: repeated cvm.agent.FileStatus staged = 3;
+   */
+  staged: FileStatus[];
+
+  /**
+   * @generated from field: repeated cvm.agent.FileStatus untracked = 4;
+   */
+  untracked: FileStatus[];
+
+  /**
+   * @generated from field: bool has_upstream = 5;
+   */
+  hasUpstream: boolean;
+
+  /**
+   * @generated from field: int32 ahead = 6;
+   */
+  ahead: number;
+
+  /**
+   * @generated from field: int32 behind = 7;
+   */
+  behind: number;
+};
+
+/**
+ * Describes the message cvm.agent.GitStatusResponse.
+ * Use `create(GitStatusResponseSchema)` to create a new message.
+ */
+export const GitStatusResponseSchema: GenMessage<GitStatusResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 14);
+
+/**
+ * @generated from message cvm.agent.FileStatus
+ */
+export type FileStatus = Message<"cvm.agent.FileStatus"> & {
+  /**
+   * @generated from field: string path = 1;
+   */
+  path: string;
+
+  /**
+   * "modified", "added", "deleted", "renamed"
+   *
+   * @generated from field: string status = 2;
+   */
+  status: string;
+};
+
+/**
+ * Describes the message cvm.agent.FileStatus.
+ * Use `create(FileStatusSchema)` to create a new message.
+ */
+export const FileStatusSchema: GenMessage<FileStatus> = /*@__PURE__*/
+  messageDesc(file_agent, 15);
+
+/**
+ * @generated from message cvm.agent.GitDiffRequest
+ */
+export type GitDiffRequest = Message<"cvm.agent.GitDiffRequest"> & {
+  /**
+   * @generated from field: string repo_path = 1;
+   */
+  repoPath: string;
+
+  /**
+   * Specific paths, or all if empty
+   *
+   * @generated from field: repeated string paths = 2;
+   */
+  paths: string[];
+
+  /**
+   * Show staged changes
+   *
+   * @generated from field: bool staged = 3;
+   */
+  staged: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.GitDiffRequest.
+ * Use `create(GitDiffRequestSchema)` to create a new message.
+ */
+export const GitDiffRequestSchema: GenMessage<GitDiffRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 16);
+
+/**
+ * @generated from message cvm.agent.GitDiffResponse
+ */
+export type GitDiffResponse = Message<"cvm.agent.GitDiffResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.FileDiff diffs = 1;
+   */
+  diffs: FileDiff[];
+};
+
+/**
+ * Describes the message cvm.agent.GitDiffResponse.
+ * Use `create(GitDiffResponseSchema)` to create a new message.
+ */
+export const GitDiffResponseSchema: GenMessage<GitDiffResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 17);
+
+/**
+ * @generated from message cvm.agent.FileDiff
+ */
+export type FileDiff = Message<"cvm.agent.FileDiff"> & {
+  /**
+   * @generated from field: string path = 1;
+   */
+  path: string;
+
+  /**
+   * Unified diff format
+   *
+   * @generated from field: string diff = 2;
+   */
+  diff: string;
+
+  /**
+   * @generated from field: cvm.agent.RiskLevel risk_level = 3;
+   */
+  riskLevel: RiskLevel;
+};
+
+/**
+ * Describes the message cvm.agent.FileDiff.
+ * Use `create(FileDiffSchema)` to create a new message.
+ */
+export const FileDiffSchema: GenMessage<FileDiff> = /*@__PURE__*/
+  messageDesc(file_agent, 18);
+
+/**
+ * @generated from message cvm.agent.GitAddRequest
+ */
+export type GitAddRequest = Message<"cvm.agent.GitAddRequest"> & {
+  /**
+   * @generated from field: string repo_path = 1;
+   */
+  repoPath: string;
+
+  /**
+   * Files to stage
+   *
+   * @generated from field: repeated string paths = 2;
+   */
+  paths: string[];
+};
+
+/**
+ * Describes the message cvm.agent.GitAddRequest.
+ * Use `create(GitAddRequestSchema)` to create a new message.
+ */
+export const GitAddRequestSchema: GenMessage<GitAddRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 19);
+
+/**
+ * @generated from message cvm.agent.GitAddResponse
+ */
+export type GitAddResponse = Message<"cvm.agent.GitAddResponse"> & {
+  /**
+   * @generated from field: bool success = 1;
+   */
+  success: boolean;
+
+  /**
+   * @generated from field: repeated string staged_paths = 2;
+   */
+  stagedPaths: string[];
+};
+
+/**
+ * Describes the message cvm.agent.GitAddResponse.
+ * Use `create(GitAddResponseSchema)` to create a new message.
+ */
+export const GitAddResponseSchema: GenMessage<GitAddResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 20);
+
+/**
+ * @generated from message cvm.agent.GitCommitRequest
+ */
+export type GitCommitRequest = Message<"cvm.agent.GitCommitRequest"> & {
+  /**
+   * @generated from field: string repo_path = 1;
+   */
+  repoPath: string;
+
+  /**
+   * @generated from field: string message = 2;
+   */
+  message: string;
+};
+
+/**
+ * Describes the message cvm.agent.GitCommitRequest.
+ * Use `create(GitCommitRequestSchema)` to create a new message.
+ */
+export const GitCommitRequestSchema: GenMessage<GitCommitRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 21);
+
+/**
+ * @generated from message cvm.agent.GitCommitResponse
+ */
+export type GitCommitResponse = Message<"cvm.agent.GitCommitResponse"> & {
+  /**
+   * @generated from field: bool success = 1;
+   */
+  success: boolean;
+
+  /**
+   * @generated from field: string commit_hash = 2;
+   */
+  commitHash: string;
+
+  /**
+   * @generated from field: string error = 3;
+   */
+  error: string;
+};
+
+/**
+ * Describes the message cvm.agent.GitCommitResponse.
+ * Use `create(GitCommitResponseSchema)` to create a new message.
+ */
+export const GitCommitResponseSchema: GenMessage<GitCommitResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 22);
+
+/**
+ * @generated from message cvm.agent.GitPushRequest
+ */
+export type GitPushRequest = Message<"cvm.agent.GitPushRequest"> & {
+  /**
+   * @generated from field: string repo_path = 1;
+   */
+  repoPath: string;
+
+  /**
+   * Default: "origin"
+   *
+   * @generated from field: string remote = 2;
+   */
+  remote: string;
+
+  /**
+   * Default: current branch
+   *
+   * @generated from field: string branch = 3;
+   */
+  branch: string;
+};
+
+/**
+ * Describes the message cvm.agent.GitPushRequest.
+ * Use `create(GitPushRequestSchema)` to create a new message.
+ */
+export const GitPushRequestSchema: GenMessage<GitPushRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 23);
+
+/**
+ * @generated from message cvm.agent.GitPushOutput
+ */
+export type GitPushOutput = Message<"cvm.agent.GitPushOutput"> & {
+  /**
+   * @generated from oneof cvm.agent.GitPushOutput.output
+   */
+  output: {
+    /**
+     * @generated from field: string stdout = 1;
+     */
+    value: string;
+    case: "stdout";
+  } | {
+    /**
+     * @generated from field: string stderr = 2;
+     */
+    value: string;
+    case: "stderr";
+  } | { case: undefined; value?: undefined };
+
+  /**
+   * @generated from field: optional int32 exit_code = 3;
+   */
+  exitCode?: number;
+};
+
+/**
+ * Describes the message cvm.agent.GitPushOutput.
+ * Use `create(GitPushOutputSchema)` to create a new message.
+ */
+export const GitPushOutputSchema: GenMessage<GitPushOutput> = /*@__PURE__*/
+  messageDesc(file_agent, 24);
+
+/**
+ * @generated from enum cvm.agent.RiskLevel
+ */
+export enum RiskLevel {
+  /**
+   * @generated from enum value: RISK_LOW = 0;
+   */
+  RISK_LOW = 0,
+
+  /**
+   * @generated from enum value: RISK_MEDIUM = 1;
+   */
+  RISK_MEDIUM = 1,
+
+  /**
+   * @generated from enum value: RISK_HIGH = 2;
+   */
+  RISK_HIGH = 2,
+
+  /**
+   * @generated from enum value: RISK_CRITICAL = 3;
+   */
+  RISK_CRITICAL = 3,
+}
+
+/**
+ * Describes the enum cvm.agent.RiskLevel.
+ */
+export const RiskLevelSchema: GenEnum<RiskLevel> = /*@__PURE__*/
+  enumDesc(file_agent, 0);
+
+/**
  * Health check
  *
  * @generated from service cvm.agent.HealthService
@@ -218,4 +760,112 @@ export const ShellService: GenService<{
   },
 }> = /*@__PURE__*/
   serviceDesc(file_agent, 2);
+
+/**
+ * NixOS operations service
+ *
+ * @generated from service cvm.agent.NixOpsService
+ */
+export const NixOpsService: GenService<{
+  /**
+   * Rebuild NixOS configuration
+   *
+   * @generated from rpc cvm.agent.NixOpsService.Rebuild
+   */
+  rebuild: {
+    methodKind: "server_streaming";
+    input: typeof RebuildRequestSchema;
+    output: typeof RebuildOutputSchema;
+  },
+  /**
+   * Rollback to previous generation
+   *
+   * @generated from rpc cvm.agent.NixOpsService.Rollback
+   */
+  rollback: {
+    methodKind: "server_streaming";
+    input: typeof RollbackRequestSchema;
+    output: typeof RebuildOutputSchema;
+  },
+  /**
+   * List available generations
+   *
+   * @generated from rpc cvm.agent.NixOpsService.ListGenerations
+   */
+  listGenerations: {
+    methodKind: "unary";
+    input: typeof ListGenerationsRequestSchema;
+    output: typeof ListGenerationsResponseSchema;
+  },
+  /**
+   * Get current generation info
+   *
+   * @generated from rpc cvm.agent.NixOpsService.CurrentGeneration
+   */
+  currentGeneration: {
+    methodKind: "unary";
+    input: typeof CurrentGenerationRequestSchema;
+    output: typeof GenerationInfoSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_agent, 3);
+
+/**
+ * Git operations service
+ *
+ * @generated from service cvm.agent.GitOpsService
+ */
+export const GitOpsService: GenService<{
+  /**
+   * Get repository status
+   *
+   * @generated from rpc cvm.agent.GitOpsService.Status
+   */
+  status: {
+    methodKind: "unary";
+    input: typeof GitStatusRequestSchema;
+    output: typeof GitStatusResponseSchema;
+  },
+  /**
+   * Get diff of changes
+   *
+   * @generated from rpc cvm.agent.GitOpsService.Diff
+   */
+  diff: {
+    methodKind: "unary";
+    input: typeof GitDiffRequestSchema;
+    output: typeof GitDiffResponseSchema;
+  },
+  /**
+   * Stage files
+   *
+   * @generated from rpc cvm.agent.GitOpsService.Add
+   */
+  add: {
+    methodKind: "unary";
+    input: typeof GitAddRequestSchema;
+    output: typeof GitAddResponseSchema;
+  },
+  /**
+   * Create commit
+   *
+   * @generated from rpc cvm.agent.GitOpsService.Commit
+   */
+  commit: {
+    methodKind: "unary";
+    input: typeof GitCommitRequestSchema;
+    output: typeof GitCommitResponseSchema;
+  },
+  /**
+   * Push to remote
+   *
+   * @generated from rpc cvm.agent.GitOpsService.Push
+   */
+  push: {
+    methodKind: "server_streaming";
+    input: typeof GitPushRequestSchema;
+    output: typeof GitPushOutputSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_agent, 4);
 
