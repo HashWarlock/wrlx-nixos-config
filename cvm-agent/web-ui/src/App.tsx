@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { ChatOverlay } from "./components/ChatOverlay";
+import { DiffPreview } from "./components/DiffPreview";
+import { GenerationsList } from "./components/GenerationsList";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showDiff, setShowDiff] = useState(false);
+  const [showGenerations, setShowGenerations] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -23,7 +27,11 @@ function App() {
       {/* Placeholder for noVNC - in production this would be the noVNC canvas */}
       <div className="flex items-center justify-center h-screen text-gray-600">
         <div className="text-center">
-          <p className="text-sm">Press <kbd className="px-2 py-1 bg-gray-800 rounded">Cmd</kbd> + <kbd className="px-2 py-1 bg-gray-800 rounded">Shift</kbd> + <kbd className="px-2 py-1 bg-gray-800 rounded">Space</kbd> to open agent</p>
+          <p className="text-sm">
+            Press <kbd className="px-2 py-1 bg-gray-800 rounded">Cmd</kbd> +{" "}
+            <kbd className="px-2 py-1 bg-gray-800 rounded">Shift</kbd> +{" "}
+            <kbd className="px-2 py-1 bg-gray-800 rounded">Space</kbd> to open agent
+          </p>
           <p className="text-xs mt-2 text-gray-700">Or click the button below</p>
           <button
             onClick={() => setIsOpen(true)}
@@ -53,7 +61,15 @@ function App() {
         }}
         isExpanded={isExpanded}
         onToggleExpand={() => setIsExpanded(!isExpanded)}
+        onShowDiff={() => setShowDiff(true)}
+        onShowGenerations={() => setShowGenerations(true)}
       />
+
+      {showDiff && (
+        <DiffPreview onClose={() => setShowDiff(false)} onApprove={() => setShowDiff(false)} />
+      )}
+
+      {showGenerations && <GenerationsList onClose={() => setShowGenerations(false)} />}
     </div>
   );
 }

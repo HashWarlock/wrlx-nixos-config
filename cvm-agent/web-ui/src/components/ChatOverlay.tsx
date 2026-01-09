@@ -6,9 +6,18 @@ interface ChatOverlayProps {
   onClose: () => void;
   isExpanded: boolean;
   onToggleExpand: () => void;
+  onShowDiff?: () => void;
+  onShowGenerations?: () => void;
 }
 
-export function ChatOverlay({ isOpen, onClose, isExpanded, onToggleExpand }: ChatOverlayProps) {
+export function ChatOverlay({
+  isOpen,
+  onClose,
+  isExpanded,
+  onToggleExpand,
+  onShowDiff,
+  onShowGenerations,
+}: ChatOverlayProps) {
   const [input, setInput] = useState("");
   const { messages, sendMessage, isLoading, currentResponse } = useAgent();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -58,16 +67,31 @@ export function ChatOverlay({ isOpen, onClose, isExpanded, onToggleExpand }: Cha
         <div className="flex items-center justify-between px-4 py-2 border-b border-gray-700">
           <span className="text-sm text-gray-400">CVM Agent</span>
           <div className="flex gap-2">
+            {onShowDiff && (
+              <button
+                onClick={onShowDiff}
+                className="text-gray-400 hover:text-white text-sm px-2"
+                title="Review Changes"
+              >
+                Diff
+              </button>
+            )}
+            {onShowGenerations && (
+              <button
+                onClick={onShowGenerations}
+                className="text-gray-400 hover:text-white text-sm px-2"
+                title="NixOS Generations"
+              >
+                Gen
+              </button>
+            )}
             <button
               onClick={onToggleExpand}
               className="text-gray-400 hover:text-white text-sm"
             >
               {isExpanded ? "▢" : "◱"}
             </button>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-white"
-            >
+            <button onClick={onClose} className="text-gray-400 hover:text-white">
               x
             </button>
           </div>
