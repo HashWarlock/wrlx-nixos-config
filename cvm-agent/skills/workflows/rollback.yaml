@@ -1,0 +1,41 @@
+name: rollback
+description: Rollback to a previous NixOS generation
+triggers:
+  - rollback
+  - undo last change
+  - previous generation
+  - restore system
+
+parameters:
+  generation:
+    description: Specific generation number (empty for previous)
+    required: false
+
+steps:
+  - id: list_generations
+    action: nixops.list_generations
+    description: List available generations
+    args:
+      limit: 5
+
+  - id: confirm_rollback
+    action: prompt.confirm
+    message: |
+      Current generation: {{ steps.list_generations.current }}
+      Available generations:
+      {{ steps.list_generations.list }}
+
+      Rollback to {{ parameters.generation or 'previous' }} generation?
+
+  - id: rollback
+    action: nixops.rollback
+    condition: "steps.confirm_rollback.confirmed"
+    args:
+      generation: "{{ parameters.generation }}"
+    stream: true
+
+  - id: report
+    action: chat.respond
+    message: |
+      Rollback {{ 'complete' if steps.rollback.success else 'failed' }}!
+      Now running generation: {{ steps.rollback.new_generation }}
