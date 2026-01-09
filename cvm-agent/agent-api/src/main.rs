@@ -1,4 +1,5 @@
 mod llm;
+mod risk;
 mod services;
 
 use std::net::SocketAddr;
