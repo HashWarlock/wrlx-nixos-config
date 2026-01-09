@@ -6,7 +6,8 @@ use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use services::health::proto::health_service_server::HealthServiceServer;
-use services::HealthServiceImpl;
+use services::health::proto::shell_service_server::ShellServiceServer;
+use services::{HealthServiceImpl, ShellServiceImpl};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -26,12 +27,14 @@ async fn main() -> anyhow::Result<()> {
         .allow_methods(Any);
 
     let health_service = HealthServiceImpl;
+    let shell_service = ShellServiceImpl;
 
     Server::builder()
         .accept_http1(true)
         .layer(cors)
         .layer(tonic_web::GrpcWebLayer::new())
         .add_service(HealthServiceServer::new(health_service))
+        .add_service(ShellServiceServer::new(shell_service))
         .serve(addr)
         .await?;
 
