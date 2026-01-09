@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file agent.proto.
  */
 export const file_agent: GenFile = /*@__PURE__*/
-  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJGCg5SZWJ1aWxkUmVxdWVzdBISCgpmbGFrZV9wYXRoGAEgASgJEhAKCGhvc3RuYW1lGAIgASgJEg4KBmFjdGlvbhgDIAEoCSKBAQoNUmVidWlsZE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBARISCgVwaGFzZRgEIAEoCUgCiAEBQggKBm91dHB1dEIMCgpfZXhpdF9jb2RlQggKBl9waGFzZSI5Cg9Sb2xsYmFja1JlcXVlc3QSFwoKZ2VuZXJhdGlvbhgBIAEoBUgAiAEBQg0KC19nZW5lcmF0aW9uIicKFkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QSDQoFbGltaXQYASABKAUiSQoXTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USLgoLZ2VuZXJhdGlvbnMYASADKAsyGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8iGgoYQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0Io4BCg5HZW5lcmF0aW9uSW5mbxIOCgZudW1iZXIYASABKAUSDAoEZGF0ZRgCIAEoCRIVCg1uaXhvc192ZXJzaW9uGAMgASgJEhYKDmtlcm5lbF92ZXJzaW9uGAQgASgJEh4KFmNvbmZpZ3VyYXRpb25fcmV2aXNpb24YBSABKAkSDwoHY3VycmVudBgGIAEoCCIlChBHaXRTdGF0dXNSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCSLSAQoRR2l0U3RhdHVzUmVzcG9uc2USDgoGYnJhbmNoGAEgASgJEicKCG1vZGlmaWVkGAIgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSJQoGc3RhZ2VkGAMgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSKAoJdW50cmFja2VkGAQgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSFAoMaGFzX3Vwc3RyZWFtGAUgASgIEg0KBWFoZWFkGAYgASgFEg4KBmJlaGluZBgHIAEoBSIqCgpGaWxlU3RhdHVzEgwKBHBhdGgYASABKAkSDgoGc3RhdHVzGAIgASgJIkIKDkdpdERpZmZSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCRIOCgZzdGFnZWQYAyABKAgiNQoPR2l0RGlmZlJlc3BvbnNlEiIKBWRpZmZzGAEgAygLMhMuY3ZtLmFnZW50LkZpbGVEaWZmIlAKCEZpbGVEaWZmEgwKBHBhdGgYASABKAkSDAoEZGlmZhgCIAEoCRIoCgpyaXNrX2xldmVsGAMgASgOMhQuY3ZtLmFnZW50LlJpc2tMZXZlbCIxCg1HaXRBZGRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCSI3Cg5HaXRBZGRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhQKDHN0YWdlZF9wYXRocxgCIAMoCSI2ChBHaXRDb21taXRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIkgKEUdpdENvbW1pdFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSEwoLY29tbWl0X2hhc2gYAiABKAkSDQoFZXJyb3IYAyABKAkiQwoOR2l0UHVzaFJlcXVlc3QSEQoJcmVwb19wYXRoGAEgASgJEg4KBnJlbW90ZRgCIAEoCRIOCgZicmFuY2gYAyABKAkiYwoNR2l0UHVzaE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJiChFTY3JlZW5zaG90UmVxdWVzdBIWCgl3aW5kb3dfaWQYASABKAlIAIgBARIWCg5pbmNsdWRlX2N1cnNvchgCIAEoCBIPCgdxdWFsaXR5GAMgASgFQgwKCl93aW5kb3dfaWQiVwoSU2NyZWVuc2hvdFJlc3BvbnNlEhIKCmltYWdlX2RhdGEYASABKAwSDgoGZm9ybWF0GAIgASgJEg0KBXdpZHRoGAMgASgFEg4KBmhlaWdodBgEIAEoBSKDAQoMRWxlbWVudFF1ZXJ5EhgKC2FwcGxpY2F0aW9uGAEgASgJSACIAQESEQoEcm9sZRgCIAEoCUgBiAEBEhEKBG5hbWUYAyABKAlIAogBARIRCgltYXhfZGVwdGgYBCABKAVCDgoMX2FwcGxpY2F0aW9uQgcKBV9yb2xlQgcKBV9uYW1lIjoKEEVsZW1lbnRzUmVzcG9uc2USJgoIZWxlbWVudHMYASADKAsyFC5jdm0uYWdlbnQuVUlFbGVtZW50IqYBCglVSUVsZW1lbnQSCgoCaWQYASABKAkSEwoLYXBwbGljYXRpb24YAiABKAkSDAoEcm9sZRgDIAEoCRIMCgRuYW1lGAQgASgJEhMKC2Rlc2NyaXB0aW9uGAUgASgJEiYKBmJvdW5kcxgGIAEoCzIWLmN2bS5hZ2VudC5Cb3VuZGluZ0JveBIOCgZzdGF0ZXMYByADKAkSDwoHYWN0aW9ucxgIIAMoCSJCCgtCb3VuZGluZ0JveBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDQoFd2lkdGgYAyABKAUSDgoGaGVpZ2h0GAQgASgFIlEKEkVsZW1lbnRUcmVlUmVxdWVzdBIYCgthcHBsaWNhdGlvbhgBIAEoCUgAiAEBEhEKCW1heF9kZXB0aBgCIAEoBUIOCgxfYXBwbGljYXRpb24iPAoTRWxlbWVudFRyZWVSZXNwb25zZRIlCgVyb290cxgBIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSJeCgtFbGVtZW50Tm9kZRIlCgdlbGVtZW50GAEgASgLMhQuY3ZtLmFnZW50LlVJRWxlbWVudBIoCghjaGlsZHJlbhgCIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSKSAQoMQ2xpY2tSZXF1ZXN0EhQKCmVsZW1lbnRfaWQYASABKAlIABIqCghwb3NpdGlvbhgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlc0gAEiYKBmJ1dHRvbhgDIAEoDjIWLmN2bS5hZ2VudC5Nb3VzZUJ1dHRvbhIOCgZjbGlja3MYBCABKAVCCAoGdGFyZ2V0IiMKC0Nvb3JkaW5hdGVzEgkKAXgYASABKAUSCQoBeRgCIAEoBSJqCgtUeXBlUmVxdWVzdBIMCgR0ZXh0GAEgASgJEhcKCmVsZW1lbnRfaWQYAiABKAlIAIgBARIQCghkZWxheV9tcxgDIAEoBRITCgtjbGVhcl9maXJzdBgEIAEoCEINCgtfZWxlbWVudF9pZCJHCg9LZXlQcmVzc1JlcXVlc3QSDAoEa2V5cxgBIAMoCRIXCgplbGVtZW50X2lkGAIgASgJSACIAQFCDQoLX2VsZW1lbnRfaWQiOAoQTW92ZU1vdXNlUmVxdWVzdBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDgoGc21vb3RoGAMgASgIIjAKDkFjdGlvblJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkiiQEKD0Rlc2NyaWJlUmVxdWVzdBISCgpzY3JlZW5zaG90GAEgASgMEi8KCmZvY3VzX2FyZWEYAiABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3hIAIgBARIVCghxdWVzdGlvbhgDIAEoCUgBiAEBQg0KC19mb2N1c19hcmVhQgsKCV9xdWVzdGlvbiJVCg5WaXNpb25SZXNwb25zZRITCgtkZXNjcmlwdGlvbhgBIAEoCRIuCghlbGVtZW50cxgCIAMoCzIcLmN2bS5hZ2VudC5JZGVudGlmaWVkRWxlbWVudCJuChFJZGVudGlmaWVkRWxlbWVudBITCgtkZXNjcmlwdGlvbhgBIAEoCRIwChBlc3RpbWF0ZWRfYm91bmRzGAIgASgLMhYuY3ZtLmFnZW50LkJvdW5kaW5nQm94EhIKCmNvbmZpZGVuY2UYAyABKAIiUgoTRmluZEJ5VmlzaW9uUmVxdWVzdBITCgtkZXNjcmlwdGlvbhgBIAEoCRIXCgpzY3JlZW5zaG90GAIgASgMSACIAQFCDQoLX3NjcmVlbnNob3QipgEKFEZpbmRCeVZpc2lvblJlc3BvbnNlEg0KBWZvdW5kGAEgASgIEiYKBmNlbnRlchgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlcxImCgZib3VuZHMYAyABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3gSEgoKY29uZmlkZW5jZRgEIAEoAhIbChNlbGVtZW50X2Rlc2NyaXB0aW9uGAUgASgJKkwKCVJpc2tMZXZlbBIMCghSSVNLX0xPVxAAEg8KC1JJU0tfTUVESVVNEAESDQoJUklTS19ISUdIEAISEQoNUklTS19DUklUSUNBTBADKkAKC01vdXNlQnV0dG9uEg4KCk1PVVNFX0xFRlQQABIPCgtNT1VTRV9SSUdIVBABEhAKDE1PVVNFX01JRERMRRACMk0KDUhlYWx0aFNlcnZpY2USPAoFQ2hlY2sSGC5jdm0uYWdlbnQuSGVhbHRoUmVxdWVzdBoZLmN2bS5hZ2VudC5IZWFsdGhSZXNwb25zZTJPCgtDaGF0U2VydmljZRJACgtTZW5kTWVzc2FnZRIWLmN2bS5hZ2VudC5DaGF0UmVxdWVzdBoXLmN2bS5hZ2VudC5DaGF0UmVzcG9uc2UwATJMCgxTaGVsbFNlcnZpY2USPAoHRXhlY3V0ZRIXLmN2bS5hZ2VudC5TaGVsbFJlcXVlc3QaFi5jdm0uYWdlbnQuU2hlbGxPdXRwdXQwATLEAgoNTml4T3BzU2VydmljZRJACgdSZWJ1aWxkEhkuY3ZtLmFnZW50LlJlYnVpbGRSZXF1ZXN0GhguY3ZtLmFnZW50LlJlYnVpbGRPdXRwdXQwARJCCghSb2xsYmFjaxIaLmN2bS5hZ2VudC5Sb2xsYmFja1JlcXVlc3QaGC5jdm0uYWdlbnQuUmVidWlsZE91dHB1dDABElgKD0xpc3RHZW5lcmF0aW9ucxIhLmN2bS5hZ2VudC5MaXN0R2VuZXJhdGlvbnNSZXF1ZXN0GiIuY3ZtLmFnZW50Lkxpc3RHZW5lcmF0aW9uc1Jlc3BvbnNlElMKEUN1cnJlbnRHZW5lcmF0aW9uEiMuY3ZtLmFnZW50LkN1cnJlbnRHZW5lcmF0aW9uUmVxdWVzdBoZLmN2bS5hZ2VudC5HZW5lcmF0aW9uSW5mbzLTAgoNR2l0T3BzU2VydmljZRJDCgZTdGF0dXMSGy5jdm0uYWdlbnQuR2l0U3RhdHVzUmVxdWVzdBocLmN2bS5hZ2VudC5HaXRTdGF0dXNSZXNwb25zZRI9CgREaWZmEhkuY3ZtLmFnZW50LkdpdERpZmZSZXF1ZXN0GhouY3ZtLmFnZW50LkdpdERpZmZSZXNwb25zZRI6CgNBZGQSGC5jdm0uYWdlbnQuR2l0QWRkUmVxdWVzdBoZLmN2bS5hZ2VudC5HaXRBZGRSZXNwb25zZRJDCgZDb21taXQSGy5jdm0uYWdlbnQuR2l0Q29tbWl0UmVxdWVzdBocLmN2bS5hZ2VudC5HaXRDb21taXRSZXNwb25zZRI9CgRQdXNoEhkuY3ZtLmFnZW50LkdpdFB1c2hSZXF1ZXN0GhguY3ZtLmFnZW50LkdpdFB1c2hPdXRwdXQwATKBBQoKR1VJU2VydmljZRJJCgpTY3JlZW5zaG90EhwuY3ZtLmFnZW50LlNjcmVlbnNob3RSZXF1ZXN0Gh0uY3ZtLmFnZW50LlNjcmVlbnNob3RSZXNwb25zZRJDCgtHZXRFbGVtZW50cxIXLmN2bS5hZ2VudC5FbGVtZW50UXVlcnkaGy5jdm0uYWdlbnQuRWxlbWVudHNSZXNwb25zZRJPCg5HZXRFbGVtZW50VHJlZRIdLmN2bS5hZ2VudC5FbGVtZW50VHJlZVJlcXVlc3QaHi5jdm0uYWdlbnQuRWxlbWVudFRyZWVSZXNwb25zZRI7CgVDbGljaxIXLmN2bS5hZ2VudC5DbGlja1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USOQoEVHlwZRIWLmN2bS5hZ2VudC5UeXBlUmVxdWVzdBoZLmN2bS5hZ2VudC5BY3Rpb25SZXNwb25zZRJBCghLZXlQcmVzcxIaLmN2bS5hZ2VudC5LZXlQcmVzc1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQwoJTW92ZU1vdXNlEhsuY3ZtLmFnZW50Lk1vdmVNb3VzZVJlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQQoIRGVzY3JpYmUSGi5jdm0uYWdlbnQuRGVzY3JpYmVSZXF1ZXN0GhkuY3ZtLmFnZW50LlZpc2lvblJlc3BvbnNlEk8KDEZpbmRCeVZpc2lvbhIeLmN2bS5hZ2VudC5GaW5kQnlWaXNpb25SZXF1ZXN0Gh8uY3ZtLmFnZW50LkZpbmRCeVZpc2lvblJlc3BvbnNlYgZwcm90bzM");
+  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJGCg5SZWJ1aWxkUmVxdWVzdBISCgpmbGFrZV9wYXRoGAEgASgJEhAKCGhvc3RuYW1lGAIgASgJEg4KBmFjdGlvbhgDIAEoCSKBAQoNUmVidWlsZE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBARISCgVwaGFzZRgEIAEoCUgCiAEBQggKBm91dHB1dEIMCgpfZXhpdF9jb2RlQggKBl9waGFzZSI5Cg9Sb2xsYmFja1JlcXVlc3QSFwoKZ2VuZXJhdGlvbhgBIAEoBUgAiAEBQg0KC19nZW5lcmF0aW9uIicKFkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QSDQoFbGltaXQYASABKAUiSQoXTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USLgoLZ2VuZXJhdGlvbnMYASADKAsyGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8iGgoYQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0Io4BCg5HZW5lcmF0aW9uSW5mbxIOCgZudW1iZXIYASABKAUSDAoEZGF0ZRgCIAEoCRIVCg1uaXhvc192ZXJzaW9uGAMgASgJEhYKDmtlcm5lbF92ZXJzaW9uGAQgASgJEh4KFmNvbmZpZ3VyYXRpb25fcmV2aXNpb24YBSABKAkSDwoHY3VycmVudBgGIAEoCCIlChBHaXRTdGF0dXNSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCSLSAQoRR2l0U3RhdHVzUmVzcG9uc2USDgoGYnJhbmNoGAEgASgJEicKCG1vZGlmaWVkGAIgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSJQoGc3RhZ2VkGAMgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSKAoJdW50cmFja2VkGAQgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSFAoMaGFzX3Vwc3RyZWFtGAUgASgIEg0KBWFoZWFkGAYgASgFEg4KBmJlaGluZBgHIAEoBSIqCgpGaWxlU3RhdHVzEgwKBHBhdGgYASABKAkSDgoGc3RhdHVzGAIgASgJIkIKDkdpdERpZmZSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCRIOCgZzdGFnZWQYAyABKAgiNQoPR2l0RGlmZlJlc3BvbnNlEiIKBWRpZmZzGAEgAygLMhMuY3ZtLmFnZW50LkZpbGVEaWZmIlAKCEZpbGVEaWZmEgwKBHBhdGgYASABKAkSDAoEZGlmZhgCIAEoCRIoCgpyaXNrX2xldmVsGAMgASgOMhQuY3ZtLmFnZW50LlJpc2tMZXZlbCIxCg1HaXRBZGRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCSI3Cg5HaXRBZGRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhQKDHN0YWdlZF9wYXRocxgCIAMoCSI2ChBHaXRDb21taXRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIkgKEUdpdENvbW1pdFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSEwoLY29tbWl0X2hhc2gYAiABKAkSDQoFZXJyb3IYAyABKAkiQwoOR2l0UHVzaFJlcXVlc3QSEQoJcmVwb19wYXRoGAEgASgJEg4KBnJlbW90ZRgCIAEoCRIOCgZicmFuY2gYAyABKAkiYwoNR2l0UHVzaE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJiChFTY3JlZW5zaG90UmVxdWVzdBIWCgl3aW5kb3dfaWQYASABKAlIAIgBARIWCg5pbmNsdWRlX2N1cnNvchgCIAEoCBIPCgdxdWFsaXR5GAMgASgFQgwKCl93aW5kb3dfaWQiVwoSU2NyZWVuc2hvdFJlc3BvbnNlEhIKCmltYWdlX2RhdGEYASABKAwSDgoGZm9ybWF0GAIgASgJEg0KBXdpZHRoGAMgASgFEg4KBmhlaWdodBgEIAEoBSKDAQoMRWxlbWVudFF1ZXJ5EhgKC2FwcGxpY2F0aW9uGAEgASgJSACIAQESEQoEcm9sZRgCIAEoCUgBiAEBEhEKBG5hbWUYAyABKAlIAogBARIRCgltYXhfZGVwdGgYBCABKAVCDgoMX2FwcGxpY2F0aW9uQgcKBV9yb2xlQgcKBV9uYW1lIjoKEEVsZW1lbnRzUmVzcG9uc2USJgoIZWxlbWVudHMYASADKAsyFC5jdm0uYWdlbnQuVUlFbGVtZW50IqYBCglVSUVsZW1lbnQSCgoCaWQYASABKAkSEwoLYXBwbGljYXRpb24YAiABKAkSDAoEcm9sZRgDIAEoCRIMCgRuYW1lGAQgASgJEhMKC2Rlc2NyaXB0aW9uGAUgASgJEiYKBmJvdW5kcxgGIAEoCzIWLmN2bS5hZ2VudC5Cb3VuZGluZ0JveBIOCgZzdGF0ZXMYByADKAkSDwoHYWN0aW9ucxgIIAMoCSJCCgtCb3VuZGluZ0JveBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDQoFd2lkdGgYAyABKAUSDgoGaGVpZ2h0GAQgASgFIlEKEkVsZW1lbnRUcmVlUmVxdWVzdBIYCgthcHBsaWNhdGlvbhgBIAEoCUgAiAEBEhEKCW1heF9kZXB0aBgCIAEoBUIOCgxfYXBwbGljYXRpb24iPAoTRWxlbWVudFRyZWVSZXNwb25zZRIlCgVyb290cxgBIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSJeCgtFbGVtZW50Tm9kZRIlCgdlbGVtZW50GAEgASgLMhQuY3ZtLmFnZW50LlVJRWxlbWVudBIoCghjaGlsZHJlbhgCIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSKSAQoMQ2xpY2tSZXF1ZXN0EhQKCmVsZW1lbnRfaWQYASABKAlIABIqCghwb3NpdGlvbhgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlc0gAEiYKBmJ1dHRvbhgDIAEoDjIWLmN2bS5hZ2VudC5Nb3VzZUJ1dHRvbhIOCgZjbGlja3MYBCABKAVCCAoGdGFyZ2V0IiMKC0Nvb3JkaW5hdGVzEgkKAXgYASABKAUSCQoBeRgCIAEoBSJqCgtUeXBlUmVxdWVzdBIMCgR0ZXh0GAEgASgJEhcKCmVsZW1lbnRfaWQYAiABKAlIAIgBARIQCghkZWxheV9tcxgDIAEoBRITCgtjbGVhcl9maXJzdBgEIAEoCEINCgtfZWxlbWVudF9pZCJHCg9LZXlQcmVzc1JlcXVlc3QSDAoEa2V5cxgBIAMoCRIXCgplbGVtZW50X2lkGAIgASgJSACIAQFCDQoLX2VsZW1lbnRfaWQiOAoQTW92ZU1vdXNlUmVxdWVzdBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDgoGc21vb3RoGAMgASgIIjAKDkFjdGlvblJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkiiQEKD0Rlc2NyaWJlUmVxdWVzdBISCgpzY3JlZW5zaG90GAEgASgMEi8KCmZvY3VzX2FyZWEYAiABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3hIAIgBARIVCghxdWVzdGlvbhgDIAEoCUgBiAEBQg0KC19mb2N1c19hcmVhQgsKCV9xdWVzdGlvbiJVCg5WaXNpb25SZXNwb25zZRITCgtkZXNjcmlwdGlvbhgBIAEoCRIuCghlbGVtZW50cxgCIAMoCzIcLmN2bS5hZ2VudC5JZGVudGlmaWVkRWxlbWVudCJuChFJZGVudGlmaWVkRWxlbWVudBITCgtkZXNjcmlwdGlvbhgBIAEoCRIwChBlc3RpbWF0ZWRfYm91bmRzGAIgASgLMhYuY3ZtLmFnZW50LkJvdW5kaW5nQm94EhIKCmNvbmZpZGVuY2UYAyABKAIiUgoTRmluZEJ5VmlzaW9uUmVxdWVzdBITCgtkZXNjcmlwdGlvbhgBIAEoCRIXCgpzY3JlZW5zaG90GAIgASgMSACIAQFCDQoLX3NjcmVlbnNob3QipgEKFEZpbmRCeVZpc2lvblJlc3BvbnNlEg0KBWZvdW5kGAEgASgIEiYKBmNlbnRlchgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlcxImCgZib3VuZHMYAyABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3gSEgoKY29uZmlkZW5jZRgEIAEoAhIbChNlbGVtZW50X2Rlc2NyaXB0aW9uGAUgASgJIiwKCkF1ZGlvQ2h1bmsSDAoEZGF0YRgBIAEoDBIQCghpc19maW5hbBgCIAEoCCJpCg9UcmFuc2NyaXB0Q2h1bmsSDAoEdGV4dBgBIAEoCRISCgppc19wYXJ0aWFsGAIgASgIEhIKCmNvbmZpZGVuY2UYAyABKAISEAoIc3RhcnRfbXMYBCABKAUSDgoGZW5kX21zGAUgASgFIhMKEUxpc3RNb2RlbHNSZXF1ZXN0Ij0KEkxpc3RNb2RlbHNSZXNwb25zZRInCgZtb2RlbHMYASADKAsyFy5jdm0uYWdlbnQuV2hpc3Blck1vZGVsIkMKDFdoaXNwZXJNb2RlbBIMCgRuYW1lGAEgASgJEhEKCWF2YWlsYWJsZRgCIAEoCBISCgpzaXplX2J5dGVzGAMgASgDIhQKElZvaWNlU3RhdHVzUmVxdWVzdCJWChNWb2ljZVN0YXR1c1Jlc3BvbnNlEhEKCWF2YWlsYWJsZRgBIAEoCBIVCg1jdXJyZW50X21vZGVsGAIgASgJEhUKDWlzX3Byb2Nlc3NpbmcYAyABKAgiPgoRTGlzdFNraWxsc1JlcXVlc3QSKQoLdHlwZV9maWx0ZXIYASABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlIj0KEkxpc3RTa2lsbHNSZXNwb25zZRInCgZza2lsbHMYASADKAsyFy5jdm0uYWdlbnQuU2tpbGxTdW1tYXJ5IncKDFNraWxsU3VtbWFyeRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg4KBnNvdXJjZRgFIAEoCSIfCg9HZXRTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCSKJAQoNU2tpbGxSZXNwb25zZRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg8KB2NvbnRlbnQYBSABKAkSDgoGc291cmNlGAYgASgJIn4KEkNyZWF0ZVNraWxsUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg8KB2NvbnRlbnQYBSABKAkiWgoSVXBkYXRlU2tpbGxSZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSEAoIdHJpZ2dlcnMYAyADKAkSDwoHY29udGVudBgEIAEoCSIiChJEZWxldGVTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCSI1ChNEZWxldGVTa2lsbFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkimgEKE0V4ZWN1dGVTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCRJCCgpwYXJhbWV0ZXJzGAIgAygLMi4uY3ZtLmFnZW50LkV4ZWN1dGVTa2lsbFJlcXVlc3QuUGFyYW1ldGVyc0VudHJ5GjEKD1BhcmFtZXRlcnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpMBCg1Ta2lsbFByb2dyZXNzEhMKC3N0ZXBfbnVtYmVyGAEgASgFEhMKC3RvdGFsX3N0ZXBzGAIgASgFEhgKEHN0ZXBfZGVzY3JpcHRpb24YAyABKAkSEAoGb3V0cHV0GAQgASgJSAASDwoFZXJyb3IYBSABKAlIABIRCgljb21wbGV0ZWQYBiABKAhCCAoGcmVzdWx0IiMKEk1hdGNoU2tpbGxzUmVxdWVzdBINCgVpbnB1dBgBIAEoCSI9ChNNYXRjaFNraWxsc1Jlc3BvbnNlEiYKB21hdGNoZXMYASADKAsyFS5jdm0uYWdlbnQuU2tpbGxNYXRjaCJqCgpTa2lsbE1hdGNoEgwKBG5hbWUYASABKAkSIgoEdHlwZRgCIAEoDjIULmN2bS5hZ2VudC5Ta2lsbFR5cGUSEQoJcmVsZXZhbmNlGAMgASgCEhcKD21hdGNoZWRfdHJpZ2dlchgEIAEoCSpMCglSaXNrTGV2ZWwSDAoIUklTS19MT1cQABIPCgtSSVNLX01FRElVTRABEg0KCVJJU0tfSElHSBACEhEKDVJJU0tfQ1JJVElDQUwQAypACgtNb3VzZUJ1dHRvbhIOCgpNT1VTRV9MRUZUEAASDwoLTU9VU0VfUklHSFQQARIQCgxNT1VTRV9NSURETEUQAipFCglTa2lsbFR5cGUSDQoJU0tJTExfQUxMEAASFQoRU0tJTExfSU5TVFJVQ1RJT04QARISCg5TS0lMTF9XT1JLRkxPVxACMk0KDUhlYWx0aFNlcnZpY2USPAoFQ2hlY2sSGC5jdm0uYWdlbnQuSGVhbHRoUmVxdWVzdBoZLmN2bS5hZ2VudC5IZWFsdGhSZXNwb25zZTJPCgtDaGF0U2VydmljZRJACgtTZW5kTWVzc2FnZRIWLmN2bS5hZ2VudC5DaGF0UmVxdWVzdBoXLmN2bS5hZ2VudC5DaGF0UmVzcG9uc2UwATJMCgxTaGVsbFNlcnZpY2USPAoHRXhlY3V0ZRIXLmN2bS5hZ2VudC5TaGVsbFJlcXVlc3QaFi5jdm0uYWdlbnQuU2hlbGxPdXRwdXQwATLEAgoNTml4T3BzU2VydmljZRJACgdSZWJ1aWxkEhkuY3ZtLmFnZW50LlJlYnVpbGRSZXF1ZXN0GhguY3ZtLmFnZW50LlJlYnVpbGRPdXRwdXQwARJCCghSb2xsYmFjaxIaLmN2bS5hZ2VudC5Sb2xsYmFja1JlcXVlc3QaGC5jdm0uYWdlbnQuUmVidWlsZE91dHB1dDABElgKD0xpc3RHZW5lcmF0aW9ucxIhLmN2bS5hZ2VudC5MaXN0R2VuZXJhdGlvbnNSZXF1ZXN0GiIuY3ZtLmFnZW50Lkxpc3RHZW5lcmF0aW9uc1Jlc3BvbnNlElMKEUN1cnJlbnRHZW5lcmF0aW9uEiMuY3ZtLmFnZW50LkN1cnJlbnRHZW5lcmF0aW9uUmVxdWVzdBoZLmN2bS5hZ2VudC5HZW5lcmF0aW9uSW5mbzLTAgoNR2l0T3BzU2VydmljZRJDCgZTdGF0dXMSGy5jdm0uYWdlbnQuR2l0U3RhdHVzUmVxdWVzdBocLmN2bS5hZ2VudC5HaXRTdGF0dXNSZXNwb25zZRI9CgREaWZmEhkuY3ZtLmFnZW50LkdpdERpZmZSZXF1ZXN0GhouY3ZtLmFnZW50LkdpdERpZmZSZXNwb25zZRI6CgNBZGQSGC5jdm0uYWdlbnQuR2l0QWRkUmVxdWVzdBoZLmN2bS5hZ2VudC5HaXRBZGRSZXNwb25zZRJDCgZDb21taXQSGy5jdm0uYWdlbnQuR2l0Q29tbWl0UmVxdWVzdBocLmN2bS5hZ2VudC5HaXRDb21taXRSZXNwb25zZRI9CgRQdXNoEhkuY3ZtLmFnZW50LkdpdFB1c2hSZXF1ZXN0GhguY3ZtLmFnZW50LkdpdFB1c2hPdXRwdXQwATKBBQoKR1VJU2VydmljZRJJCgpTY3JlZW5zaG90EhwuY3ZtLmFnZW50LlNjcmVlbnNob3RSZXF1ZXN0Gh0uY3ZtLmFnZW50LlNjcmVlbnNob3RSZXNwb25zZRJDCgtHZXRFbGVtZW50cxIXLmN2bS5hZ2VudC5FbGVtZW50UXVlcnkaGy5jdm0uYWdlbnQuRWxlbWVudHNSZXNwb25zZRJPCg5HZXRFbGVtZW50VHJlZRIdLmN2bS5hZ2VudC5FbGVtZW50VHJlZVJlcXVlc3QaHi5jdm0uYWdlbnQuRWxlbWVudFRyZWVSZXNwb25zZRI7CgVDbGljaxIXLmN2bS5hZ2VudC5DbGlja1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USOQoEVHlwZRIWLmN2bS5hZ2VudC5UeXBlUmVxdWVzdBoZLmN2bS5hZ2VudC5BY3Rpb25SZXNwb25zZRJBCghLZXlQcmVzcxIaLmN2bS5hZ2VudC5LZXlQcmVzc1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQwoJTW92ZU1vdXNlEhsuY3ZtLmFnZW50Lk1vdmVNb3VzZVJlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQQoIRGVzY3JpYmUSGi5jdm0uYWdlbnQuRGVzY3JpYmVSZXF1ZXN0GhkuY3ZtLmFnZW50LlZpc2lvblJlc3BvbnNlEk8KDEZpbmRCeVZpc2lvbhIeLmN2bS5hZ2VudC5GaW5kQnlWaXNpb25SZXF1ZXN0Gh8uY3ZtLmFnZW50LkZpbmRCeVZpc2lvblJlc3BvbnNlMucBCgxWb2ljZVNlcnZpY2USQwoKVHJhbnNjcmliZRIVLmN2bS5hZ2VudC5BdWRpb0NodW5rGhouY3ZtLmFnZW50LlRyYW5zY3JpcHRDaHVuaygBMAESSQoKTGlzdE1vZGVscxIcLmN2bS5hZ2VudC5MaXN0TW9kZWxzUmVxdWVzdBodLmN2bS5hZ2VudC5MaXN0TW9kZWxzUmVzcG9uc2USRwoGU3RhdHVzEh0uY3ZtLmFnZW50LlZvaWNlU3RhdHVzUmVxdWVzdBoeLmN2bS5hZ2VudC5Wb2ljZVN0YXR1c1Jlc3BvbnNlMu8DCg1Ta2lsbHNTZXJ2aWNlEkMKBExpc3QSHC5jdm0uYWdlbnQuTGlzdFNraWxsc1JlcXVlc3QaHS5jdm0uYWdlbnQuTGlzdFNraWxsc1Jlc3BvbnNlEjsKA0dldBIaLmN2bS5hZ2VudC5HZXRTa2lsbFJlcXVlc3QaGC5jdm0uYWdlbnQuU2tpbGxSZXNwb25zZRJBCgZDcmVhdGUSHS5jdm0uYWdlbnQuQ3JlYXRlU2tpbGxSZXF1ZXN0GhguY3ZtLmFnZW50LlNraWxsUmVzcG9uc2USQQoGVXBkYXRlEh0uY3ZtLmFnZW50LlVwZGF0ZVNraWxsUmVxdWVzdBoYLmN2bS5hZ2VudC5Ta2lsbFJlc3BvbnNlEkcKBkRlbGV0ZRIdLmN2bS5hZ2VudC5EZWxldGVTa2lsbFJlcXVlc3QaHi5jdm0uYWdlbnQuRGVsZXRlU2tpbGxSZXNwb25zZRJFCgdFeGVjdXRlEh4uY3ZtLmFnZW50LkV4ZWN1dGVTa2lsbFJlcXVlc3QaGC5jdm0uYWdlbnQuU2tpbGxQcm9ncmVzczABEkYKBU1hdGNoEh0uY3ZtLmFnZW50Lk1hdGNoU2tpbGxzUmVxdWVzdBoeLmN2bS5hZ2VudC5NYXRjaFNraWxsc1Jlc3BvbnNlYgZwcm90bzM");
 
 /**
  * @generated from message cvm.agent.HealthRequest
@@ -1370,6 +1370,563 @@ export const FindByVisionResponseSchema: GenMessage<FindByVisionResponse> = /*@_
   messageDesc(file_agent, 44);
 
 /**
+ * @generated from message cvm.agent.AudioChunk
+ */
+export type AudioChunk = Message<"cvm.agent.AudioChunk"> & {
+  /**
+   * Raw audio bytes (16-bit PCM, 16kHz mono)
+   *
+   * @generated from field: bytes data = 1;
+   */
+  data: Uint8Array;
+
+  /**
+   * Last chunk in utterance
+   *
+   * @generated from field: bool is_final = 2;
+   */
+  isFinal: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.AudioChunk.
+ * Use `create(AudioChunkSchema)` to create a new message.
+ */
+export const AudioChunkSchema: GenMessage<AudioChunk> = /*@__PURE__*/
+  messageDesc(file_agent, 45);
+
+/**
+ * @generated from message cvm.agent.TranscriptChunk
+ */
+export type TranscriptChunk = Message<"cvm.agent.TranscriptChunk"> & {
+  /**
+   * Transcribed text
+   *
+   * @generated from field: string text = 1;
+   */
+  text: string;
+
+  /**
+   * Partial (still processing) vs final
+   *
+   * @generated from field: bool is_partial = 2;
+   */
+  isPartial: boolean;
+
+  /**
+   * 0-1 confidence score
+   *
+   * @generated from field: float confidence = 3;
+   */
+  confidence: number;
+
+  /**
+   * Start time in audio
+   *
+   * @generated from field: int32 start_ms = 4;
+   */
+  startMs: number;
+
+  /**
+   * End time in audio
+   *
+   * @generated from field: int32 end_ms = 5;
+   */
+  endMs: number;
+};
+
+/**
+ * Describes the message cvm.agent.TranscriptChunk.
+ * Use `create(TranscriptChunkSchema)` to create a new message.
+ */
+export const TranscriptChunkSchema: GenMessage<TranscriptChunk> = /*@__PURE__*/
+  messageDesc(file_agent, 46);
+
+/**
+ * @generated from message cvm.agent.ListModelsRequest
+ */
+export type ListModelsRequest = Message<"cvm.agent.ListModelsRequest"> & {
+};
+
+/**
+ * Describes the message cvm.agent.ListModelsRequest.
+ * Use `create(ListModelsRequestSchema)` to create a new message.
+ */
+export const ListModelsRequestSchema: GenMessage<ListModelsRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 47);
+
+/**
+ * @generated from message cvm.agent.ListModelsResponse
+ */
+export type ListModelsResponse = Message<"cvm.agent.ListModelsResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.WhisperModel models = 1;
+   */
+  models: WhisperModel[];
+};
+
+/**
+ * Describes the message cvm.agent.ListModelsResponse.
+ * Use `create(ListModelsResponseSchema)` to create a new message.
+ */
+export const ListModelsResponseSchema: GenMessage<ListModelsResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 48);
+
+/**
+ * @generated from message cvm.agent.WhisperModel
+ */
+export type WhisperModel = Message<"cvm.agent.WhisperModel"> & {
+  /**
+   * "tiny", "base", "small", "medium", "large"
+   *
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: bool available = 2;
+   */
+  available: boolean;
+
+  /**
+   * @generated from field: int64 size_bytes = 3;
+   */
+  sizeBytes: bigint;
+};
+
+/**
+ * Describes the message cvm.agent.WhisperModel.
+ * Use `create(WhisperModelSchema)` to create a new message.
+ */
+export const WhisperModelSchema: GenMessage<WhisperModel> = /*@__PURE__*/
+  messageDesc(file_agent, 49);
+
+/**
+ * @generated from message cvm.agent.VoiceStatusRequest
+ */
+export type VoiceStatusRequest = Message<"cvm.agent.VoiceStatusRequest"> & {
+};
+
+/**
+ * Describes the message cvm.agent.VoiceStatusRequest.
+ * Use `create(VoiceStatusRequestSchema)` to create a new message.
+ */
+export const VoiceStatusRequestSchema: GenMessage<VoiceStatusRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 50);
+
+/**
+ * @generated from message cvm.agent.VoiceStatusResponse
+ */
+export type VoiceStatusResponse = Message<"cvm.agent.VoiceStatusResponse"> & {
+  /**
+   * @generated from field: bool available = 1;
+   */
+  available: boolean;
+
+  /**
+   * @generated from field: string current_model = 2;
+   */
+  currentModel: string;
+
+  /**
+   * @generated from field: bool is_processing = 3;
+   */
+  isProcessing: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.VoiceStatusResponse.
+ * Use `create(VoiceStatusResponseSchema)` to create a new message.
+ */
+export const VoiceStatusResponseSchema: GenMessage<VoiceStatusResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 51);
+
+/**
+ * @generated from message cvm.agent.ListSkillsRequest
+ */
+export type ListSkillsRequest = Message<"cvm.agent.ListSkillsRequest"> & {
+  /**
+   * Filter by type, or SKILL_ALL
+   *
+   * @generated from field: cvm.agent.SkillType type_filter = 1;
+   */
+  typeFilter: SkillType;
+};
+
+/**
+ * Describes the message cvm.agent.ListSkillsRequest.
+ * Use `create(ListSkillsRequestSchema)` to create a new message.
+ */
+export const ListSkillsRequestSchema: GenMessage<ListSkillsRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 52);
+
+/**
+ * @generated from message cvm.agent.ListSkillsResponse
+ */
+export type ListSkillsResponse = Message<"cvm.agent.ListSkillsResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.SkillSummary skills = 1;
+   */
+  skills: SkillSummary[];
+};
+
+/**
+ * Describes the message cvm.agent.ListSkillsResponse.
+ * Use `create(ListSkillsResponseSchema)` to create a new message.
+ */
+export const ListSkillsResponseSchema: GenMessage<ListSkillsResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 53);
+
+/**
+ * @generated from message cvm.agent.SkillSummary
+ */
+export type SkillSummary = Message<"cvm.agent.SkillSummary"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string description = 2;
+   */
+  description: string;
+
+  /**
+   * @generated from field: cvm.agent.SkillType type = 3;
+   */
+  type: SkillType;
+
+  /**
+   * @generated from field: repeated string triggers = 4;
+   */
+  triggers: string[];
+
+  /**
+   * "builtin", "user", "imported"
+   *
+   * @generated from field: string source = 5;
+   */
+  source: string;
+};
+
+/**
+ * Describes the message cvm.agent.SkillSummary.
+ * Use `create(SkillSummarySchema)` to create a new message.
+ */
+export const SkillSummarySchema: GenMessage<SkillSummary> = /*@__PURE__*/
+  messageDesc(file_agent, 54);
+
+/**
+ * @generated from message cvm.agent.GetSkillRequest
+ */
+export type GetSkillRequest = Message<"cvm.agent.GetSkillRequest"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+};
+
+/**
+ * Describes the message cvm.agent.GetSkillRequest.
+ * Use `create(GetSkillRequestSchema)` to create a new message.
+ */
+export const GetSkillRequestSchema: GenMessage<GetSkillRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 55);
+
+/**
+ * @generated from message cvm.agent.SkillResponse
+ */
+export type SkillResponse = Message<"cvm.agent.SkillResponse"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string description = 2;
+   */
+  description: string;
+
+  /**
+   * @generated from field: cvm.agent.SkillType type = 3;
+   */
+  type: SkillType;
+
+  /**
+   * @generated from field: repeated string triggers = 4;
+   */
+  triggers: string[];
+
+  /**
+   * Full skill content (markdown or YAML)
+   *
+   * @generated from field: string content = 5;
+   */
+  content: string;
+
+  /**
+   * @generated from field: string source = 6;
+   */
+  source: string;
+};
+
+/**
+ * Describes the message cvm.agent.SkillResponse.
+ * Use `create(SkillResponseSchema)` to create a new message.
+ */
+export const SkillResponseSchema: GenMessage<SkillResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 56);
+
+/**
+ * @generated from message cvm.agent.CreateSkillRequest
+ */
+export type CreateSkillRequest = Message<"cvm.agent.CreateSkillRequest"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string description = 2;
+   */
+  description: string;
+
+  /**
+   * @generated from field: cvm.agent.SkillType type = 3;
+   */
+  type: SkillType;
+
+  /**
+   * @generated from field: repeated string triggers = 4;
+   */
+  triggers: string[];
+
+  /**
+   * @generated from field: string content = 5;
+   */
+  content: string;
+};
+
+/**
+ * Describes the message cvm.agent.CreateSkillRequest.
+ * Use `create(CreateSkillRequestSchema)` to create a new message.
+ */
+export const CreateSkillRequestSchema: GenMessage<CreateSkillRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 57);
+
+/**
+ * @generated from message cvm.agent.UpdateSkillRequest
+ */
+export type UpdateSkillRequest = Message<"cvm.agent.UpdateSkillRequest"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string description = 2;
+   */
+  description: string;
+
+  /**
+   * @generated from field: repeated string triggers = 3;
+   */
+  triggers: string[];
+
+  /**
+   * @generated from field: string content = 4;
+   */
+  content: string;
+};
+
+/**
+ * Describes the message cvm.agent.UpdateSkillRequest.
+ * Use `create(UpdateSkillRequestSchema)` to create a new message.
+ */
+export const UpdateSkillRequestSchema: GenMessage<UpdateSkillRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 58);
+
+/**
+ * @generated from message cvm.agent.DeleteSkillRequest
+ */
+export type DeleteSkillRequest = Message<"cvm.agent.DeleteSkillRequest"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+};
+
+/**
+ * Describes the message cvm.agent.DeleteSkillRequest.
+ * Use `create(DeleteSkillRequestSchema)` to create a new message.
+ */
+export const DeleteSkillRequestSchema: GenMessage<DeleteSkillRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 59);
+
+/**
+ * @generated from message cvm.agent.DeleteSkillResponse
+ */
+export type DeleteSkillResponse = Message<"cvm.agent.DeleteSkillResponse"> & {
+  /**
+   * @generated from field: bool success = 1;
+   */
+  success: boolean;
+
+  /**
+   * @generated from field: string error = 2;
+   */
+  error: string;
+};
+
+/**
+ * Describes the message cvm.agent.DeleteSkillResponse.
+ * Use `create(DeleteSkillResponseSchema)` to create a new message.
+ */
+export const DeleteSkillResponseSchema: GenMessage<DeleteSkillResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 60);
+
+/**
+ * @generated from message cvm.agent.ExecuteSkillRequest
+ */
+export type ExecuteSkillRequest = Message<"cvm.agent.ExecuteSkillRequest"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: map<string, string> parameters = 2;
+   */
+  parameters: { [key: string]: string };
+};
+
+/**
+ * Describes the message cvm.agent.ExecuteSkillRequest.
+ * Use `create(ExecuteSkillRequestSchema)` to create a new message.
+ */
+export const ExecuteSkillRequestSchema: GenMessage<ExecuteSkillRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 61);
+
+/**
+ * @generated from message cvm.agent.SkillProgress
+ */
+export type SkillProgress = Message<"cvm.agent.SkillProgress"> & {
+  /**
+   * @generated from field: int32 step_number = 1;
+   */
+  stepNumber: number;
+
+  /**
+   * @generated from field: int32 total_steps = 2;
+   */
+  totalSteps: number;
+
+  /**
+   * @generated from field: string step_description = 3;
+   */
+  stepDescription: string;
+
+  /**
+   * @generated from oneof cvm.agent.SkillProgress.result
+   */
+  result: {
+    /**
+     * @generated from field: string output = 4;
+     */
+    value: string;
+    case: "output";
+  } | {
+    /**
+     * @generated from field: string error = 5;
+     */
+    value: string;
+    case: "error";
+  } | { case: undefined; value?: undefined };
+
+  /**
+   * @generated from field: bool completed = 6;
+   */
+  completed: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.SkillProgress.
+ * Use `create(SkillProgressSchema)` to create a new message.
+ */
+export const SkillProgressSchema: GenMessage<SkillProgress> = /*@__PURE__*/
+  messageDesc(file_agent, 62);
+
+/**
+ * @generated from message cvm.agent.MatchSkillsRequest
+ */
+export type MatchSkillsRequest = Message<"cvm.agent.MatchSkillsRequest"> & {
+  /**
+   * User input to match against triggers
+   *
+   * @generated from field: string input = 1;
+   */
+  input: string;
+};
+
+/**
+ * Describes the message cvm.agent.MatchSkillsRequest.
+ * Use `create(MatchSkillsRequestSchema)` to create a new message.
+ */
+export const MatchSkillsRequestSchema: GenMessage<MatchSkillsRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 63);
+
+/**
+ * @generated from message cvm.agent.MatchSkillsResponse
+ */
+export type MatchSkillsResponse = Message<"cvm.agent.MatchSkillsResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.SkillMatch matches = 1;
+   */
+  matches: SkillMatch[];
+};
+
+/**
+ * Describes the message cvm.agent.MatchSkillsResponse.
+ * Use `create(MatchSkillsResponseSchema)` to create a new message.
+ */
+export const MatchSkillsResponseSchema: GenMessage<MatchSkillsResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 64);
+
+/**
+ * @generated from message cvm.agent.SkillMatch
+ */
+export type SkillMatch = Message<"cvm.agent.SkillMatch"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: cvm.agent.SkillType type = 2;
+   */
+  type: SkillType;
+
+  /**
+   * 0-1 relevance score
+   *
+   * @generated from field: float relevance = 3;
+   */
+  relevance: number;
+
+  /**
+   * @generated from field: string matched_trigger = 4;
+   */
+  matchedTrigger: string;
+};
+
+/**
+ * Describes the message cvm.agent.SkillMatch.
+ * Use `create(SkillMatchSchema)` to create a new message.
+ */
+export const SkillMatchSchema: GenMessage<SkillMatch> = /*@__PURE__*/
+  messageDesc(file_agent, 65);
+
+/**
  * @generated from enum cvm.agent.RiskLevel
  */
 export enum RiskLevel {
@@ -1427,6 +1984,32 @@ export enum MouseButton {
  */
 export const MouseButtonSchema: GenEnum<MouseButton> = /*@__PURE__*/
   enumDesc(file_agent, 1);
+
+/**
+ * @generated from enum cvm.agent.SkillType
+ */
+export enum SkillType {
+  /**
+   * @generated from enum value: SKILL_ALL = 0;
+   */
+  SKILL_ALL = 0,
+
+  /**
+   * @generated from enum value: SKILL_INSTRUCTION = 1;
+   */
+  SKILL_INSTRUCTION = 1,
+
+  /**
+   * @generated from enum value: SKILL_WORKFLOW = 2;
+   */
+  SKILL_WORKFLOW = 2,
+}
+
+/**
+ * Describes the enum cvm.agent.SkillType.
+ */
+export const SkillTypeSchema: GenEnum<SkillType> = /*@__PURE__*/
+  enumDesc(file_agent, 2);
 
 /**
  * Health check
@@ -1685,4 +2268,122 @@ export const GUIService: GenService<{
   },
 }> = /*@__PURE__*/
   serviceDesc(file_agent, 5);
+
+/**
+ * Voice transcription service
+ *
+ * @generated from service cvm.agent.VoiceService
+ */
+export const VoiceService: GenService<{
+  /**
+   * Stream audio for transcription
+   *
+   * @generated from rpc cvm.agent.VoiceService.Transcribe
+   */
+  transcribe: {
+    methodKind: "bidi_streaming";
+    input: typeof AudioChunkSchema;
+    output: typeof TranscriptChunkSchema;
+  },
+  /**
+   * Get available models
+   *
+   * @generated from rpc cvm.agent.VoiceService.ListModels
+   */
+  listModels: {
+    methodKind: "unary";
+    input: typeof ListModelsRequestSchema;
+    output: typeof ListModelsResponseSchema;
+  },
+  /**
+   * Check if voice service is available
+   *
+   * @generated from rpc cvm.agent.VoiceService.Status
+   */
+  status: {
+    methodKind: "unary";
+    input: typeof VoiceStatusRequestSchema;
+    output: typeof VoiceStatusResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_agent, 6);
+
+/**
+ * Skills management service
+ *
+ * @generated from service cvm.agent.SkillsService
+ */
+export const SkillsService: GenService<{
+  /**
+   * List all available skills
+   *
+   * @generated from rpc cvm.agent.SkillsService.List
+   */
+  list: {
+    methodKind: "unary";
+    input: typeof ListSkillsRequestSchema;
+    output: typeof ListSkillsResponseSchema;
+  },
+  /**
+   * Get skill details
+   *
+   * @generated from rpc cvm.agent.SkillsService.Get
+   */
+  get: {
+    methodKind: "unary";
+    input: typeof GetSkillRequestSchema;
+    output: typeof SkillResponseSchema;
+  },
+  /**
+   * Create new skill
+   *
+   * @generated from rpc cvm.agent.SkillsService.Create
+   */
+  create: {
+    methodKind: "unary";
+    input: typeof CreateSkillRequestSchema;
+    output: typeof SkillResponseSchema;
+  },
+  /**
+   * Update existing skill
+   *
+   * @generated from rpc cvm.agent.SkillsService.Update
+   */
+  update: {
+    methodKind: "unary";
+    input: typeof UpdateSkillRequestSchema;
+    output: typeof SkillResponseSchema;
+  },
+  /**
+   * Delete skill
+   *
+   * @generated from rpc cvm.agent.SkillsService.Delete
+   */
+  delete: {
+    methodKind: "unary";
+    input: typeof DeleteSkillRequestSchema;
+    output: typeof DeleteSkillResponseSchema;
+  },
+  /**
+   * Execute workflow skill
+   *
+   * @generated from rpc cvm.agent.SkillsService.Execute
+   */
+  execute: {
+    methodKind: "server_streaming";
+    input: typeof ExecuteSkillRequestSchema;
+    output: typeof SkillProgressSchema;
+  },
+  /**
+   * Find matching skills for input
+   *
+   * @generated from rpc cvm.agent.SkillsService.Match
+   */
+  match: {
+    methodKind: "unary";
+    input: typeof MatchSkillsRequestSchema;
+    output: typeof MatchSkillsResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_agent, 7);
 
