@@ -1,15 +1,17 @@
-#[allow(unused)]
 mod llm;
 mod services;
 
 use std::net::SocketAddr;
+use std::sync::Arc;
 use tonic::transport::Server;
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+use llm::RedpillClient;
+use services::health::proto::chat_service_server::ChatServiceServer;
 use services::health::proto::health_service_server::HealthServiceServer;
 use services::health::proto::shell_service_server::ShellServiceServer;
-use services::{HealthServiceImpl, ShellServiceImpl};
+use services::{ChatServiceImpl, HealthServiceImpl, ShellServiceImpl};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -28,8 +30,21 @@ async fn main() -> anyhow::Result<()> {
         .allow_headers(Any)
         .allow_methods(Any);
 
+    // Initialize LLM client
+    let llm_client = match RedpillClient::new() {
+        Ok(client) => {
+            tracing::info!("Redpill LLM client initialized");
+            Arc::new(client)
+        }
+        Err(e) => {
+            tracing::warn!("LLM client not configured: {}. Chat service will return errors.", e);
+            Arc::new(RedpillClient::new_dummy())
+        }
+    };
+
     let health_service = HealthServiceImpl;
     let shell_service = ShellServiceImpl;
+    let chat_service = ChatServiceImpl::new(llm_client);
 
     Server::builder()
         .accept_http1(true)
@@ -37,6 +52,7 @@ async fn main() -> anyhow::Result<()> {
         .layer(tonic_web::GrpcWebLayer::new())
         .add_service(HealthServiceServer::new(health_service))
         .add_service(ShellServiceServer::new(shell_service))
+        .add_service(ChatServiceServer::new(chat_service))
         .serve(addr)
         .await?;
 
