@@ -4,6 +4,7 @@ pub mod gui;
 pub mod health;
 pub mod nixops;
 pub mod shell;
+pub mod skills;
 pub mod voice;
 
 pub use chat::ChatServiceImpl;
@@ -12,4 +13,5 @@ pub use gui::GUIServiceImpl;
 pub use health::HealthServiceImpl;
 pub use nixops::NixOpsServiceImpl;
 pub use shell::ShellServiceImpl;
+pub use skills::SkillsServiceImpl;
 pub use voice::VoiceServiceImpl;
