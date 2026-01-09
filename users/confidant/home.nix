@@ -21,7 +21,7 @@
   programs.home-manager.enable = true;
 
   # State version
-  home.stateVersion = "24.05";
+  home.stateVersion = "25.11";
 
   # Git configuration for CVM user
   programs.git = {
