@@ -14,4 +14,5 @@ pub mod vision;
 mod service;
 
 pub use screenshot::ScreenshotCapture;
+pub use atspi::{ATSPIClient, ATSPIElement, ATSPIQueryFilter, ATSPITreeNode};
 pub use service::GUIServiceImpl;
