@@ -1,5 +1,51 @@
 syntax = "proto3";
+package cvm.agent;
 
-package agent;
+// Health check
+service HealthService {
+  rpc Check(HealthRequest) returns (HealthResponse);
+}
 
-// Placeholder proto file - will be populated in a later task
+message HealthRequest {}
+
+message HealthResponse {
+  bool healthy = 1;
+  string version = 2;
+}
+
+// Chat service - main interaction point
+service ChatService {
+  rpc SendMessage(ChatRequest) returns (stream ChatResponse);
+}
+
+message ChatRequest {
+  string message = 1;
+  string conversation_id = 2;
+}
+
+message ChatResponse {
+  oneof response {
+    string text = 1;
+    string error = 2;
+  }
+  bool done = 3;  // Moved outside oneof
+}
+
+// Shell execution service
+service ShellService {
+  rpc Execute(ShellRequest) returns (stream ShellOutput);
+}
+
+message ShellRequest {
+  string command = 1;
+  string working_dir = 2;
+  int32 timeout_seconds = 3;
+}
+
+message ShellOutput {
+  oneof output {
+    string stdout = 1;
+    string stderr = 2;
+  }
+  optional int32 exit_code = 3;  // Set only on final message
+}
