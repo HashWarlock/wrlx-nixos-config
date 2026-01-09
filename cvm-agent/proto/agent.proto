@@ -197,3 +197,183 @@ message GitPushOutput {
   }
   optional int32 exit_code = 3;
 }
+
+// GUI automation service - screen capture, element interaction, and vision
+service GUIService {
+  // Capture a screenshot of the screen or specific window
+  rpc Screenshot(ScreenshotRequest) returns (ScreenshotResponse);
+
+  // Query UI elements by application, role, or name
+  rpc GetElements(ElementQuery) returns (ElementsResponse);
+
+  // Get the full UI element tree
+  rpc GetElementTree(ElementTreeRequest) returns (ElementTreeResponse);
+
+  // Click on an element or coordinates
+  rpc Click(ClickRequest) returns (ActionResponse);
+
+  // Type text into an element or at cursor
+  rpc Type(TypeRequest) returns (ActionResponse);
+
+  // Press keyboard keys
+  rpc KeyPress(KeyPressRequest) returns (ActionResponse);
+
+  // Move mouse to coordinates
+  rpc MoveMouse(MoveMouseRequest) returns (ActionResponse);
+
+  // Describe screen content using vision model
+  rpc Describe(DescribeRequest) returns (VisionResponse);
+
+  // Find an element by visual description
+  rpc FindByVision(FindByVisionRequest) returns (FindByVisionResponse);
+}
+
+// Screenshot request options
+message ScreenshotRequest {
+  optional string window_id = 1;     // Specific window, or full screen if not set
+  bool include_cursor = 2;           // Include mouse cursor in screenshot
+  int32 quality = 3;                 // JPEG quality (1-100), 0 for PNG
+}
+
+// Screenshot response with image data
+message ScreenshotResponse {
+  bytes image_data = 1;              // Raw image bytes
+  string format = 2;                 // "png" or "jpeg"
+  int32 width = 3;
+  int32 height = 4;
+}
+
+// Query for finding UI elements
+message ElementQuery {
+  optional string application = 1;   // Filter by application name
+  optional string role = 2;          // Filter by accessibility role (button, textfield, etc.)
+  optional string name = 3;          // Filter by element name/label
+  int32 max_depth = 4;               // Maximum tree depth to search (0 = unlimited)
+}
+
+// Response containing matched UI elements
+message ElementsResponse {
+  repeated UIElement elements = 1;
+}
+
+// A single UI element from the accessibility tree
+message UIElement {
+  string id = 1;                     // Unique element identifier
+  string application = 2;            // Parent application name
+  string role = 3;                   // Accessibility role (button, textfield, etc.)
+  string name = 4;                   // Element name/label
+  string description = 5;            // Element description or tooltip
+  BoundingBox bounds = 6;            // Screen coordinates
+  repeated string states = 7;        // Current states (focused, selected, enabled, etc.)
+  repeated string actions = 8;       // Available actions (click, type, etc.)
+}
+
+// Bounding box for element position
+message BoundingBox {
+  int32 x = 1;
+  int32 y = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+
+// Request for full element tree
+message ElementTreeRequest {
+  optional string application = 1;   // Filter to specific application
+  int32 max_depth = 2;               // Maximum depth (0 = unlimited)
+}
+
+// Response containing element tree
+message ElementTreeResponse {
+  repeated ElementNode roots = 1;    // Root nodes (usually applications)
+}
+
+// A node in the UI element tree
+message ElementNode {
+  UIElement element = 1;             // Element data
+  repeated ElementNode children = 2; // Child elements
+}
+
+// Click action request
+message ClickRequest {
+  oneof target {
+    string element_id = 1;           // Click on element by ID
+    Coordinates position = 2;        // Click at screen coordinates
+  }
+  MouseButton button = 3;            // Which mouse button
+  int32 clicks = 4;                  // Number of clicks (1=single, 2=double)
+}
+
+// Screen coordinates
+message Coordinates {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+// Mouse button options
+enum MouseButton {
+  MOUSE_LEFT = 0;
+  MOUSE_RIGHT = 1;
+  MOUSE_MIDDLE = 2;
+}
+
+// Type text request
+message TypeRequest {
+  string text = 1;                   // Text to type
+  optional string element_id = 2;   // Target element (optional, types at cursor if not set)
+  int32 delay_ms = 3;                // Delay between keystrokes in milliseconds
+  bool clear_first = 4;              // Clear existing content before typing
+}
+
+// Key press request
+message KeyPressRequest {
+  repeated string keys = 1;          // Keys to press (e.g., ["ctrl", "c"] or ["Return"])
+  optional string element_id = 2;   // Target element (optional)
+}
+
+// Mouse movement request
+message MoveMouseRequest {
+  int32 x = 1;
+  int32 y = 2;
+  bool smooth = 3;                   // Smooth movement vs instant
+}
+
+// Generic action response
+message ActionResponse {
+  bool success = 1;
+  string error = 2;                  // Error message if success is false
+}
+
+// Vision-based description request
+message DescribeRequest {
+  bytes screenshot = 1;              // Screenshot to analyze
+  optional BoundingBox focus_area = 2;  // Optional area to focus on
+  optional string question = 3;      // Optional specific question about the screen
+}
+
+// Vision model response
+message VisionResponse {
+  string description = 1;            // Natural language description
+  repeated IdentifiedElement elements = 2;  // Elements identified in the image
+}
+
+// An element identified by vision model
+message IdentifiedElement {
+  string description = 1;            // What the element appears to be
+  BoundingBox estimated_bounds = 2;  // Estimated bounding box
+  float confidence = 3;              // Confidence score (0.0-1.0)
+}
+
+// Find element by visual description
+message FindByVisionRequest {
+  string description = 1;            // Natural language description of element to find
+  optional bytes screenshot = 2;     // Screenshot to search (captures new one if not provided)
+}
+
+// Response for vision-based element finding
+message FindByVisionResponse {
+  bool found = 1;                    // Whether element was found
+  Coordinates center = 2;            // Center point of found element
+  BoundingBox bounds = 3;            // Bounding box of found element
+  float confidence = 4;              // Confidence score (0.0-1.0)
+  string element_description = 5;    // Description of what was found
+}
