@@ -11,8 +11,9 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use llm::RedpillClient;
 use services::health::proto::chat_service_server::ChatServiceServer;
 use services::health::proto::health_service_server::HealthServiceServer;
+use services::health::proto::nix_ops_service_server::NixOpsServiceServer;
 use services::health::proto::shell_service_server::ShellServiceServer;
-use services::{ChatServiceImpl, HealthServiceImpl, ShellServiceImpl};
+use services::{ChatServiceImpl, HealthServiceImpl, NixOpsServiceImpl, ShellServiceImpl};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -46,6 +47,7 @@ async fn main() -> anyhow::Result<()> {
     let health_service = HealthServiceImpl;
     let shell_service = ShellServiceImpl;
     let chat_service = ChatServiceImpl::new(llm_client);
+    let nixops_service = NixOpsServiceImpl;
 
     Server::builder()
         .accept_http1(true)
@@ -54,6 +56,7 @@ async fn main() -> anyhow::Result<()> {
         .add_service(HealthServiceServer::new(health_service))
         .add_service(ShellServiceServer::new(shell_service))
         .add_service(ChatServiceServer::new(chat_service))
+        .add_service(NixOpsServiceServer::new(nixops_service))
         .serve(addr)
         .await?;
 
