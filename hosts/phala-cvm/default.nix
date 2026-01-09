@@ -6,6 +6,7 @@
 {
   imports = [
     ../../modules/cvm-system.nix
+    ../../modules/cvm-agent.nix
   ];
 
   # No bootloader needed for containerized environment
@@ -58,6 +59,17 @@
       PasswordAuthentication = false; # Key-based auth only
     };
     openFirewall = true;
+  };
+
+  # Enable CVM Agent service
+  services.cvm-agent = {
+    enable = true;
+    # Default ports: 8080 (API), 8081 (Web UI)
+    # Environment variables can be configured here:
+    # environment = {
+    #   REDPILL_API_KEY = "your-key";
+    #   REDPILL_MODEL = "claude-3-5-sonnet-20241022";
+    # };
   };
 
   # System state version
