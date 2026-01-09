@@ -102,3 +102,98 @@ message GenerationInfo {
   string configuration_revision = 5;
   bool current = 6;
 }
+
+// Git operations service
+service GitOpsService {
+  // Get repository status
+  rpc Status(GitStatusRequest) returns (GitStatusResponse);
+
+  // Get diff of changes
+  rpc Diff(GitDiffRequest) returns (GitDiffResponse);
+
+  // Stage files
+  rpc Add(GitAddRequest) returns (GitAddResponse);
+
+  // Create commit
+  rpc Commit(GitCommitRequest) returns (GitCommitResponse);
+
+  // Push to remote
+  rpc Push(GitPushRequest) returns (stream GitPushOutput);
+}
+
+message GitStatusRequest {
+  string repo_path = 1;         // Repository path (default: /app)
+}
+
+message GitStatusResponse {
+  string branch = 1;
+  repeated FileStatus modified = 2;
+  repeated FileStatus staged = 3;
+  repeated FileStatus untracked = 4;
+  bool has_upstream = 5;
+  int32 ahead = 6;
+  int32 behind = 7;
+}
+
+message FileStatus {
+  string path = 1;
+  string status = 2;            // "modified", "added", "deleted", "renamed"
+}
+
+message GitDiffRequest {
+  string repo_path = 1;
+  repeated string paths = 2;    // Specific paths, or all if empty
+  bool staged = 3;              // Show staged changes
+}
+
+message GitDiffResponse {
+  repeated FileDiff diffs = 1;
+}
+
+message FileDiff {
+  string path = 1;
+  string diff = 2;              // Unified diff format
+  RiskLevel risk_level = 3;
+}
+
+enum RiskLevel {
+  RISK_LOW = 0;
+  RISK_MEDIUM = 1;
+  RISK_HIGH = 2;
+  RISK_CRITICAL = 3;
+}
+
+message GitAddRequest {
+  string repo_path = 1;
+  repeated string paths = 2;    // Files to stage
+}
+
+message GitAddResponse {
+  bool success = 1;
+  repeated string staged_paths = 2;
+}
+
+message GitCommitRequest {
+  string repo_path = 1;
+  string message = 2;
+}
+
+message GitCommitResponse {
+  bool success = 1;
+  string commit_hash = 2;
+  string error = 3;
+}
+
+message GitPushRequest {
+  string repo_path = 1;
+  string remote = 2;            // Default: "origin"
+  string branch = 3;            // Default: current branch
+}
+
+message GitPushOutput {
+  oneof output {
+    string stdout = 1;
+    string stderr = 2;
+  }
+  optional int32 exit_code = 3;
+}
