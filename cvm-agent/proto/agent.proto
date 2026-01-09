@@ -49,3 +49,56 @@ message ShellOutput {
   }
   optional int32 exit_code = 3;  // Set only on final message
 }
+
+// NixOS operations service
+service NixOpsService {
+  // Rebuild NixOS configuration
+  rpc Rebuild(RebuildRequest) returns (stream RebuildOutput);
+
+  // Rollback to previous generation
+  rpc Rollback(RollbackRequest) returns (stream RebuildOutput);
+
+  // List available generations
+  rpc ListGenerations(ListGenerationsRequest) returns (ListGenerationsResponse);
+
+  // Get current generation info
+  rpc CurrentGeneration(CurrentGenerationRequest) returns (GenerationInfo);
+}
+
+message RebuildRequest {
+  string flake_path = 1;        // Path to flake (default: current dir)
+  string hostname = 2;          // Target hostname
+  string action = 3;            // "switch", "boot", "test", "build"
+}
+
+message RebuildOutput {
+  oneof output {
+    string stdout = 1;
+    string stderr = 2;
+  }
+  optional int32 exit_code = 3;
+  optional string phase = 4;    // "evaluating", "building", "activating"
+}
+
+message RollbackRequest {
+  optional int32 generation = 1;  // Specific generation, or previous if not set
+}
+
+message ListGenerationsRequest {
+  int32 limit = 1;              // Max generations to return (default: 10)
+}
+
+message ListGenerationsResponse {
+  repeated GenerationInfo generations = 1;
+}
+
+message CurrentGenerationRequest {}
+
+message GenerationInfo {
+  int32 number = 1;
+  string date = 2;
+  string nixos_version = 3;
+  string kernel_version = 4;
+  string configuration_revision = 5;
+  bool current = 6;
+}
