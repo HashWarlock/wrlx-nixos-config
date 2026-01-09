@@ -1,3 +1,5 @@
+#[allow(unused)]
+mod llm;
 mod services;
 
 use std::net::SocketAddr;
