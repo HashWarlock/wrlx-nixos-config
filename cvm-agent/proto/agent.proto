@@ -377,3 +377,162 @@ message FindByVisionResponse {
   float confidence = 4;              // Confidence score (0.0-1.0)
   string element_description = 5;    // Description of what was found
 }
+
+// Voice transcription service
+service VoiceService {
+  // Stream audio for transcription
+  rpc Transcribe(stream AudioChunk) returns (stream TranscriptChunk);
+
+  // Get available models
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse);
+
+  // Check if voice service is available
+  rpc Status(VoiceStatusRequest) returns (VoiceStatusResponse);
+}
+
+message AudioChunk {
+  bytes data = 1;                 // Raw audio bytes (16-bit PCM, 16kHz mono)
+  bool is_final = 2;              // Last chunk in utterance
+}
+
+message TranscriptChunk {
+  string text = 1;                // Transcribed text
+  bool is_partial = 2;            // Partial (still processing) vs final
+  float confidence = 3;           // 0-1 confidence score
+  int32 start_ms = 4;             // Start time in audio
+  int32 end_ms = 5;               // End time in audio
+}
+
+message ListModelsRequest {}
+
+message ListModelsResponse {
+  repeated WhisperModel models = 1;
+}
+
+message WhisperModel {
+  string name = 1;                // "tiny", "base", "small", "medium", "large"
+  bool available = 2;
+  int64 size_bytes = 3;
+}
+
+message VoiceStatusRequest {}
+
+message VoiceStatusResponse {
+  bool available = 1;
+  string current_model = 2;
+  bool is_processing = 3;
+}
+
+// Skills management service
+service SkillsService {
+  // List all available skills
+  rpc List(ListSkillsRequest) returns (ListSkillsResponse);
+
+  // Get skill details
+  rpc Get(GetSkillRequest) returns (SkillResponse);
+
+  // Create new skill
+  rpc Create(CreateSkillRequest) returns (SkillResponse);
+
+  // Update existing skill
+  rpc Update(UpdateSkillRequest) returns (SkillResponse);
+
+  // Delete skill
+  rpc Delete(DeleteSkillRequest) returns (DeleteSkillResponse);
+
+  // Execute workflow skill
+  rpc Execute(ExecuteSkillRequest) returns (stream SkillProgress);
+
+  // Find matching skills for input
+  rpc Match(MatchSkillsRequest) returns (MatchSkillsResponse);
+}
+
+message ListSkillsRequest {
+  SkillType type_filter = 1;      // Filter by type, or SKILL_ALL
+}
+
+enum SkillType {
+  SKILL_ALL = 0;
+  SKILL_INSTRUCTION = 1;
+  SKILL_WORKFLOW = 2;
+}
+
+message ListSkillsResponse {
+  repeated SkillSummary skills = 1;
+}
+
+message SkillSummary {
+  string name = 1;
+  string description = 2;
+  SkillType type = 3;
+  repeated string triggers = 4;
+  string source = 5;              // "builtin", "user", "imported"
+}
+
+message GetSkillRequest {
+  string name = 1;
+}
+
+message SkillResponse {
+  string name = 1;
+  string description = 2;
+  SkillType type = 3;
+  repeated string triggers = 4;
+  string content = 5;             // Full skill content (markdown or YAML)
+  string source = 6;
+}
+
+message CreateSkillRequest {
+  string name = 1;
+  string description = 2;
+  SkillType type = 3;
+  repeated string triggers = 4;
+  string content = 5;
+}
+
+message UpdateSkillRequest {
+  string name = 1;
+  string description = 2;
+  repeated string triggers = 3;
+  string content = 4;
+}
+
+message DeleteSkillRequest {
+  string name = 1;
+}
+
+message DeleteSkillResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message ExecuteSkillRequest {
+  string name = 1;
+  map<string, string> parameters = 2;
+}
+
+message SkillProgress {
+  int32 step_number = 1;
+  int32 total_steps = 2;
+  string step_description = 3;
+  oneof result {
+    string output = 4;
+    string error = 5;
+  }
+  bool completed = 6;
+}
+
+message MatchSkillsRequest {
+  string input = 1;               // User input to match against triggers
+}
+
+message MatchSkillsResponse {
+  repeated SkillMatch matches = 1;
+}
+
+message SkillMatch {
+  string name = 1;
+  SkillType type = 2;
+  float relevance = 3;            // 0-1 relevance score
+  string matched_trigger = 4;
+}
