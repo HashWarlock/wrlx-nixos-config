@@ -15,7 +15,8 @@ use services::health::proto::gui_service_server::GuiServiceServer;
 use services::health::proto::health_service_server::HealthServiceServer;
 use services::health::proto::nix_ops_service_server::NixOpsServiceServer;
 use services::health::proto::shell_service_server::ShellServiceServer;
-use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, NixOpsServiceImpl, ShellServiceImpl};
+use services::health::proto::voice_service_server::VoiceServiceServer;
+use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, NixOpsServiceImpl, ShellServiceImpl, VoiceServiceImpl};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -52,9 +53,11 @@ async fn main() -> anyhow::Result<()> {
     let nixops_service = NixOpsServiceImpl;
     let gitops_service = GitOpsServiceImpl;
     let gui_service = GUIServiceImpl::new();
+    let voice_service = VoiceServiceImpl::new();
 
     tracing::info!("GUI service initialized (vision: {})",
         if gui_service.has_vision() { "enabled" } else { "disabled" });
+    tracing::info!("Voice service initialized");
 
     Server::builder()
         .accept_http1(true)
@@ -66,6 +69,7 @@ async fn main() -> anyhow::Result<()> {
         .add_service(NixOpsServiceServer::new(nixops_service))
         .add_service(GitOpsServiceServer::new(gitops_service))
         .add_service(GuiServiceServer::new(gui_service))
+        .add_service(VoiceServiceServer::new(voice_service))
         .serve(addr)
         .await?;
 
