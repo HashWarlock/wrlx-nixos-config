@@ -180,6 +180,89 @@ else
     SSH_PID=""
 fi
 
+# =========================
+# CVM Agent Service Setup
+# =========================
+echo "Setting up CVM Agent service..."
+
+# Install Rust toolchain if not present
+if ! command -v cargo > /dev/null 2>&1; then
+    echo "Installing Rust toolchain..."
+    nix-env -iA nixpkgs.rustc nixpkgs.cargo nixpkgs.gcc nixpkgs.pkg-config nixpkgs.openssl
+fi
+
+# Build the agent binary if source exists
+AGENT_API_DIR="/app/cvm-agent/agent-api"
+AGENT_BINARY="/app/cvm-agent/agent-api/target/release/agent-api"
+
+if [ -d "$AGENT_API_DIR" ]; then
+    echo "Building CVM Agent API..."
+    cd "$AGENT_API_DIR"
+
+    # Set OpenSSL environment for build
+    export PKG_CONFIG_PATH=$(find /nix/store -name "pkgconfig" -type d 2>/dev/null | head -1):$PKG_CONFIG_PATH
+
+    # Build in release mode
+    if cargo build --release; then
+        echo "Agent API built successfully"
+    else
+        echo "WARNING: Agent API build failed"
+    fi
+
+    cd /app
+else
+    echo "WARNING: Agent API source not found at $AGENT_API_DIR"
+fi
+
+# Start the agent API service
+AGENT_PID=""
+if [ -x "$AGENT_BINARY" ]; then
+    echo "Starting CVM Agent API on port 8080..."
+    $AGENT_BINARY &
+    AGENT_PID=$!
+    sleep 2
+
+    if kill -0 $AGENT_PID 2>/dev/null; then
+        echo "Agent API started with PID $AGENT_PID"
+    else
+        echo "WARNING: Agent API failed to start"
+        AGENT_PID=""
+    fi
+else
+    echo "WARNING: Agent binary not found or not executable at $AGENT_BINARY"
+fi
+
+# Start web UI server
+WEB_UI_DIR="/app/cvm-agent/web-ui/dist"
+WEB_UI_PID=""
+
+if [ -d "$WEB_UI_DIR" ]; then
+    echo "Starting Web UI server on port 8081..."
+
+    # Install python if not present (for simple HTTP server)
+    if ! command -v python3 > /dev/null 2>&1; then
+        echo "Installing python3 for web server..."
+        nix-env -iA nixpkgs.python3
+    fi
+
+    cd "$WEB_UI_DIR"
+    python3 -m http.server 8081 --bind 0.0.0.0 &
+    WEB_UI_PID=$!
+    sleep 1
+
+    if kill -0 $WEB_UI_PID 2>/dev/null; then
+        echo "Web UI server started with PID $WEB_UI_PID"
+    else
+        echo "WARNING: Web UI server failed to start"
+        WEB_UI_PID=""
+    fi
+
+    cd /app
+else
+    echo "WARNING: Web UI dist not found at $WEB_UI_DIR"
+    echo "Run 'npm run build' in the web-ui directory to build it"
+fi
+
 echo "=== CVM Services Started Successfully ==="
 echo "Repository: $GITHUB_REPO"
 echo "Commit: $GIT_COMMIT_HASH"
@@ -187,6 +270,12 @@ echo "SSH: port 22 (mapped to host port 2222)"
 echo "VNC: port 5900"
 echo "noVNC: http://localhost:6080/vnc.html"
 echo "Display Resolution: $VNC_RESOLUTION"
+if [ -n "$AGENT_PID" ]; then
+    echo "Agent API: http://localhost:8080 (gRPC)"
+fi
+if [ -n "$WEB_UI_PID" ]; then
+    echo "Web UI: http://localhost:8081"
+fi
 if [ -n "$AGENT_DOMAIN" ]; then
     echo "Phala Cloud Domain: $AGENT_DOMAIN"
 fi
@@ -195,6 +284,8 @@ echo "==="
 # Trap signals for graceful shutdown
 cleanup() {
     echo "Shutting down..."
+    [ -n "$WEB_UI_PID" ] && kill $WEB_UI_PID 2>/dev/null
+    [ -n "$AGENT_PID" ] && kill $AGENT_PID 2>/dev/null
     [ -n "$SSH_PID" ] && kill $SSH_PID 2>/dev/null
     [ -n "$NOVNC_PID" ] && kill $NOVNC_PID 2>/dev/null
     [ -n "$VNC_PID" ] && kill $VNC_PID 2>/dev/null
@@ -207,4 +298,6 @@ trap cleanup SIGTERM SIGINT
 # Wait for all processes (only wait for those that exist)
 WAIT_PIDS="$XVFB_PID $VNC_PID $NOVNC_PID"
 [ -n "$SSH_PID" ] && WAIT_PIDS="$WAIT_PIDS $SSH_PID"
+[ -n "$AGENT_PID" ] && WAIT_PIDS="$WAIT_PIDS $AGENT_PID"
+[ -n "$WEB_UI_PID" ] && WAIT_PIDS="$WAIT_PIDS $WEB_UI_PID"
 wait $WAIT_PIDS

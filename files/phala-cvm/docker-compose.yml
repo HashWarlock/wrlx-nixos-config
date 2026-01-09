@@ -22,6 +22,11 @@ services:
       # SSH configuration
       - SSH_PORT=${SSH_PORT:-22}
 
+      # Redpill API configuration (for LLM features)
+      - REDPILL_API_KEY=${REDPILL_API_KEY}
+      - REDPILL_BASE_URL=${REDPILL_BASE_URL:-https://api.redpill.ai}
+      - REDPILL_MODEL=${REDPILL_MODEL:-claude-3-5-sonnet-20241022}
+
       # Phala Cloud domain (auto-populated in CVM)
       - AGENT_DOMAIN=${AGENT_DOMAIN}
       - DSTACK_APP_ID=${DSTACK_APP_ID}
@@ -40,6 +45,8 @@ services:
       - "2222:22"      # SSH access
       - "6080:6080"    # noVNC web interface
       - "5900:5900"    # VNC direct connection (optional)
+      - "8080:8080"    # Agent API (gRPC)
+      - "8081:8081"    # Web UI
 
     # Privileged mode may be needed for systemd and full NixOS functionality
     privileged: true
