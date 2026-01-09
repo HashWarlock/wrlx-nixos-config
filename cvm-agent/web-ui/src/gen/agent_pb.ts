@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file agent.proto.
  */
 export const file_agent: GenFile = /*@__PURE__*/
-  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJGCg5SZWJ1aWxkUmVxdWVzdBISCgpmbGFrZV9wYXRoGAEgASgJEhAKCGhvc3RuYW1lGAIgASgJEg4KBmFjdGlvbhgDIAEoCSKBAQoNUmVidWlsZE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBARISCgVwaGFzZRgEIAEoCUgCiAEBQggKBm91dHB1dEIMCgpfZXhpdF9jb2RlQggKBl9waGFzZSI5Cg9Sb2xsYmFja1JlcXVlc3QSFwoKZ2VuZXJhdGlvbhgBIAEoBUgAiAEBQg0KC19nZW5lcmF0aW9uIicKFkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QSDQoFbGltaXQYASABKAUiSQoXTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USLgoLZ2VuZXJhdGlvbnMYASADKAsyGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8iGgoYQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0Io4BCg5HZW5lcmF0aW9uSW5mbxIOCgZudW1iZXIYASABKAUSDAoEZGF0ZRgCIAEoCRIVCg1uaXhvc192ZXJzaW9uGAMgASgJEhYKDmtlcm5lbF92ZXJzaW9uGAQgASgJEh4KFmNvbmZpZ3VyYXRpb25fcmV2aXNpb24YBSABKAkSDwoHY3VycmVudBgGIAEoCCIlChBHaXRTdGF0dXNSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCSLSAQoRR2l0U3RhdHVzUmVzcG9uc2USDgoGYnJhbmNoGAEgASgJEicKCG1vZGlmaWVkGAIgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSJQoGc3RhZ2VkGAMgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSKAoJdW50cmFja2VkGAQgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSFAoMaGFzX3Vwc3RyZWFtGAUgASgIEg0KBWFoZWFkGAYgASgFEg4KBmJlaGluZBgHIAEoBSIqCgpGaWxlU3RhdHVzEgwKBHBhdGgYASABKAkSDgoGc3RhdHVzGAIgASgJIkIKDkdpdERpZmZSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCRIOCgZzdGFnZWQYAyABKAgiNQoPR2l0RGlmZlJlc3BvbnNlEiIKBWRpZmZzGAEgAygLMhMuY3ZtLmFnZW50LkZpbGVEaWZmIlAKCEZpbGVEaWZmEgwKBHBhdGgYASABKAkSDAoEZGlmZhgCIAEoCRIoCgpyaXNrX2xldmVsGAMgASgOMhQuY3ZtLmFnZW50LlJpc2tMZXZlbCIxCg1HaXRBZGRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCSI3Cg5HaXRBZGRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhQKDHN0YWdlZF9wYXRocxgCIAMoCSI2ChBHaXRDb21taXRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIkgKEUdpdENvbW1pdFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSEwoLY29tbWl0X2hhc2gYAiABKAkSDQoFZXJyb3IYAyABKAkiQwoOR2l0UHVzaFJlcXVlc3QSEQoJcmVwb19wYXRoGAEgASgJEg4KBnJlbW90ZRgCIAEoCRIOCgZicmFuY2gYAyABKAkiYwoNR2l0UHVzaE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSpMCglSaXNrTGV2ZWwSDAoIUklTS19MT1cQABIPCgtSSVNLX01FRElVTRABEg0KCVJJU0tfSElHSBACEhEKDVJJU0tfQ1JJVElDQUwQAzJNCg1IZWFsdGhTZXJ2aWNlEjwKBUNoZWNrEhguY3ZtLmFnZW50LkhlYWx0aFJlcXVlc3QaGS5jdm0uYWdlbnQuSGVhbHRoUmVzcG9uc2UyTwoLQ2hhdFNlcnZpY2USQAoLU2VuZE1lc3NhZ2USFi5jdm0uYWdlbnQuQ2hhdFJlcXVlc3QaFy5jdm0uYWdlbnQuQ2hhdFJlc3BvbnNlMAEyTAoMU2hlbGxTZXJ2aWNlEjwKB0V4ZWN1dGUSFy5jdm0uYWdlbnQuU2hlbGxSZXF1ZXN0GhYuY3ZtLmFnZW50LlNoZWxsT3V0cHV0MAEyxAIKDU5peE9wc1NlcnZpY2USQAoHUmVidWlsZBIZLmN2bS5hZ2VudC5SZWJ1aWxkUmVxdWVzdBoYLmN2bS5hZ2VudC5SZWJ1aWxkT3V0cHV0MAESQgoIUm9sbGJhY2sSGi5jdm0uYWdlbnQuUm9sbGJhY2tSZXF1ZXN0GhguY3ZtLmFnZW50LlJlYnVpbGRPdXRwdXQwARJYCg9MaXN0R2VuZXJhdGlvbnMSIS5jdm0uYWdlbnQuTGlzdEdlbmVyYXRpb25zUmVxdWVzdBoiLmN2bS5hZ2VudC5MaXN0R2VuZXJhdGlvbnNSZXNwb25zZRJTChFDdXJyZW50R2VuZXJhdGlvbhIjLmN2bS5hZ2VudC5DdXJyZW50R2VuZXJhdGlvblJlcXVlc3QaGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8y0wIKDUdpdE9wc1NlcnZpY2USQwoGU3RhdHVzEhsuY3ZtLmFnZW50LkdpdFN0YXR1c1JlcXVlc3QaHC5jdm0uYWdlbnQuR2l0U3RhdHVzUmVzcG9uc2USPQoERGlmZhIZLmN2bS5hZ2VudC5HaXREaWZmUmVxdWVzdBoaLmN2bS5hZ2VudC5HaXREaWZmUmVzcG9uc2USOgoDQWRkEhguY3ZtLmFnZW50LkdpdEFkZFJlcXVlc3QaGS5jdm0uYWdlbnQuR2l0QWRkUmVzcG9uc2USQwoGQ29tbWl0EhsuY3ZtLmFnZW50LkdpdENvbW1pdFJlcXVlc3QaHC5jdm0uYWdlbnQuR2l0Q29tbWl0UmVzcG9uc2USPQoEUHVzaBIZLmN2bS5hZ2VudC5HaXRQdXNoUmVxdWVzdBoYLmN2bS5hZ2VudC5HaXRQdXNoT3V0cHV0MAFiBnByb3RvMw");
+  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJGCg5SZWJ1aWxkUmVxdWVzdBISCgpmbGFrZV9wYXRoGAEgASgJEhAKCGhvc3RuYW1lGAIgASgJEg4KBmFjdGlvbhgDIAEoCSKBAQoNUmVidWlsZE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBARISCgVwaGFzZRgEIAEoCUgCiAEBQggKBm91dHB1dEIMCgpfZXhpdF9jb2RlQggKBl9waGFzZSI5Cg9Sb2xsYmFja1JlcXVlc3QSFwoKZ2VuZXJhdGlvbhgBIAEoBUgAiAEBQg0KC19nZW5lcmF0aW9uIicKFkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QSDQoFbGltaXQYASABKAUiSQoXTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USLgoLZ2VuZXJhdGlvbnMYASADKAsyGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8iGgoYQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0Io4BCg5HZW5lcmF0aW9uSW5mbxIOCgZudW1iZXIYASABKAUSDAoEZGF0ZRgCIAEoCRIVCg1uaXhvc192ZXJzaW9uGAMgASgJEhYKDmtlcm5lbF92ZXJzaW9uGAQgASgJEh4KFmNvbmZpZ3VyYXRpb25fcmV2aXNpb24YBSABKAkSDwoHY3VycmVudBgGIAEoCCIlChBHaXRTdGF0dXNSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCSLSAQoRR2l0U3RhdHVzUmVzcG9uc2USDgoGYnJhbmNoGAEgASgJEicKCG1vZGlmaWVkGAIgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSJQoGc3RhZ2VkGAMgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSKAoJdW50cmFja2VkGAQgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSFAoMaGFzX3Vwc3RyZWFtGAUgASgIEg0KBWFoZWFkGAYgASgFEg4KBmJlaGluZBgHIAEoBSIqCgpGaWxlU3RhdHVzEgwKBHBhdGgYASABKAkSDgoGc3RhdHVzGAIgASgJIkIKDkdpdERpZmZSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCRIOCgZzdGFnZWQYAyABKAgiNQoPR2l0RGlmZlJlc3BvbnNlEiIKBWRpZmZzGAEgAygLMhMuY3ZtLmFnZW50LkZpbGVEaWZmIlAKCEZpbGVEaWZmEgwKBHBhdGgYASABKAkSDAoEZGlmZhgCIAEoCRIoCgpyaXNrX2xldmVsGAMgASgOMhQuY3ZtLmFnZW50LlJpc2tMZXZlbCIxCg1HaXRBZGRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCSI3Cg5HaXRBZGRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhQKDHN0YWdlZF9wYXRocxgCIAMoCSI2ChBHaXRDb21taXRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIkgKEUdpdENvbW1pdFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSEwoLY29tbWl0X2hhc2gYAiABKAkSDQoFZXJyb3IYAyABKAkiQwoOR2l0UHVzaFJlcXVlc3QSEQoJcmVwb19wYXRoGAEgASgJEg4KBnJlbW90ZRgCIAEoCRIOCgZicmFuY2gYAyABKAkiYwoNR2l0UHVzaE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJiChFTY3JlZW5zaG90UmVxdWVzdBIWCgl3aW5kb3dfaWQYASABKAlIAIgBARIWCg5pbmNsdWRlX2N1cnNvchgCIAEoCBIPCgdxdWFsaXR5GAMgASgFQgwKCl93aW5kb3dfaWQiVwoSU2NyZWVuc2hvdFJlc3BvbnNlEhIKCmltYWdlX2RhdGEYASABKAwSDgoGZm9ybWF0GAIgASgJEg0KBXdpZHRoGAMgASgFEg4KBmhlaWdodBgEIAEoBSKDAQoMRWxlbWVudFF1ZXJ5EhgKC2FwcGxpY2F0aW9uGAEgASgJSACIAQESEQoEcm9sZRgCIAEoCUgBiAEBEhEKBG5hbWUYAyABKAlIAogBARIRCgltYXhfZGVwdGgYBCABKAVCDgoMX2FwcGxpY2F0aW9uQgcKBV9yb2xlQgcKBV9uYW1lIjoKEEVsZW1lbnRzUmVzcG9uc2USJgoIZWxlbWVudHMYASADKAsyFC5jdm0uYWdlbnQuVUlFbGVtZW50IqYBCglVSUVsZW1lbnQSCgoCaWQYASABKAkSEwoLYXBwbGljYXRpb24YAiABKAkSDAoEcm9sZRgDIAEoCRIMCgRuYW1lGAQgASgJEhMKC2Rlc2NyaXB0aW9uGAUgASgJEiYKBmJvdW5kcxgGIAEoCzIWLmN2bS5hZ2VudC5Cb3VuZGluZ0JveBIOCgZzdGF0ZXMYByADKAkSDwoHYWN0aW9ucxgIIAMoCSJCCgtCb3VuZGluZ0JveBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDQoFd2lkdGgYAyABKAUSDgoGaGVpZ2h0GAQgASgFIlEKEkVsZW1lbnRUcmVlUmVxdWVzdBIYCgthcHBsaWNhdGlvbhgBIAEoCUgAiAEBEhEKCW1heF9kZXB0aBgCIAEoBUIOCgxfYXBwbGljYXRpb24iPAoTRWxlbWVudFRyZWVSZXNwb25zZRIlCgVyb290cxgBIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSJeCgtFbGVtZW50Tm9kZRIlCgdlbGVtZW50GAEgASgLMhQuY3ZtLmFnZW50LlVJRWxlbWVudBIoCghjaGlsZHJlbhgCIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSKSAQoMQ2xpY2tSZXF1ZXN0EhQKCmVsZW1lbnRfaWQYASABKAlIABIqCghwb3NpdGlvbhgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlc0gAEiYKBmJ1dHRvbhgDIAEoDjIWLmN2bS5hZ2VudC5Nb3VzZUJ1dHRvbhIOCgZjbGlja3MYBCABKAVCCAoGdGFyZ2V0IiMKC0Nvb3JkaW5hdGVzEgkKAXgYASABKAUSCQoBeRgCIAEoBSJqCgtUeXBlUmVxdWVzdBIMCgR0ZXh0GAEgASgJEhcKCmVsZW1lbnRfaWQYAiABKAlIAIgBARIQCghkZWxheV9tcxgDIAEoBRITCgtjbGVhcl9maXJzdBgEIAEoCEINCgtfZWxlbWVudF9pZCJHCg9LZXlQcmVzc1JlcXVlc3QSDAoEa2V5cxgBIAMoCRIXCgplbGVtZW50X2lkGAIgASgJSACIAQFCDQoLX2VsZW1lbnRfaWQiOAoQTW92ZU1vdXNlUmVxdWVzdBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDgoGc21vb3RoGAMgASgIIjAKDkFjdGlvblJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkiiQEKD0Rlc2NyaWJlUmVxdWVzdBISCgpzY3JlZW5zaG90GAEgASgMEi8KCmZvY3VzX2FyZWEYAiABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3hIAIgBARIVCghxdWVzdGlvbhgDIAEoCUgBiAEBQg0KC19mb2N1c19hcmVhQgsKCV9xdWVzdGlvbiJVCg5WaXNpb25SZXNwb25zZRITCgtkZXNjcmlwdGlvbhgBIAEoCRIuCghlbGVtZW50cxgCIAMoCzIcLmN2bS5hZ2VudC5JZGVudGlmaWVkRWxlbWVudCJuChFJZGVudGlmaWVkRWxlbWVudBITCgtkZXNjcmlwdGlvbhgBIAEoCRIwChBlc3RpbWF0ZWRfYm91bmRzGAIgASgLMhYuY3ZtLmFnZW50LkJvdW5kaW5nQm94EhIKCmNvbmZpZGVuY2UYAyABKAIiUgoTRmluZEJ5VmlzaW9uUmVxdWVzdBITCgtkZXNjcmlwdGlvbhgBIAEoCRIXCgpzY3JlZW5zaG90GAIgASgMSACIAQFCDQoLX3NjcmVlbnNob3QipgEKFEZpbmRCeVZpc2lvblJlc3BvbnNlEg0KBWZvdW5kGAEgASgIEiYKBmNlbnRlchgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlcxImCgZib3VuZHMYAyABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3gSEgoKY29uZmlkZW5jZRgEIAEoAhIbChNlbGVtZW50X2Rlc2NyaXB0aW9uGAUgASgJKkwKCVJpc2tMZXZlbBIMCghSSVNLX0xPVxAAEg8KC1JJU0tfTUVESVVNEAESDQoJUklTS19ISUdIEAISEQoNUklTS19DUklUSUNBTBADKkAKC01vdXNlQnV0dG9uEg4KCk1PVVNFX0xFRlQQABIPCgtNT1VTRV9SSUdIVBABEhAKDE1PVVNFX01JRERMRRACMk0KDUhlYWx0aFNlcnZpY2USPAoFQ2hlY2sSGC5jdm0uYWdlbnQuSGVhbHRoUmVxdWVzdBoZLmN2bS5hZ2VudC5IZWFsdGhSZXNwb25zZTJPCgtDaGF0U2VydmljZRJACgtTZW5kTWVzc2FnZRIWLmN2bS5hZ2VudC5DaGF0UmVxdWVzdBoXLmN2bS5hZ2VudC5DaGF0UmVzcG9uc2UwATJMCgxTaGVsbFNlcnZpY2USPAoHRXhlY3V0ZRIXLmN2bS5hZ2VudC5TaGVsbFJlcXVlc3QaFi5jdm0uYWdlbnQuU2hlbGxPdXRwdXQwATLEAgoNTml4T3BzU2VydmljZRJACgdSZWJ1aWxkEhkuY3ZtLmFnZW50LlJlYnVpbGRSZXF1ZXN0GhguY3ZtLmFnZW50LlJlYnVpbGRPdXRwdXQwARJCCghSb2xsYmFjaxIaLmN2bS5hZ2VudC5Sb2xsYmFja1JlcXVlc3QaGC5jdm0uYWdlbnQuUmVidWlsZE91dHB1dDABElgKD0xpc3RHZW5lcmF0aW9ucxIhLmN2bS5hZ2VudC5MaXN0R2VuZXJhdGlvbnNSZXF1ZXN0GiIuY3ZtLmFnZW50Lkxpc3RHZW5lcmF0aW9uc1Jlc3BvbnNlElMKEUN1cnJlbnRHZW5lcmF0aW9uEiMuY3ZtLmFnZW50LkN1cnJlbnRHZW5lcmF0aW9uUmVxdWVzdBoZLmN2bS5hZ2VudC5HZW5lcmF0aW9uSW5mbzLTAgoNR2l0T3BzU2VydmljZRJDCgZTdGF0dXMSGy5jdm0uYWdlbnQuR2l0U3RhdHVzUmVxdWVzdBocLmN2bS5hZ2VudC5HaXRTdGF0dXNSZXNwb25zZRI9CgREaWZmEhkuY3ZtLmFnZW50LkdpdERpZmZSZXF1ZXN0GhouY3ZtLmFnZW50LkdpdERpZmZSZXNwb25zZRI6CgNBZGQSGC5jdm0uYWdlbnQuR2l0QWRkUmVxdWVzdBoZLmN2bS5hZ2VudC5HaXRBZGRSZXNwb25zZRJDCgZDb21taXQSGy5jdm0uYWdlbnQuR2l0Q29tbWl0UmVxdWVzdBocLmN2bS5hZ2VudC5HaXRDb21taXRSZXNwb25zZRI9CgRQdXNoEhkuY3ZtLmFnZW50LkdpdFB1c2hSZXF1ZXN0GhguY3ZtLmFnZW50LkdpdFB1c2hPdXRwdXQwATKBBQoKR1VJU2VydmljZRJJCgpTY3JlZW5zaG90EhwuY3ZtLmFnZW50LlNjcmVlbnNob3RSZXF1ZXN0Gh0uY3ZtLmFnZW50LlNjcmVlbnNob3RSZXNwb25zZRJDCgtHZXRFbGVtZW50cxIXLmN2bS5hZ2VudC5FbGVtZW50UXVlcnkaGy5jdm0uYWdlbnQuRWxlbWVudHNSZXNwb25zZRJPCg5HZXRFbGVtZW50VHJlZRIdLmN2bS5hZ2VudC5FbGVtZW50VHJlZVJlcXVlc3QaHi5jdm0uYWdlbnQuRWxlbWVudFRyZWVSZXNwb25zZRI7CgVDbGljaxIXLmN2bS5hZ2VudC5DbGlja1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USOQoEVHlwZRIWLmN2bS5hZ2VudC5UeXBlUmVxdWVzdBoZLmN2bS5hZ2VudC5BY3Rpb25SZXNwb25zZRJBCghLZXlQcmVzcxIaLmN2bS5hZ2VudC5LZXlQcmVzc1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQwoJTW92ZU1vdXNlEhsuY3ZtLmFnZW50Lk1vdmVNb3VzZVJlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQQoIRGVzY3JpYmUSGi5jdm0uYWdlbnQuRGVzY3JpYmVSZXF1ZXN0GhkuY3ZtLmFnZW50LlZpc2lvblJlc3BvbnNlEk8KDEZpbmRCeVZpc2lvbhIeLmN2bS5hZ2VudC5GaW5kQnlWaXNpb25SZXF1ZXN0Gh8uY3ZtLmFnZW50LkZpbmRCeVZpc2lvblJlc3BvbnNlYgZwcm90bzM");
 
 /**
  * @generated from message cvm.agent.HealthRequest
@@ -680,6 +680,696 @@ export const GitPushOutputSchema: GenMessage<GitPushOutput> = /*@__PURE__*/
   messageDesc(file_agent, 24);
 
 /**
+ * Screenshot request options
+ *
+ * @generated from message cvm.agent.ScreenshotRequest
+ */
+export type ScreenshotRequest = Message<"cvm.agent.ScreenshotRequest"> & {
+  /**
+   * Specific window, or full screen if not set
+   *
+   * @generated from field: optional string window_id = 1;
+   */
+  windowId?: string;
+
+  /**
+   * Include mouse cursor in screenshot
+   *
+   * @generated from field: bool include_cursor = 2;
+   */
+  includeCursor: boolean;
+
+  /**
+   * JPEG quality (1-100), 0 for PNG
+   *
+   * @generated from field: int32 quality = 3;
+   */
+  quality: number;
+};
+
+/**
+ * Describes the message cvm.agent.ScreenshotRequest.
+ * Use `create(ScreenshotRequestSchema)` to create a new message.
+ */
+export const ScreenshotRequestSchema: GenMessage<ScreenshotRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 25);
+
+/**
+ * Screenshot response with image data
+ *
+ * @generated from message cvm.agent.ScreenshotResponse
+ */
+export type ScreenshotResponse = Message<"cvm.agent.ScreenshotResponse"> & {
+  /**
+   * Raw image bytes
+   *
+   * @generated from field: bytes image_data = 1;
+   */
+  imageData: Uint8Array;
+
+  /**
+   * "png" or "jpeg"
+   *
+   * @generated from field: string format = 2;
+   */
+  format: string;
+
+  /**
+   * @generated from field: int32 width = 3;
+   */
+  width: number;
+
+  /**
+   * @generated from field: int32 height = 4;
+   */
+  height: number;
+};
+
+/**
+ * Describes the message cvm.agent.ScreenshotResponse.
+ * Use `create(ScreenshotResponseSchema)` to create a new message.
+ */
+export const ScreenshotResponseSchema: GenMessage<ScreenshotResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 26);
+
+/**
+ * Query for finding UI elements
+ *
+ * @generated from message cvm.agent.ElementQuery
+ */
+export type ElementQuery = Message<"cvm.agent.ElementQuery"> & {
+  /**
+   * Filter by application name
+   *
+   * @generated from field: optional string application = 1;
+   */
+  application?: string;
+
+  /**
+   * Filter by accessibility role (button, textfield, etc.)
+   *
+   * @generated from field: optional string role = 2;
+   */
+  role?: string;
+
+  /**
+   * Filter by element name/label
+   *
+   * @generated from field: optional string name = 3;
+   */
+  name?: string;
+
+  /**
+   * Maximum tree depth to search (0 = unlimited)
+   *
+   * @generated from field: int32 max_depth = 4;
+   */
+  maxDepth: number;
+};
+
+/**
+ * Describes the message cvm.agent.ElementQuery.
+ * Use `create(ElementQuerySchema)` to create a new message.
+ */
+export const ElementQuerySchema: GenMessage<ElementQuery> = /*@__PURE__*/
+  messageDesc(file_agent, 27);
+
+/**
+ * Response containing matched UI elements
+ *
+ * @generated from message cvm.agent.ElementsResponse
+ */
+export type ElementsResponse = Message<"cvm.agent.ElementsResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.UIElement elements = 1;
+   */
+  elements: UIElement[];
+};
+
+/**
+ * Describes the message cvm.agent.ElementsResponse.
+ * Use `create(ElementsResponseSchema)` to create a new message.
+ */
+export const ElementsResponseSchema: GenMessage<ElementsResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 28);
+
+/**
+ * A single UI element from the accessibility tree
+ *
+ * @generated from message cvm.agent.UIElement
+ */
+export type UIElement = Message<"cvm.agent.UIElement"> & {
+  /**
+   * Unique element identifier
+   *
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * Parent application name
+   *
+   * @generated from field: string application = 2;
+   */
+  application: string;
+
+  /**
+   * Accessibility role (button, textfield, etc.)
+   *
+   * @generated from field: string role = 3;
+   */
+  role: string;
+
+  /**
+   * Element name/label
+   *
+   * @generated from field: string name = 4;
+   */
+  name: string;
+
+  /**
+   * Element description or tooltip
+   *
+   * @generated from field: string description = 5;
+   */
+  description: string;
+
+  /**
+   * Screen coordinates
+   *
+   * @generated from field: cvm.agent.BoundingBox bounds = 6;
+   */
+  bounds?: BoundingBox;
+
+  /**
+   * Current states (focused, selected, enabled, etc.)
+   *
+   * @generated from field: repeated string states = 7;
+   */
+  states: string[];
+
+  /**
+   * Available actions (click, type, etc.)
+   *
+   * @generated from field: repeated string actions = 8;
+   */
+  actions: string[];
+};
+
+/**
+ * Describes the message cvm.agent.UIElement.
+ * Use `create(UIElementSchema)` to create a new message.
+ */
+export const UIElementSchema: GenMessage<UIElement> = /*@__PURE__*/
+  messageDesc(file_agent, 29);
+
+/**
+ * Bounding box for element position
+ *
+ * @generated from message cvm.agent.BoundingBox
+ */
+export type BoundingBox = Message<"cvm.agent.BoundingBox"> & {
+  /**
+   * @generated from field: int32 x = 1;
+   */
+  x: number;
+
+  /**
+   * @generated from field: int32 y = 2;
+   */
+  y: number;
+
+  /**
+   * @generated from field: int32 width = 3;
+   */
+  width: number;
+
+  /**
+   * @generated from field: int32 height = 4;
+   */
+  height: number;
+};
+
+/**
+ * Describes the message cvm.agent.BoundingBox.
+ * Use `create(BoundingBoxSchema)` to create a new message.
+ */
+export const BoundingBoxSchema: GenMessage<BoundingBox> = /*@__PURE__*/
+  messageDesc(file_agent, 30);
+
+/**
+ * Request for full element tree
+ *
+ * @generated from message cvm.agent.ElementTreeRequest
+ */
+export type ElementTreeRequest = Message<"cvm.agent.ElementTreeRequest"> & {
+  /**
+   * Filter to specific application
+   *
+   * @generated from field: optional string application = 1;
+   */
+  application?: string;
+
+  /**
+   * Maximum depth (0 = unlimited)
+   *
+   * @generated from field: int32 max_depth = 2;
+   */
+  maxDepth: number;
+};
+
+/**
+ * Describes the message cvm.agent.ElementTreeRequest.
+ * Use `create(ElementTreeRequestSchema)` to create a new message.
+ */
+export const ElementTreeRequestSchema: GenMessage<ElementTreeRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 31);
+
+/**
+ * Response containing element tree
+ *
+ * @generated from message cvm.agent.ElementTreeResponse
+ */
+export type ElementTreeResponse = Message<"cvm.agent.ElementTreeResponse"> & {
+  /**
+   * Root nodes (usually applications)
+   *
+   * @generated from field: repeated cvm.agent.ElementNode roots = 1;
+   */
+  roots: ElementNode[];
+};
+
+/**
+ * Describes the message cvm.agent.ElementTreeResponse.
+ * Use `create(ElementTreeResponseSchema)` to create a new message.
+ */
+export const ElementTreeResponseSchema: GenMessage<ElementTreeResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 32);
+
+/**
+ * A node in the UI element tree
+ *
+ * @generated from message cvm.agent.ElementNode
+ */
+export type ElementNode = Message<"cvm.agent.ElementNode"> & {
+  /**
+   * Element data
+   *
+   * @generated from field: cvm.agent.UIElement element = 1;
+   */
+  element?: UIElement;
+
+  /**
+   * Child elements
+   *
+   * @generated from field: repeated cvm.agent.ElementNode children = 2;
+   */
+  children: ElementNode[];
+};
+
+/**
+ * Describes the message cvm.agent.ElementNode.
+ * Use `create(ElementNodeSchema)` to create a new message.
+ */
+export const ElementNodeSchema: GenMessage<ElementNode> = /*@__PURE__*/
+  messageDesc(file_agent, 33);
+
+/**
+ * Click action request
+ *
+ * @generated from message cvm.agent.ClickRequest
+ */
+export type ClickRequest = Message<"cvm.agent.ClickRequest"> & {
+  /**
+   * @generated from oneof cvm.agent.ClickRequest.target
+   */
+  target: {
+    /**
+     * Click on element by ID
+     *
+     * @generated from field: string element_id = 1;
+     */
+    value: string;
+    case: "elementId";
+  } | {
+    /**
+     * Click at screen coordinates
+     *
+     * @generated from field: cvm.agent.Coordinates position = 2;
+     */
+    value: Coordinates;
+    case: "position";
+  } | { case: undefined; value?: undefined };
+
+  /**
+   * Which mouse button
+   *
+   * @generated from field: cvm.agent.MouseButton button = 3;
+   */
+  button: MouseButton;
+
+  /**
+   * Number of clicks (1=single, 2=double)
+   *
+   * @generated from field: int32 clicks = 4;
+   */
+  clicks: number;
+};
+
+/**
+ * Describes the message cvm.agent.ClickRequest.
+ * Use `create(ClickRequestSchema)` to create a new message.
+ */
+export const ClickRequestSchema: GenMessage<ClickRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 34);
+
+/**
+ * Screen coordinates
+ *
+ * @generated from message cvm.agent.Coordinates
+ */
+export type Coordinates = Message<"cvm.agent.Coordinates"> & {
+  /**
+   * @generated from field: int32 x = 1;
+   */
+  x: number;
+
+  /**
+   * @generated from field: int32 y = 2;
+   */
+  y: number;
+};
+
+/**
+ * Describes the message cvm.agent.Coordinates.
+ * Use `create(CoordinatesSchema)` to create a new message.
+ */
+export const CoordinatesSchema: GenMessage<Coordinates> = /*@__PURE__*/
+  messageDesc(file_agent, 35);
+
+/**
+ * Type text request
+ *
+ * @generated from message cvm.agent.TypeRequest
+ */
+export type TypeRequest = Message<"cvm.agent.TypeRequest"> & {
+  /**
+   * Text to type
+   *
+   * @generated from field: string text = 1;
+   */
+  text: string;
+
+  /**
+   * Target element (optional, types at cursor if not set)
+   *
+   * @generated from field: optional string element_id = 2;
+   */
+  elementId?: string;
+
+  /**
+   * Delay between keystrokes in milliseconds
+   *
+   * @generated from field: int32 delay_ms = 3;
+   */
+  delayMs: number;
+
+  /**
+   * Clear existing content before typing
+   *
+   * @generated from field: bool clear_first = 4;
+   */
+  clearFirst: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.TypeRequest.
+ * Use `create(TypeRequestSchema)` to create a new message.
+ */
+export const TypeRequestSchema: GenMessage<TypeRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 36);
+
+/**
+ * Key press request
+ *
+ * @generated from message cvm.agent.KeyPressRequest
+ */
+export type KeyPressRequest = Message<"cvm.agent.KeyPressRequest"> & {
+  /**
+   * Keys to press (e.g., ["ctrl", "c"] or ["Return"])
+   *
+   * @generated from field: repeated string keys = 1;
+   */
+  keys: string[];
+
+  /**
+   * Target element (optional)
+   *
+   * @generated from field: optional string element_id = 2;
+   */
+  elementId?: string;
+};
+
+/**
+ * Describes the message cvm.agent.KeyPressRequest.
+ * Use `create(KeyPressRequestSchema)` to create a new message.
+ */
+export const KeyPressRequestSchema: GenMessage<KeyPressRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 37);
+
+/**
+ * Mouse movement request
+ *
+ * @generated from message cvm.agent.MoveMouseRequest
+ */
+export type MoveMouseRequest = Message<"cvm.agent.MoveMouseRequest"> & {
+  /**
+   * @generated from field: int32 x = 1;
+   */
+  x: number;
+
+  /**
+   * @generated from field: int32 y = 2;
+   */
+  y: number;
+
+  /**
+   * Smooth movement vs instant
+   *
+   * @generated from field: bool smooth = 3;
+   */
+  smooth: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.MoveMouseRequest.
+ * Use `create(MoveMouseRequestSchema)` to create a new message.
+ */
+export const MoveMouseRequestSchema: GenMessage<MoveMouseRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 38);
+
+/**
+ * Generic action response
+ *
+ * @generated from message cvm.agent.ActionResponse
+ */
+export type ActionResponse = Message<"cvm.agent.ActionResponse"> & {
+  /**
+   * @generated from field: bool success = 1;
+   */
+  success: boolean;
+
+  /**
+   * Error message if success is false
+   *
+   * @generated from field: string error = 2;
+   */
+  error: string;
+};
+
+/**
+ * Describes the message cvm.agent.ActionResponse.
+ * Use `create(ActionResponseSchema)` to create a new message.
+ */
+export const ActionResponseSchema: GenMessage<ActionResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 39);
+
+/**
+ * Vision-based description request
+ *
+ * @generated from message cvm.agent.DescribeRequest
+ */
+export type DescribeRequest = Message<"cvm.agent.DescribeRequest"> & {
+  /**
+   * Screenshot to analyze
+   *
+   * @generated from field: bytes screenshot = 1;
+   */
+  screenshot: Uint8Array;
+
+  /**
+   * Optional area to focus on
+   *
+   * @generated from field: optional cvm.agent.BoundingBox focus_area = 2;
+   */
+  focusArea?: BoundingBox;
+
+  /**
+   * Optional specific question about the screen
+   *
+   * @generated from field: optional string question = 3;
+   */
+  question?: string;
+};
+
+/**
+ * Describes the message cvm.agent.DescribeRequest.
+ * Use `create(DescribeRequestSchema)` to create a new message.
+ */
+export const DescribeRequestSchema: GenMessage<DescribeRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 40);
+
+/**
+ * Vision model response
+ *
+ * @generated from message cvm.agent.VisionResponse
+ */
+export type VisionResponse = Message<"cvm.agent.VisionResponse"> & {
+  /**
+   * Natural language description
+   *
+   * @generated from field: string description = 1;
+   */
+  description: string;
+
+  /**
+   * Elements identified in the image
+   *
+   * @generated from field: repeated cvm.agent.IdentifiedElement elements = 2;
+   */
+  elements: IdentifiedElement[];
+};
+
+/**
+ * Describes the message cvm.agent.VisionResponse.
+ * Use `create(VisionResponseSchema)` to create a new message.
+ */
+export const VisionResponseSchema: GenMessage<VisionResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 41);
+
+/**
+ * An element identified by vision model
+ *
+ * @generated from message cvm.agent.IdentifiedElement
+ */
+export type IdentifiedElement = Message<"cvm.agent.IdentifiedElement"> & {
+  /**
+   * What the element appears to be
+   *
+   * @generated from field: string description = 1;
+   */
+  description: string;
+
+  /**
+   * Estimated bounding box
+   *
+   * @generated from field: cvm.agent.BoundingBox estimated_bounds = 2;
+   */
+  estimatedBounds?: BoundingBox;
+
+  /**
+   * Confidence score (0.0-1.0)
+   *
+   * @generated from field: float confidence = 3;
+   */
+  confidence: number;
+};
+
+/**
+ * Describes the message cvm.agent.IdentifiedElement.
+ * Use `create(IdentifiedElementSchema)` to create a new message.
+ */
+export const IdentifiedElementSchema: GenMessage<IdentifiedElement> = /*@__PURE__*/
+  messageDesc(file_agent, 42);
+
+/**
+ * Find element by visual description
+ *
+ * @generated from message cvm.agent.FindByVisionRequest
+ */
+export type FindByVisionRequest = Message<"cvm.agent.FindByVisionRequest"> & {
+  /**
+   * Natural language description of element to find
+   *
+   * @generated from field: string description = 1;
+   */
+  description: string;
+
+  /**
+   * Screenshot to search (captures new one if not provided)
+   *
+   * @generated from field: optional bytes screenshot = 2;
+   */
+  screenshot?: Uint8Array;
+};
+
+/**
+ * Describes the message cvm.agent.FindByVisionRequest.
+ * Use `create(FindByVisionRequestSchema)` to create a new message.
+ */
+export const FindByVisionRequestSchema: GenMessage<FindByVisionRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 43);
+
+/**
+ * Response for vision-based element finding
+ *
+ * @generated from message cvm.agent.FindByVisionResponse
+ */
+export type FindByVisionResponse = Message<"cvm.agent.FindByVisionResponse"> & {
+  /**
+   * Whether element was found
+   *
+   * @generated from field: bool found = 1;
+   */
+  found: boolean;
+
+  /**
+   * Center point of found element
+   *
+   * @generated from field: cvm.agent.Coordinates center = 2;
+   */
+  center?: Coordinates;
+
+  /**
+   * Bounding box of found element
+   *
+   * @generated from field: cvm.agent.BoundingBox bounds = 3;
+   */
+  bounds?: BoundingBox;
+
+  /**
+   * Confidence score (0.0-1.0)
+   *
+   * @generated from field: float confidence = 4;
+   */
+  confidence: number;
+
+  /**
+   * Description of what was found
+   *
+   * @generated from field: string element_description = 5;
+   */
+  elementDescription: string;
+};
+
+/**
+ * Describes the message cvm.agent.FindByVisionResponse.
+ * Use `create(FindByVisionResponseSchema)` to create a new message.
+ */
+export const FindByVisionResponseSchema: GenMessage<FindByVisionResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 44);
+
+/**
  * @generated from enum cvm.agent.RiskLevel
  */
 export enum RiskLevel {
@@ -709,6 +1399,34 @@ export enum RiskLevel {
  */
 export const RiskLevelSchema: GenEnum<RiskLevel> = /*@__PURE__*/
   enumDesc(file_agent, 0);
+
+/**
+ * Mouse button options
+ *
+ * @generated from enum cvm.agent.MouseButton
+ */
+export enum MouseButton {
+  /**
+   * @generated from enum value: MOUSE_LEFT = 0;
+   */
+  MOUSE_LEFT = 0,
+
+  /**
+   * @generated from enum value: MOUSE_RIGHT = 1;
+   */
+  MOUSE_RIGHT = 1,
+
+  /**
+   * @generated from enum value: MOUSE_MIDDLE = 2;
+   */
+  MOUSE_MIDDLE = 2,
+}
+
+/**
+ * Describes the enum cvm.agent.MouseButton.
+ */
+export const MouseButtonSchema: GenEnum<MouseButton> = /*@__PURE__*/
+  enumDesc(file_agent, 1);
 
 /**
  * Health check
@@ -868,4 +1586,103 @@ export const GitOpsService: GenService<{
   },
 }> = /*@__PURE__*/
   serviceDesc(file_agent, 4);
+
+/**
+ * GUI automation service - screen capture, element interaction, and vision
+ *
+ * @generated from service cvm.agent.GUIService
+ */
+export const GUIService: GenService<{
+  /**
+   * Capture a screenshot of the screen or specific window
+   *
+   * @generated from rpc cvm.agent.GUIService.Screenshot
+   */
+  screenshot: {
+    methodKind: "unary";
+    input: typeof ScreenshotRequestSchema;
+    output: typeof ScreenshotResponseSchema;
+  },
+  /**
+   * Query UI elements by application, role, or name
+   *
+   * @generated from rpc cvm.agent.GUIService.GetElements
+   */
+  getElements: {
+    methodKind: "unary";
+    input: typeof ElementQuerySchema;
+    output: typeof ElementsResponseSchema;
+  },
+  /**
+   * Get the full UI element tree
+   *
+   * @generated from rpc cvm.agent.GUIService.GetElementTree
+   */
+  getElementTree: {
+    methodKind: "unary";
+    input: typeof ElementTreeRequestSchema;
+    output: typeof ElementTreeResponseSchema;
+  },
+  /**
+   * Click on an element or coordinates
+   *
+   * @generated from rpc cvm.agent.GUIService.Click
+   */
+  click: {
+    methodKind: "unary";
+    input: typeof ClickRequestSchema;
+    output: typeof ActionResponseSchema;
+  },
+  /**
+   * Type text into an element or at cursor
+   *
+   * @generated from rpc cvm.agent.GUIService.Type
+   */
+  type: {
+    methodKind: "unary";
+    input: typeof TypeRequestSchema;
+    output: typeof ActionResponseSchema;
+  },
+  /**
+   * Press keyboard keys
+   *
+   * @generated from rpc cvm.agent.GUIService.KeyPress
+   */
+  keyPress: {
+    methodKind: "unary";
+    input: typeof KeyPressRequestSchema;
+    output: typeof ActionResponseSchema;
+  },
+  /**
+   * Move mouse to coordinates
+   *
+   * @generated from rpc cvm.agent.GUIService.MoveMouse
+   */
+  moveMouse: {
+    methodKind: "unary";
+    input: typeof MoveMouseRequestSchema;
+    output: typeof ActionResponseSchema;
+  },
+  /**
+   * Describe screen content using vision model
+   *
+   * @generated from rpc cvm.agent.GUIService.Describe
+   */
+  describe: {
+    methodKind: "unary";
+    input: typeof DescribeRequestSchema;
+    output: typeof VisionResponseSchema;
+  },
+  /**
+   * Find an element by visual description
+   *
+   * @generated from rpc cvm.agent.GUIService.FindByVision
+   */
+  findByVision: {
+    methodKind: "unary";
+    input: typeof FindByVisionRequestSchema;
+    output: typeof FindByVisionResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_agent, 5);
 
