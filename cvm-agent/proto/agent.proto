@@ -536,3 +536,106 @@ message SkillMatch {
   float relevance = 3;            // 0-1 relevance score
   string matched_trigger = 4;
 }
+
+// Memory management service
+service MemoryService {
+  // Query memories with filters
+  rpc Query(MemoryQuery) returns (MemoryQueryResponse);
+
+  // Store a new memory
+  rpc Store(StoreMemoryRequest) returns (StoreMemoryResponse);
+
+  // Get memories that are candidates for forgetting
+  rpc GetForgetCandidates(GetForgetCandidatesRequest) returns (ForgetCandidatesResponse);
+
+  // Confirm which candidates to forget/keep
+  rpc ConfirmForget(ForgetDecision) returns (ConfirmForgetResponse);
+
+  // Pin or unpin a memory
+  rpc Pin(PinRequest) returns (PinResponse);
+
+  // Refresh system facts (re-query and update)
+  rpc RefreshFacts(RefreshFactsRequest) returns (MemoryQueryResponse);
+}
+
+// Memory Layer Types
+enum MemoryLayer {
+  MEMORY_LAYER_UNSPECIFIED = 0;
+  MEMORY_LAYER_WORKING = 1;      // Current session context
+  MEMORY_LAYER_ARCHIVE = 2;      // Summarized past conversations
+  MEMORY_LAYER_FACTS = 3;        // System state facts
+  MEMORY_LAYER_PREFERENCES = 4;  // Learned user preferences
+}
+
+// Memory Entry
+message MemoryEntry {
+  string id = 1;
+  MemoryLayer layer = 2;
+  string content = 3;
+  map<string, string> metadata = 4;
+  int64 created_at_ms = 5;        // Unix timestamp in milliseconds
+  int64 last_accessed_ms = 6;     // Unix timestamp in milliseconds
+  int64 expires_at_ms = 7;        // Unix timestamp in milliseconds (0 = no expiry)
+  bool pinned = 8;
+  int32 access_count = 9;
+}
+
+// Query memories
+message MemoryQuery {
+  repeated MemoryLayer layers = 1;  // Empty = all layers
+  string search_text = 2;           // Full-text search
+  map<string, string> filters = 3;  // Metadata filters
+  int32 limit = 4;                  // Max results (default 50)
+}
+
+message MemoryQueryResponse {
+  repeated MemoryEntry entries = 1;
+  int32 total_count = 2;
+}
+
+// Store memory
+message StoreMemoryRequest {
+  MemoryLayer layer = 1;
+  string content = 2;
+  map<string, string> metadata = 3;
+  int64 ttl_ms = 4;                 // Time-to-live in milliseconds (0 = no expiry)
+}
+
+message StoreMemoryResponse {
+  string id = 1;
+}
+
+// Forgetting candidates
+message GetForgetCandidatesRequest {}
+
+message ForgetCandidate {
+  MemoryEntry entry = 1;
+  string reason = 2;              // Why this is a candidate
+  bool auto_forget = 3;           // True if will be auto-deleted
+}
+
+message ForgetCandidatesResponse {
+  repeated ForgetCandidate candidates = 1;
+}
+
+message ForgetDecision {
+  repeated string forget_ids = 1;  // IDs to forget
+  repeated string keep_ids = 2;    // IDs to keep (resets decay)
+}
+
+message ConfirmForgetResponse {
+  int32 deleted_count = 1;
+  int32 kept_count = 2;
+}
+
+// Pin/unpin memories
+message PinRequest {
+  string id = 1;
+  bool pinned = 2;
+}
+
+message PinResponse {
+  bool success = 1;
+}
+
+message RefreshFactsRequest {}
