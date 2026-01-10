@@ -15,11 +15,12 @@ use services::health::proto::chat_service_server::ChatServiceServer;
 use services::health::proto::git_ops_service_server::GitOpsServiceServer;
 use services::health::proto::gui_service_server::GuiServiceServer;
 use services::health::proto::health_service_server::HealthServiceServer;
+use services::health::proto::memory_service_server::MemoryServiceServer;
 use services::health::proto::nix_ops_service_server::NixOpsServiceServer;
 use services::health::proto::shell_service_server::ShellServiceServer;
 use services::health::proto::skills_service_server::SkillsServiceServer;
 use services::health::proto::voice_service_server::VoiceServiceServer;
-use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, NixOpsServiceImpl, ShellServiceImpl, SkillsServiceImpl, VoiceServiceImpl};
+use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, MemoryServiceImpl, NixOpsServiceImpl, ShellServiceImpl, SkillsServiceImpl, VoiceServiceImpl};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -37,6 +38,11 @@ async fn main() -> anyhow::Result<()> {
         .allow_origin(Any)
         .allow_headers(Any)
         .allow_methods(Any);
+
+    // Initialize database
+    let db_path = std::env::var("AGENT_DB_PATH").unwrap_or_else(|_| "./data/agent.db".to_string());
+    let db = db::init_db(&db_path).expect("Failed to initialize database");
+    tracing::info!("Database initialized at {}", db_path);
 
     // Initialize LLM client
     let llm_client = match RedpillClient::new() {
@@ -58,11 +64,13 @@ async fn main() -> anyhow::Result<()> {
     let gui_service = GUIServiceImpl::new();
     let voice_service = VoiceServiceImpl::new();
     let skills_service = SkillsServiceImpl::new("/app/cvm-agent/skills").await;
+    let memory_service = MemoryServiceImpl::new(db);
 
     tracing::info!("GUI service initialized (vision: {})",
         if gui_service.has_vision() { "enabled" } else { "disabled" });
     tracing::info!("Voice service initialized");
     tracing::info!("Skills service initialized");
+    tracing::info!("Memory service initialized");
 
     Server::builder()
         .accept_http1(true)
@@ -76,6 +84,7 @@ async fn main() -> anyhow::Result<()> {
         .add_service(GuiServiceServer::new(gui_service))
         .add_service(VoiceServiceServer::new(voice_service))
         .add_service(SkillsServiceServer::new(skills_service))
+        .add_service(MemoryServiceServer::new(memory_service))
         .serve(addr)
         .await?;
 
