@@ -1,6 +1,8 @@
 mod migrations;
 mod repository;
 mod schema;
+#[cfg(test)]
+mod tests;
 
 pub use migrations::run_migrations;
 pub use repository::MemoryRepository;
