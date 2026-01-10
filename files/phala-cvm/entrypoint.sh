@@ -12,9 +12,12 @@ fi
 echo "Working directory: $(pwd)"
 echo "Repository cloned at: /app"
 
+# Nix sandbox doesn't work in Docker on macOS, so disable it
+NIX_OPTIONS="--option sandbox false"
+
 # Install necessary packages for VNC/GUI setup
 echo "Installing VNC and GUI components..."
-nix-env -iA \
+nix-env $NIX_OPTIONS -iA \
     nixpkgs.tigervnc \
     nixpkgs.xorg.xorgserver \
     nixpkgs.xfce.xfce4-session \
@@ -38,7 +41,7 @@ nix-env -iA \
 
 # GUI automation tools
 echo "Installing GUI automation tools..."
-nix-env -iA \
+nix-env $NIX_OPTIONS -iA \
     nixpkgs.xdotool \
     nixpkgs.scrot \
     nixpkgs.at-spi2-core \
@@ -46,12 +49,12 @@ nix-env -iA \
 
 # Voice transcription
 echo "Installing voice transcription tools..."
-nix-env -iA nixpkgs.whisper-cpp
+nix-env $NIX_OPTIONS -iA nixpkgs.whisper-cpp
 
 # Install noVNC
 if ! command -v novnc > /dev/null 2>&1; then
     echo "Installing noVNC..."
-    nix-env -iA nixpkgs.novnc
+    nix-env $NIX_OPTIONS -iA nixpkgs.novnc
 fi
 
 # Set VNC password
@@ -200,7 +203,7 @@ echo "Setting up CVM Agent service..."
 # Install Rust toolchain if not present
 if ! command -v cargo > /dev/null 2>&1; then
     echo "Installing Rust toolchain..."
-    nix-env -iA nixpkgs.rustc nixpkgs.cargo nixpkgs.gcc nixpkgs.pkg-config nixpkgs.openssl
+    nix-env $NIX_OPTIONS -iA nixpkgs.rustc nixpkgs.cargo nixpkgs.gcc nixpkgs.pkg-config nixpkgs.openssl
 fi
 
 # Build the agent binary if source exists
@@ -254,7 +257,7 @@ if [ -d "$WEB_UI_DIR" ]; then
     # Install python if not present (for simple HTTP server)
     if ! command -v python3 > /dev/null 2>&1; then
         echo "Installing python3 for web server..."
-        nix-env -iA nixpkgs.python3
+        nix-env $NIX_OPTIONS -iA nixpkgs.python3
     fi
 
     cd "$WEB_UI_DIR"
