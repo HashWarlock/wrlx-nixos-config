@@ -1,7 +1,9 @@
 mod migrations;
+mod repository;
 mod schema;
 
 pub use migrations::run_migrations;
+pub use repository::MemoryRepository;
 pub use schema::*;
 
 use rusqlite::Connection;
