@@ -24,6 +24,8 @@ base64.workspace = true
 image.workspace = true
 tokio-tungstenite.workspace = true
 serde_yaml.workspace = true
+rusqlite.workspace = true
+uuid.workspace = true
 
 [build-dependencies]
 tonic-build = "0.12"

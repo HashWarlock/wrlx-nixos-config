@@ -26,3 +26,5 @@ base64 = "0.22"
 image = "0.25"
 tokio-tungstenite = "0.21"
 serde_yaml = "0.9"
+rusqlite = { version = "0.31", features = ["bundled"] }
+uuid = { version = "1.6", features = ["v4"] }
