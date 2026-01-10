@@ -14,12 +14,12 @@
   };
 
   inputs = {
-    # NixOS official package source, using the nixos-24.05 branch here
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    # NixOS official package source, using the nixos-25.11 branch
+    nixpkgs.url = "git+https://github.com/NixOS/nixpkgs?ref=nixos-25.11";
+    nixpkgs-unstable.url = "git+https://github.com/nixos/nixpkgs?ref=nixos-unstable";
     # home-manager, used for managing user configuration
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "git+https://github.com/nix-community/home-manager?ref=release-25.11";
       # The `follows` keyword in inputs is used for inheritance.
       # Here, `inputs.nixpkgs` of home-manager is kept consistent with
       # the `inputs.nixpkgs` of the current flake,
@@ -28,11 +28,11 @@
     };
 
     # Global catppuccin theme
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin.url = "git+https://github.com/catppuccin/nix";
 
     # NixOS Spicetify
     spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
+      url = "git+https://github.com/Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

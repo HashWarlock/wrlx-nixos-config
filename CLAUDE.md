@@ -16,9 +16,9 @@ https://nixos-and-flakes.thiscute.world/best-practices/intro
 ### Flake-based Configuration
 
 This repository uses NixOS flakes with the following key inputs:
-- `nixpkgs` (24.05 stable)
+- `nixpkgs` (25.11 stable)
 - `nixpkgs-unstable` (for bleeding-edge packages via overlay)
-- `home-manager` (release-24.05)
+- `home-manager` (release-25.11)
 - `catppuccin` (global theming)
 - `spicetify-nix` (Spotify theming)
 
@@ -61,7 +61,7 @@ This repository uses NixOS flakes with the following key inputs:
 
 - **Hostname**: `asus-g512lw` (defined in flake.nix)
 - **Username**: `hashwarlock`
-- **System version**: NixOS 24.05
+- **System version**: NixOS 25.11
 - **Desktop environments**: Hyprland (primary), GNOME (secondary)
 - **Display manager**: GDM
 
@@ -129,7 +129,7 @@ Note: This configuration uses home-manager as a NixOS module, so changes apply v
 
 ## Important Notes
 
-- **State versions**: Current stateVersion is `24.05` - do not change unless migrating
+- **State versions**: Current stateVersion is `25.11` for phala-cvm, `24.05` for asus-g512lw - do not change unless migrating
 - **Trusted users**: User `hashwarlock` is a trusted user (can use additional substituters)
 - **Experimental features**: Flakes and nix-command are enabled globally
 - **Garbage collection**: Automatic weekly GC deletes items older than 365 days
