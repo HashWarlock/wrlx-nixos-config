@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file agent.proto.
  */
 export const file_agent: GenFile = /*@__PURE__*/
-  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJGCg5SZWJ1aWxkUmVxdWVzdBISCgpmbGFrZV9wYXRoGAEgASgJEhAKCGhvc3RuYW1lGAIgASgJEg4KBmFjdGlvbhgDIAEoCSKBAQoNUmVidWlsZE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBARISCgVwaGFzZRgEIAEoCUgCiAEBQggKBm91dHB1dEIMCgpfZXhpdF9jb2RlQggKBl9waGFzZSI5Cg9Sb2xsYmFja1JlcXVlc3QSFwoKZ2VuZXJhdGlvbhgBIAEoBUgAiAEBQg0KC19nZW5lcmF0aW9uIicKFkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QSDQoFbGltaXQYASABKAUiSQoXTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USLgoLZ2VuZXJhdGlvbnMYASADKAsyGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8iGgoYQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0Io4BCg5HZW5lcmF0aW9uSW5mbxIOCgZudW1iZXIYASABKAUSDAoEZGF0ZRgCIAEoCRIVCg1uaXhvc192ZXJzaW9uGAMgASgJEhYKDmtlcm5lbF92ZXJzaW9uGAQgASgJEh4KFmNvbmZpZ3VyYXRpb25fcmV2aXNpb24YBSABKAkSDwoHY3VycmVudBgGIAEoCCIlChBHaXRTdGF0dXNSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCSLSAQoRR2l0U3RhdHVzUmVzcG9uc2USDgoGYnJhbmNoGAEgASgJEicKCG1vZGlmaWVkGAIgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSJQoGc3RhZ2VkGAMgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSKAoJdW50cmFja2VkGAQgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSFAoMaGFzX3Vwc3RyZWFtGAUgASgIEg0KBWFoZWFkGAYgASgFEg4KBmJlaGluZBgHIAEoBSIqCgpGaWxlU3RhdHVzEgwKBHBhdGgYASABKAkSDgoGc3RhdHVzGAIgASgJIkIKDkdpdERpZmZSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCRIOCgZzdGFnZWQYAyABKAgiNQoPR2l0RGlmZlJlc3BvbnNlEiIKBWRpZmZzGAEgAygLMhMuY3ZtLmFnZW50LkZpbGVEaWZmIlAKCEZpbGVEaWZmEgwKBHBhdGgYASABKAkSDAoEZGlmZhgCIAEoCRIoCgpyaXNrX2xldmVsGAMgASgOMhQuY3ZtLmFnZW50LlJpc2tMZXZlbCIxCg1HaXRBZGRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCSI3Cg5HaXRBZGRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhQKDHN0YWdlZF9wYXRocxgCIAMoCSI2ChBHaXRDb21taXRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIkgKEUdpdENvbW1pdFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSEwoLY29tbWl0X2hhc2gYAiABKAkSDQoFZXJyb3IYAyABKAkiQwoOR2l0UHVzaFJlcXVlc3QSEQoJcmVwb19wYXRoGAEgASgJEg4KBnJlbW90ZRgCIAEoCRIOCgZicmFuY2gYAyABKAkiYwoNR2l0UHVzaE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJiChFTY3JlZW5zaG90UmVxdWVzdBIWCgl3aW5kb3dfaWQYASABKAlIAIgBARIWCg5pbmNsdWRlX2N1cnNvchgCIAEoCBIPCgdxdWFsaXR5GAMgASgFQgwKCl93aW5kb3dfaWQiVwoSU2NyZWVuc2hvdFJlc3BvbnNlEhIKCmltYWdlX2RhdGEYASABKAwSDgoGZm9ybWF0GAIgASgJEg0KBXdpZHRoGAMgASgFEg4KBmhlaWdodBgEIAEoBSKDAQoMRWxlbWVudFF1ZXJ5EhgKC2FwcGxpY2F0aW9uGAEgASgJSACIAQESEQoEcm9sZRgCIAEoCUgBiAEBEhEKBG5hbWUYAyABKAlIAogBARIRCgltYXhfZGVwdGgYBCABKAVCDgoMX2FwcGxpY2F0aW9uQgcKBV9yb2xlQgcKBV9uYW1lIjoKEEVsZW1lbnRzUmVzcG9uc2USJgoIZWxlbWVudHMYASADKAsyFC5jdm0uYWdlbnQuVUlFbGVtZW50IqYBCglVSUVsZW1lbnQSCgoCaWQYASABKAkSEwoLYXBwbGljYXRpb24YAiABKAkSDAoEcm9sZRgDIAEoCRIMCgRuYW1lGAQgASgJEhMKC2Rlc2NyaXB0aW9uGAUgASgJEiYKBmJvdW5kcxgGIAEoCzIWLmN2bS5hZ2VudC5Cb3VuZGluZ0JveBIOCgZzdGF0ZXMYByADKAkSDwoHYWN0aW9ucxgIIAMoCSJCCgtCb3VuZGluZ0JveBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDQoFd2lkdGgYAyABKAUSDgoGaGVpZ2h0GAQgASgFIlEKEkVsZW1lbnRUcmVlUmVxdWVzdBIYCgthcHBsaWNhdGlvbhgBIAEoCUgAiAEBEhEKCW1heF9kZXB0aBgCIAEoBUIOCgxfYXBwbGljYXRpb24iPAoTRWxlbWVudFRyZWVSZXNwb25zZRIlCgVyb290cxgBIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSJeCgtFbGVtZW50Tm9kZRIlCgdlbGVtZW50GAEgASgLMhQuY3ZtLmFnZW50LlVJRWxlbWVudBIoCghjaGlsZHJlbhgCIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSKSAQoMQ2xpY2tSZXF1ZXN0EhQKCmVsZW1lbnRfaWQYASABKAlIABIqCghwb3NpdGlvbhgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlc0gAEiYKBmJ1dHRvbhgDIAEoDjIWLmN2bS5hZ2VudC5Nb3VzZUJ1dHRvbhIOCgZjbGlja3MYBCABKAVCCAoGdGFyZ2V0IiMKC0Nvb3JkaW5hdGVzEgkKAXgYASABKAUSCQoBeRgCIAEoBSJqCgtUeXBlUmVxdWVzdBIMCgR0ZXh0GAEgASgJEhcKCmVsZW1lbnRfaWQYAiABKAlIAIgBARIQCghkZWxheV9tcxgDIAEoBRITCgtjbGVhcl9maXJzdBgEIAEoCEINCgtfZWxlbWVudF9pZCJHCg9LZXlQcmVzc1JlcXVlc3QSDAoEa2V5cxgBIAMoCRIXCgplbGVtZW50X2lkGAIgASgJSACIAQFCDQoLX2VsZW1lbnRfaWQiOAoQTW92ZU1vdXNlUmVxdWVzdBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDgoGc21vb3RoGAMgASgIIjAKDkFjdGlvblJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkiiQEKD0Rlc2NyaWJlUmVxdWVzdBISCgpzY3JlZW5zaG90GAEgASgMEi8KCmZvY3VzX2FyZWEYAiABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3hIAIgBARIVCghxdWVzdGlvbhgDIAEoCUgBiAEBQg0KC19mb2N1c19hcmVhQgsKCV9xdWVzdGlvbiJVCg5WaXNpb25SZXNwb25zZRITCgtkZXNjcmlwdGlvbhgBIAEoCRIuCghlbGVtZW50cxgCIAMoCzIcLmN2bS5hZ2VudC5JZGVudGlmaWVkRWxlbWVudCJuChFJZGVudGlmaWVkRWxlbWVudBITCgtkZXNjcmlwdGlvbhgBIAEoCRIwChBlc3RpbWF0ZWRfYm91bmRzGAIgASgLMhYuY3ZtLmFnZW50LkJvdW5kaW5nQm94EhIKCmNvbmZpZGVuY2UYAyABKAIiUgoTRmluZEJ5VmlzaW9uUmVxdWVzdBITCgtkZXNjcmlwdGlvbhgBIAEoCRIXCgpzY3JlZW5zaG90GAIgASgMSACIAQFCDQoLX3NjcmVlbnNob3QipgEKFEZpbmRCeVZpc2lvblJlc3BvbnNlEg0KBWZvdW5kGAEgASgIEiYKBmNlbnRlchgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlcxImCgZib3VuZHMYAyABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3gSEgoKY29uZmlkZW5jZRgEIAEoAhIbChNlbGVtZW50X2Rlc2NyaXB0aW9uGAUgASgJIiwKCkF1ZGlvQ2h1bmsSDAoEZGF0YRgBIAEoDBIQCghpc19maW5hbBgCIAEoCCJpCg9UcmFuc2NyaXB0Q2h1bmsSDAoEdGV4dBgBIAEoCRISCgppc19wYXJ0aWFsGAIgASgIEhIKCmNvbmZpZGVuY2UYAyABKAISEAoIc3RhcnRfbXMYBCABKAUSDgoGZW5kX21zGAUgASgFIhMKEUxpc3RNb2RlbHNSZXF1ZXN0Ij0KEkxpc3RNb2RlbHNSZXNwb25zZRInCgZtb2RlbHMYASADKAsyFy5jdm0uYWdlbnQuV2hpc3Blck1vZGVsIkMKDFdoaXNwZXJNb2RlbBIMCgRuYW1lGAEgASgJEhEKCWF2YWlsYWJsZRgCIAEoCBISCgpzaXplX2J5dGVzGAMgASgDIhQKElZvaWNlU3RhdHVzUmVxdWVzdCJWChNWb2ljZVN0YXR1c1Jlc3BvbnNlEhEKCWF2YWlsYWJsZRgBIAEoCBIVCg1jdXJyZW50X21vZGVsGAIgASgJEhUKDWlzX3Byb2Nlc3NpbmcYAyABKAgiPgoRTGlzdFNraWxsc1JlcXVlc3QSKQoLdHlwZV9maWx0ZXIYASABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlIj0KEkxpc3RTa2lsbHNSZXNwb25zZRInCgZza2lsbHMYASADKAsyFy5jdm0uYWdlbnQuU2tpbGxTdW1tYXJ5IncKDFNraWxsU3VtbWFyeRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg4KBnNvdXJjZRgFIAEoCSIfCg9HZXRTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCSKJAQoNU2tpbGxSZXNwb25zZRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg8KB2NvbnRlbnQYBSABKAkSDgoGc291cmNlGAYgASgJIn4KEkNyZWF0ZVNraWxsUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg8KB2NvbnRlbnQYBSABKAkiWgoSVXBkYXRlU2tpbGxSZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSEAoIdHJpZ2dlcnMYAyADKAkSDwoHY29udGVudBgEIAEoCSIiChJEZWxldGVTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCSI1ChNEZWxldGVTa2lsbFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkimgEKE0V4ZWN1dGVTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCRJCCgpwYXJhbWV0ZXJzGAIgAygLMi4uY3ZtLmFnZW50LkV4ZWN1dGVTa2lsbFJlcXVlc3QuUGFyYW1ldGVyc0VudHJ5GjEKD1BhcmFtZXRlcnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpMBCg1Ta2lsbFByb2dyZXNzEhMKC3N0ZXBfbnVtYmVyGAEgASgFEhMKC3RvdGFsX3N0ZXBzGAIgASgFEhgKEHN0ZXBfZGVzY3JpcHRpb24YAyABKAkSEAoGb3V0cHV0GAQgASgJSAASDwoFZXJyb3IYBSABKAlIABIRCgljb21wbGV0ZWQYBiABKAhCCAoGcmVzdWx0IiMKEk1hdGNoU2tpbGxzUmVxdWVzdBINCgVpbnB1dBgBIAEoCSI9ChNNYXRjaFNraWxsc1Jlc3BvbnNlEiYKB21hdGNoZXMYASADKAsyFS5jdm0uYWdlbnQuU2tpbGxNYXRjaCJqCgpTa2lsbE1hdGNoEgwKBG5hbWUYASABKAkSIgoEdHlwZRgCIAEoDjIULmN2bS5hZ2VudC5Ta2lsbFR5cGUSEQoJcmVsZXZhbmNlGAMgASgCEhcKD21hdGNoZWRfdHJpZ2dlchgEIAEoCSpMCglSaXNrTGV2ZWwSDAoIUklTS19MT1cQABIPCgtSSVNLX01FRElVTRABEg0KCVJJU0tfSElHSBACEhEKDVJJU0tfQ1JJVElDQUwQAypACgtNb3VzZUJ1dHRvbhIOCgpNT1VTRV9MRUZUEAASDwoLTU9VU0VfUklHSFQQARIQCgxNT1VTRV9NSURETEUQAipFCglTa2lsbFR5cGUSDQoJU0tJTExfQUxMEAASFQoRU0tJTExfSU5TVFJVQ1RJT04QARISCg5TS0lMTF9XT1JLRkxPVxACMk0KDUhlYWx0aFNlcnZpY2USPAoFQ2hlY2sSGC5jdm0uYWdlbnQuSGVhbHRoUmVxdWVzdBoZLmN2bS5hZ2VudC5IZWFsdGhSZXNwb25zZTJPCgtDaGF0U2VydmljZRJACgtTZW5kTWVzc2FnZRIWLmN2bS5hZ2VudC5DaGF0UmVxdWVzdBoXLmN2bS5hZ2VudC5DaGF0UmVzcG9uc2UwATJMCgxTaGVsbFNlcnZpY2USPAoHRXhlY3V0ZRIXLmN2bS5hZ2VudC5TaGVsbFJlcXVlc3QaFi5jdm0uYWdlbnQuU2hlbGxPdXRwdXQwATLEAgoNTml4T3BzU2VydmljZRJACgdSZWJ1aWxkEhkuY3ZtLmFnZW50LlJlYnVpbGRSZXF1ZXN0GhguY3ZtLmFnZW50LlJlYnVpbGRPdXRwdXQwARJCCghSb2xsYmFjaxIaLmN2bS5hZ2VudC5Sb2xsYmFja1JlcXVlc3QaGC5jdm0uYWdlbnQuUmVidWlsZE91dHB1dDABElgKD0xpc3RHZW5lcmF0aW9ucxIhLmN2bS5hZ2VudC5MaXN0R2VuZXJhdGlvbnNSZXF1ZXN0GiIuY3ZtLmFnZW50Lkxpc3RHZW5lcmF0aW9uc1Jlc3BvbnNlElMKEUN1cnJlbnRHZW5lcmF0aW9uEiMuY3ZtLmFnZW50LkN1cnJlbnRHZW5lcmF0aW9uUmVxdWVzdBoZLmN2bS5hZ2VudC5HZW5lcmF0aW9uSW5mbzLTAgoNR2l0T3BzU2VydmljZRJDCgZTdGF0dXMSGy5jdm0uYWdlbnQuR2l0U3RhdHVzUmVxdWVzdBocLmN2bS5hZ2VudC5HaXRTdGF0dXNSZXNwb25zZRI9CgREaWZmEhkuY3ZtLmFnZW50LkdpdERpZmZSZXF1ZXN0GhouY3ZtLmFnZW50LkdpdERpZmZSZXNwb25zZRI6CgNBZGQSGC5jdm0uYWdlbnQuR2l0QWRkUmVxdWVzdBoZLmN2bS5hZ2VudC5HaXRBZGRSZXNwb25zZRJDCgZDb21taXQSGy5jdm0uYWdlbnQuR2l0Q29tbWl0UmVxdWVzdBocLmN2bS5hZ2VudC5HaXRDb21taXRSZXNwb25zZRI9CgRQdXNoEhkuY3ZtLmFnZW50LkdpdFB1c2hSZXF1ZXN0GhguY3ZtLmFnZW50LkdpdFB1c2hPdXRwdXQwATKBBQoKR1VJU2VydmljZRJJCgpTY3JlZW5zaG90EhwuY3ZtLmFnZW50LlNjcmVlbnNob3RSZXF1ZXN0Gh0uY3ZtLmFnZW50LlNjcmVlbnNob3RSZXNwb25zZRJDCgtHZXRFbGVtZW50cxIXLmN2bS5hZ2VudC5FbGVtZW50UXVlcnkaGy5jdm0uYWdlbnQuRWxlbWVudHNSZXNwb25zZRJPCg5HZXRFbGVtZW50VHJlZRIdLmN2bS5hZ2VudC5FbGVtZW50VHJlZVJlcXVlc3QaHi5jdm0uYWdlbnQuRWxlbWVudFRyZWVSZXNwb25zZRI7CgVDbGljaxIXLmN2bS5hZ2VudC5DbGlja1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USOQoEVHlwZRIWLmN2bS5hZ2VudC5UeXBlUmVxdWVzdBoZLmN2bS5hZ2VudC5BY3Rpb25SZXNwb25zZRJBCghLZXlQcmVzcxIaLmN2bS5hZ2VudC5LZXlQcmVzc1JlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQwoJTW92ZU1vdXNlEhsuY3ZtLmFnZW50Lk1vdmVNb3VzZVJlcXVlc3QaGS5jdm0uYWdlbnQuQWN0aW9uUmVzcG9uc2USQQoIRGVzY3JpYmUSGi5jdm0uYWdlbnQuRGVzY3JpYmVSZXF1ZXN0GhkuY3ZtLmFnZW50LlZpc2lvblJlc3BvbnNlEk8KDEZpbmRCeVZpc2lvbhIeLmN2bS5hZ2VudC5GaW5kQnlWaXNpb25SZXF1ZXN0Gh8uY3ZtLmFnZW50LkZpbmRCeVZpc2lvblJlc3BvbnNlMucBCgxWb2ljZVNlcnZpY2USQwoKVHJhbnNjcmliZRIVLmN2bS5hZ2VudC5BdWRpb0NodW5rGhouY3ZtLmFnZW50LlRyYW5zY3JpcHRDaHVuaygBMAESSQoKTGlzdE1vZGVscxIcLmN2bS5hZ2VudC5MaXN0TW9kZWxzUmVxdWVzdBodLmN2bS5hZ2VudC5MaXN0TW9kZWxzUmVzcG9uc2USRwoGU3RhdHVzEh0uY3ZtLmFnZW50LlZvaWNlU3RhdHVzUmVxdWVzdBoeLmN2bS5hZ2VudC5Wb2ljZVN0YXR1c1Jlc3BvbnNlMu8DCg1Ta2lsbHNTZXJ2aWNlEkMKBExpc3QSHC5jdm0uYWdlbnQuTGlzdFNraWxsc1JlcXVlc3QaHS5jdm0uYWdlbnQuTGlzdFNraWxsc1Jlc3BvbnNlEjsKA0dldBIaLmN2bS5hZ2VudC5HZXRTa2lsbFJlcXVlc3QaGC5jdm0uYWdlbnQuU2tpbGxSZXNwb25zZRJBCgZDcmVhdGUSHS5jdm0uYWdlbnQuQ3JlYXRlU2tpbGxSZXF1ZXN0GhguY3ZtLmFnZW50LlNraWxsUmVzcG9uc2USQQoGVXBkYXRlEh0uY3ZtLmFnZW50LlVwZGF0ZVNraWxsUmVxdWVzdBoYLmN2bS5hZ2VudC5Ta2lsbFJlc3BvbnNlEkcKBkRlbGV0ZRIdLmN2bS5hZ2VudC5EZWxldGVTa2lsbFJlcXVlc3QaHi5jdm0uYWdlbnQuRGVsZXRlU2tpbGxSZXNwb25zZRJFCgdFeGVjdXRlEh4uY3ZtLmFnZW50LkV4ZWN1dGVTa2lsbFJlcXVlc3QaGC5jdm0uYWdlbnQuU2tpbGxQcm9ncmVzczABEkYKBU1hdGNoEh0uY3ZtLmFnZW50Lk1hdGNoU2tpbGxzUmVxdWVzdBoeLmN2bS5hZ2VudC5NYXRjaFNraWxsc1Jlc3BvbnNlYgZwcm90bzM");
+  fileDesc("CgthZ2VudC5wcm90bxIJY3ZtLmFnZW50Ig8KDUhlYWx0aFJlcXVlc3QiMgoOSGVhbHRoUmVzcG9uc2USDwoHaGVhbHRoeRgBIAEoCBIPCgd2ZXJzaW9uGAIgASgJIjcKC0NoYXRSZXF1ZXN0Eg8KB21lc3NhZ2UYASABKAkSFwoPY29udmVyc2F0aW9uX2lkGAIgASgJIkkKDENoYXRSZXNwb25zZRIOCgR0ZXh0GAEgASgJSAASDwoFZXJyb3IYAiABKAlIABIMCgRkb25lGAMgASgIQgoKCHJlc3BvbnNlIk0KDFNoZWxsUmVxdWVzdBIPCgdjb21tYW5kGAEgASgJEhMKC3dvcmtpbmdfZGlyGAIgASgJEhcKD3RpbWVvdXRfc2Vjb25kcxgDIAEoBSJhCgtTaGVsbE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJGCg5SZWJ1aWxkUmVxdWVzdBISCgpmbGFrZV9wYXRoGAEgASgJEhAKCGhvc3RuYW1lGAIgASgJEg4KBmFjdGlvbhgDIAEoCSKBAQoNUmVidWlsZE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBARISCgVwaGFzZRgEIAEoCUgCiAEBQggKBm91dHB1dEIMCgpfZXhpdF9jb2RlQggKBl9waGFzZSI5Cg9Sb2xsYmFja1JlcXVlc3QSFwoKZ2VuZXJhdGlvbhgBIAEoBUgAiAEBQg0KC19nZW5lcmF0aW9uIicKFkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QSDQoFbGltaXQYASABKAUiSQoXTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USLgoLZ2VuZXJhdGlvbnMYASADKAsyGS5jdm0uYWdlbnQuR2VuZXJhdGlvbkluZm8iGgoYQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0Io4BCg5HZW5lcmF0aW9uSW5mbxIOCgZudW1iZXIYASABKAUSDAoEZGF0ZRgCIAEoCRIVCg1uaXhvc192ZXJzaW9uGAMgASgJEhYKDmtlcm5lbF92ZXJzaW9uGAQgASgJEh4KFmNvbmZpZ3VyYXRpb25fcmV2aXNpb24YBSABKAkSDwoHY3VycmVudBgGIAEoCCIlChBHaXRTdGF0dXNSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCSLSAQoRR2l0U3RhdHVzUmVzcG9uc2USDgoGYnJhbmNoGAEgASgJEicKCG1vZGlmaWVkGAIgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSJQoGc3RhZ2VkGAMgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSKAoJdW50cmFja2VkGAQgAygLMhUuY3ZtLmFnZW50LkZpbGVTdGF0dXMSFAoMaGFzX3Vwc3RyZWFtGAUgASgIEg0KBWFoZWFkGAYgASgFEg4KBmJlaGluZBgHIAEoBSIqCgpGaWxlU3RhdHVzEgwKBHBhdGgYASABKAkSDgoGc3RhdHVzGAIgASgJIkIKDkdpdERpZmZSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCRIOCgZzdGFnZWQYAyABKAgiNQoPR2l0RGlmZlJlc3BvbnNlEiIKBWRpZmZzGAEgAygLMhMuY3ZtLmFnZW50LkZpbGVEaWZmIlAKCEZpbGVEaWZmEgwKBHBhdGgYASABKAkSDAoEZGlmZhgCIAEoCRIoCgpyaXNrX2xldmVsGAMgASgOMhQuY3ZtLmFnZW50LlJpc2tMZXZlbCIxCg1HaXRBZGRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRINCgVwYXRocxgCIAMoCSI3Cg5HaXRBZGRSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhQKDHN0YWdlZF9wYXRocxgCIAMoCSI2ChBHaXRDb21taXRSZXF1ZXN0EhEKCXJlcG9fcGF0aBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIkgKEUdpdENvbW1pdFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSEwoLY29tbWl0X2hhc2gYAiABKAkSDQoFZXJyb3IYAyABKAkiQwoOR2l0UHVzaFJlcXVlc3QSEQoJcmVwb19wYXRoGAEgASgJEg4KBnJlbW90ZRgCIAEoCRIOCgZicmFuY2gYAyABKAkiYwoNR2l0UHVzaE91dHB1dBIQCgZzdGRvdXQYASABKAlIABIQCgZzdGRlcnIYAiABKAlIABIWCglleGl0X2NvZGUYAyABKAVIAYgBAUIICgZvdXRwdXRCDAoKX2V4aXRfY29kZSJiChFTY3JlZW5zaG90UmVxdWVzdBIWCgl3aW5kb3dfaWQYASABKAlIAIgBARIWCg5pbmNsdWRlX2N1cnNvchgCIAEoCBIPCgdxdWFsaXR5GAMgASgFQgwKCl93aW5kb3dfaWQiVwoSU2NyZWVuc2hvdFJlc3BvbnNlEhIKCmltYWdlX2RhdGEYASABKAwSDgoGZm9ybWF0GAIgASgJEg0KBXdpZHRoGAMgASgFEg4KBmhlaWdodBgEIAEoBSKDAQoMRWxlbWVudFF1ZXJ5EhgKC2FwcGxpY2F0aW9uGAEgASgJSACIAQESEQoEcm9sZRgCIAEoCUgBiAEBEhEKBG5hbWUYAyABKAlIAogBARIRCgltYXhfZGVwdGgYBCABKAVCDgoMX2FwcGxpY2F0aW9uQgcKBV9yb2xlQgcKBV9uYW1lIjoKEEVsZW1lbnRzUmVzcG9uc2USJgoIZWxlbWVudHMYASADKAsyFC5jdm0uYWdlbnQuVUlFbGVtZW50IqYBCglVSUVsZW1lbnQSCgoCaWQYASABKAkSEwoLYXBwbGljYXRpb24YAiABKAkSDAoEcm9sZRgDIAEoCRIMCgRuYW1lGAQgASgJEhMKC2Rlc2NyaXB0aW9uGAUgASgJEiYKBmJvdW5kcxgGIAEoCzIWLmN2bS5hZ2VudC5Cb3VuZGluZ0JveBIOCgZzdGF0ZXMYByADKAkSDwoHYWN0aW9ucxgIIAMoCSJCCgtCb3VuZGluZ0JveBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDQoFd2lkdGgYAyABKAUSDgoGaGVpZ2h0GAQgASgFIlEKEkVsZW1lbnRUcmVlUmVxdWVzdBIYCgthcHBsaWNhdGlvbhgBIAEoCUgAiAEBEhEKCW1heF9kZXB0aBgCIAEoBUIOCgxfYXBwbGljYXRpb24iPAoTRWxlbWVudFRyZWVSZXNwb25zZRIlCgVyb290cxgBIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSJeCgtFbGVtZW50Tm9kZRIlCgdlbGVtZW50GAEgASgLMhQuY3ZtLmFnZW50LlVJRWxlbWVudBIoCghjaGlsZHJlbhgCIAMoCzIWLmN2bS5hZ2VudC5FbGVtZW50Tm9kZSKSAQoMQ2xpY2tSZXF1ZXN0EhQKCmVsZW1lbnRfaWQYASABKAlIABIqCghwb3NpdGlvbhgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlc0gAEiYKBmJ1dHRvbhgDIAEoDjIWLmN2bS5hZ2VudC5Nb3VzZUJ1dHRvbhIOCgZjbGlja3MYBCABKAVCCAoGdGFyZ2V0IiMKC0Nvb3JkaW5hdGVzEgkKAXgYASABKAUSCQoBeRgCIAEoBSJqCgtUeXBlUmVxdWVzdBIMCgR0ZXh0GAEgASgJEhcKCmVsZW1lbnRfaWQYAiABKAlIAIgBARIQCghkZWxheV9tcxgDIAEoBRITCgtjbGVhcl9maXJzdBgEIAEoCEINCgtfZWxlbWVudF9pZCJHCg9LZXlQcmVzc1JlcXVlc3QSDAoEa2V5cxgBIAMoCRIXCgplbGVtZW50X2lkGAIgASgJSACIAQFCDQoLX2VsZW1lbnRfaWQiOAoQTW92ZU1vdXNlUmVxdWVzdBIJCgF4GAEgASgFEgkKAXkYAiABKAUSDgoGc21vb3RoGAMgASgIIjAKDkFjdGlvblJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkiiQEKD0Rlc2NyaWJlUmVxdWVzdBISCgpzY3JlZW5zaG90GAEgASgMEi8KCmZvY3VzX2FyZWEYAiABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3hIAIgBARIVCghxdWVzdGlvbhgDIAEoCUgBiAEBQg0KC19mb2N1c19hcmVhQgsKCV9xdWVzdGlvbiJVCg5WaXNpb25SZXNwb25zZRITCgtkZXNjcmlwdGlvbhgBIAEoCRIuCghlbGVtZW50cxgCIAMoCzIcLmN2bS5hZ2VudC5JZGVudGlmaWVkRWxlbWVudCJuChFJZGVudGlmaWVkRWxlbWVudBITCgtkZXNjcmlwdGlvbhgBIAEoCRIwChBlc3RpbWF0ZWRfYm91bmRzGAIgASgLMhYuY3ZtLmFnZW50LkJvdW5kaW5nQm94EhIKCmNvbmZpZGVuY2UYAyABKAIiUgoTRmluZEJ5VmlzaW9uUmVxdWVzdBITCgtkZXNjcmlwdGlvbhgBIAEoCRIXCgpzY3JlZW5zaG90GAIgASgMSACIAQFCDQoLX3NjcmVlbnNob3QipgEKFEZpbmRCeVZpc2lvblJlc3BvbnNlEg0KBWZvdW5kGAEgASgIEiYKBmNlbnRlchgCIAEoCzIWLmN2bS5hZ2VudC5Db29yZGluYXRlcxImCgZib3VuZHMYAyABKAsyFi5jdm0uYWdlbnQuQm91bmRpbmdCb3gSEgoKY29uZmlkZW5jZRgEIAEoAhIbChNlbGVtZW50X2Rlc2NyaXB0aW9uGAUgASgJIiwKCkF1ZGlvQ2h1bmsSDAoEZGF0YRgBIAEoDBIQCghpc19maW5hbBgCIAEoCCJpCg9UcmFuc2NyaXB0Q2h1bmsSDAoEdGV4dBgBIAEoCRISCgppc19wYXJ0aWFsGAIgASgIEhIKCmNvbmZpZGVuY2UYAyABKAISEAoIc3RhcnRfbXMYBCABKAUSDgoGZW5kX21zGAUgASgFIhMKEUxpc3RNb2RlbHNSZXF1ZXN0Ij0KEkxpc3RNb2RlbHNSZXNwb25zZRInCgZtb2RlbHMYASADKAsyFy5jdm0uYWdlbnQuV2hpc3Blck1vZGVsIkMKDFdoaXNwZXJNb2RlbBIMCgRuYW1lGAEgASgJEhEKCWF2YWlsYWJsZRgCIAEoCBISCgpzaXplX2J5dGVzGAMgASgDIhQKElZvaWNlU3RhdHVzUmVxdWVzdCJWChNWb2ljZVN0YXR1c1Jlc3BvbnNlEhEKCWF2YWlsYWJsZRgBIAEoCBIVCg1jdXJyZW50X21vZGVsGAIgASgJEhUKDWlzX3Byb2Nlc3NpbmcYAyABKAgiPgoRTGlzdFNraWxsc1JlcXVlc3QSKQoLdHlwZV9maWx0ZXIYASABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlIj0KEkxpc3RTa2lsbHNSZXNwb25zZRInCgZza2lsbHMYASADKAsyFy5jdm0uYWdlbnQuU2tpbGxTdW1tYXJ5IncKDFNraWxsU3VtbWFyeRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg4KBnNvdXJjZRgFIAEoCSIfCg9HZXRTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCSKJAQoNU2tpbGxSZXNwb25zZRIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg8KB2NvbnRlbnQYBSABKAkSDgoGc291cmNlGAYgASgJIn4KEkNyZWF0ZVNraWxsUmVxdWVzdBIMCgRuYW1lGAEgASgJEhMKC2Rlc2NyaXB0aW9uGAIgASgJEiIKBHR5cGUYAyABKA4yFC5jdm0uYWdlbnQuU2tpbGxUeXBlEhAKCHRyaWdnZXJzGAQgAygJEg8KB2NvbnRlbnQYBSABKAkiWgoSVXBkYXRlU2tpbGxSZXF1ZXN0EgwKBG5hbWUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkSEAoIdHJpZ2dlcnMYAyADKAkSDwoHY29udGVudBgEIAEoCSIiChJEZWxldGVTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCSI1ChNEZWxldGVTa2lsbFJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkimgEKE0V4ZWN1dGVTa2lsbFJlcXVlc3QSDAoEbmFtZRgBIAEoCRJCCgpwYXJhbWV0ZXJzGAIgAygLMi4uY3ZtLmFnZW50LkV4ZWN1dGVTa2lsbFJlcXVlc3QuUGFyYW1ldGVyc0VudHJ5GjEKD1BhcmFtZXRlcnNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIpMBCg1Ta2lsbFByb2dyZXNzEhMKC3N0ZXBfbnVtYmVyGAEgASgFEhMKC3RvdGFsX3N0ZXBzGAIgASgFEhgKEHN0ZXBfZGVzY3JpcHRpb24YAyABKAkSEAoGb3V0cHV0GAQgASgJSAASDwoFZXJyb3IYBSABKAlIABIRCgljb21wbGV0ZWQYBiABKAhCCAoGcmVzdWx0IiMKEk1hdGNoU2tpbGxzUmVxdWVzdBINCgVpbnB1dBgBIAEoCSI9ChNNYXRjaFNraWxsc1Jlc3BvbnNlEiYKB21hdGNoZXMYASADKAsyFS5jdm0uYWdlbnQuU2tpbGxNYXRjaCJqCgpTa2lsbE1hdGNoEgwKBG5hbWUYASABKAkSIgoEdHlwZRgCIAEoDjIULmN2bS5hZ2VudC5Ta2lsbFR5cGUSEQoJcmVsZXZhbmNlGAMgASgCEhcKD21hdGNoZWRfdHJpZ2dlchgEIAEoCSKoAgoLTWVtb3J5RW50cnkSCgoCaWQYASABKAkSJQoFbGF5ZXIYAiABKA4yFi5jdm0uYWdlbnQuTWVtb3J5TGF5ZXISDwoHY29udGVudBgDIAEoCRI2CghtZXRhZGF0YRgEIAMoCzIkLmN2bS5hZ2VudC5NZW1vcnlFbnRyeS5NZXRhZGF0YUVudHJ5EhUKDWNyZWF0ZWRfYXRfbXMYBSABKAMSGAoQbGFzdF9hY2Nlc3NlZF9tcxgGIAEoAxIVCg1leHBpcmVzX2F0X21zGAcgASgDEg4KBnBpbm5lZBgIIAEoCBIUCgxhY2Nlc3NfY291bnQYCSABKAUaLwoNTWV0YWRhdGFFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIr8BCgtNZW1vcnlRdWVyeRImCgZsYXllcnMYASADKA4yFi5jdm0uYWdlbnQuTWVtb3J5TGF5ZXISEwoLc2VhcmNoX3RleHQYAiABKAkSNAoHZmlsdGVycxgDIAMoCzIjLmN2bS5hZ2VudC5NZW1vcnlRdWVyeS5GaWx0ZXJzRW50cnkSDQoFbGltaXQYBCABKAUaLgoMRmlsdGVyc0VudHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEiUwoTTWVtb3J5UXVlcnlSZXNwb25zZRInCgdlbnRyaWVzGAEgAygLMhYuY3ZtLmFnZW50Lk1lbW9yeUVudHJ5EhMKC3RvdGFsX2NvdW50GAIgASgFIswBChJTdG9yZU1lbW9yeVJlcXVlc3QSJQoFbGF5ZXIYASABKA4yFi5jdm0uYWdlbnQuTWVtb3J5TGF5ZXISDwoHY29udGVudBgCIAEoCRI9CghtZXRhZGF0YRgDIAMoCzIrLmN2bS5hZ2VudC5TdG9yZU1lbW9yeVJlcXVlc3QuTWV0YWRhdGFFbnRyeRIOCgZ0dGxfbXMYBCABKAMaLwoNTWV0YWRhdGFFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIiEKE1N0b3JlTWVtb3J5UmVzcG9uc2USCgoCaWQYASABKAkiHAoaR2V0Rm9yZ2V0Q2FuZGlkYXRlc1JlcXVlc3QiXQoPRm9yZ2V0Q2FuZGlkYXRlEiUKBWVudHJ5GAEgASgLMhYuY3ZtLmFnZW50Lk1lbW9yeUVudHJ5Eg4KBnJlYXNvbhgCIAEoCRITCgthdXRvX2ZvcmdldBgDIAEoCCJKChhGb3JnZXRDYW5kaWRhdGVzUmVzcG9uc2USLgoKY2FuZGlkYXRlcxgBIAMoCzIaLmN2bS5hZ2VudC5Gb3JnZXRDYW5kaWRhdGUiNgoORm9yZ2V0RGVjaXNpb24SEgoKZm9yZ2V0X2lkcxgBIAMoCRIQCghrZWVwX2lkcxgCIAMoCSJCChVDb25maXJtRm9yZ2V0UmVzcG9uc2USFQoNZGVsZXRlZF9jb3VudBgBIAEoBRISCgprZXB0X2NvdW50GAIgASgFIigKClBpblJlcXVlc3QSCgoCaWQYASABKAkSDgoGcGlubmVkGAIgASgIIh4KC1BpblJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgiFQoTUmVmcmVzaEZhY3RzUmVxdWVzdCpMCglSaXNrTGV2ZWwSDAoIUklTS19MT1cQABIPCgtSSVNLX01FRElVTRABEg0KCVJJU0tfSElHSBACEhEKDVJJU0tfQ1JJVElDQUwQAypACgtNb3VzZUJ1dHRvbhIOCgpNT1VTRV9MRUZUEAASDwoLTU9VU0VfUklHSFQQARIQCgxNT1VTRV9NSURETEUQAipFCglTa2lsbFR5cGUSDQoJU0tJTExfQUxMEAASFQoRU0tJTExfSU5TVFJVQ1RJT04QARISCg5TS0lMTF9XT1JLRkxPVxACKpUBCgtNZW1vcnlMYXllchIcChhNRU1PUllfTEFZRVJfVU5TUEVDSUZJRUQQABIYChRNRU1PUllfTEFZRVJfV09SS0lORxABEhgKFE1FTU9SWV9MQVlFUl9BUkNISVZFEAISFgoSTUVNT1JZX0xBWUVSX0ZBQ1RTEAMSHAoYTUVNT1JZX0xBWUVSX1BSRUZFUkVOQ0VTEAQyTQoNSGVhbHRoU2VydmljZRI8CgVDaGVjaxIYLmN2bS5hZ2VudC5IZWFsdGhSZXF1ZXN0GhkuY3ZtLmFnZW50LkhlYWx0aFJlc3BvbnNlMk8KC0NoYXRTZXJ2aWNlEkAKC1NlbmRNZXNzYWdlEhYuY3ZtLmFnZW50LkNoYXRSZXF1ZXN0GhcuY3ZtLmFnZW50LkNoYXRSZXNwb25zZTABMkwKDFNoZWxsU2VydmljZRI8CgdFeGVjdXRlEhcuY3ZtLmFnZW50LlNoZWxsUmVxdWVzdBoWLmN2bS5hZ2VudC5TaGVsbE91dHB1dDABMsQCCg1OaXhPcHNTZXJ2aWNlEkAKB1JlYnVpbGQSGS5jdm0uYWdlbnQuUmVidWlsZFJlcXVlc3QaGC5jdm0uYWdlbnQuUmVidWlsZE91dHB1dDABEkIKCFJvbGxiYWNrEhouY3ZtLmFnZW50LlJvbGxiYWNrUmVxdWVzdBoYLmN2bS5hZ2VudC5SZWJ1aWxkT3V0cHV0MAESWAoPTGlzdEdlbmVyYXRpb25zEiEuY3ZtLmFnZW50Lkxpc3RHZW5lcmF0aW9uc1JlcXVlc3QaIi5jdm0uYWdlbnQuTGlzdEdlbmVyYXRpb25zUmVzcG9uc2USUwoRQ3VycmVudEdlbmVyYXRpb24SIy5jdm0uYWdlbnQuQ3VycmVudEdlbmVyYXRpb25SZXF1ZXN0GhkuY3ZtLmFnZW50LkdlbmVyYXRpb25JbmZvMtMCCg1HaXRPcHNTZXJ2aWNlEkMKBlN0YXR1cxIbLmN2bS5hZ2VudC5HaXRTdGF0dXNSZXF1ZXN0GhwuY3ZtLmFnZW50LkdpdFN0YXR1c1Jlc3BvbnNlEj0KBERpZmYSGS5jdm0uYWdlbnQuR2l0RGlmZlJlcXVlc3QaGi5jdm0uYWdlbnQuR2l0RGlmZlJlc3BvbnNlEjoKA0FkZBIYLmN2bS5hZ2VudC5HaXRBZGRSZXF1ZXN0GhkuY3ZtLmFnZW50LkdpdEFkZFJlc3BvbnNlEkMKBkNvbW1pdBIbLmN2bS5hZ2VudC5HaXRDb21taXRSZXF1ZXN0GhwuY3ZtLmFnZW50LkdpdENvbW1pdFJlc3BvbnNlEj0KBFB1c2gSGS5jdm0uYWdlbnQuR2l0UHVzaFJlcXVlc3QaGC5jdm0uYWdlbnQuR2l0UHVzaE91dHB1dDABMoEFCgpHVUlTZXJ2aWNlEkkKClNjcmVlbnNob3QSHC5jdm0uYWdlbnQuU2NyZWVuc2hvdFJlcXVlc3QaHS5jdm0uYWdlbnQuU2NyZWVuc2hvdFJlc3BvbnNlEkMKC0dldEVsZW1lbnRzEhcuY3ZtLmFnZW50LkVsZW1lbnRRdWVyeRobLmN2bS5hZ2VudC5FbGVtZW50c1Jlc3BvbnNlEk8KDkdldEVsZW1lbnRUcmVlEh0uY3ZtLmFnZW50LkVsZW1lbnRUcmVlUmVxdWVzdBoeLmN2bS5hZ2VudC5FbGVtZW50VHJlZVJlc3BvbnNlEjsKBUNsaWNrEhcuY3ZtLmFnZW50LkNsaWNrUmVxdWVzdBoZLmN2bS5hZ2VudC5BY3Rpb25SZXNwb25zZRI5CgRUeXBlEhYuY3ZtLmFnZW50LlR5cGVSZXF1ZXN0GhkuY3ZtLmFnZW50LkFjdGlvblJlc3BvbnNlEkEKCEtleVByZXNzEhouY3ZtLmFnZW50LktleVByZXNzUmVxdWVzdBoZLmN2bS5hZ2VudC5BY3Rpb25SZXNwb25zZRJDCglNb3ZlTW91c2USGy5jdm0uYWdlbnQuTW92ZU1vdXNlUmVxdWVzdBoZLmN2bS5hZ2VudC5BY3Rpb25SZXNwb25zZRJBCghEZXNjcmliZRIaLmN2bS5hZ2VudC5EZXNjcmliZVJlcXVlc3QaGS5jdm0uYWdlbnQuVmlzaW9uUmVzcG9uc2USTwoMRmluZEJ5VmlzaW9uEh4uY3ZtLmFnZW50LkZpbmRCeVZpc2lvblJlcXVlc3QaHy5jdm0uYWdlbnQuRmluZEJ5VmlzaW9uUmVzcG9uc2Uy5wEKDFZvaWNlU2VydmljZRJDCgpUcmFuc2NyaWJlEhUuY3ZtLmFnZW50LkF1ZGlvQ2h1bmsaGi5jdm0uYWdlbnQuVHJhbnNjcmlwdENodW5rKAEwARJJCgpMaXN0TW9kZWxzEhwuY3ZtLmFnZW50Lkxpc3RNb2RlbHNSZXF1ZXN0Gh0uY3ZtLmFnZW50Lkxpc3RNb2RlbHNSZXNwb25zZRJHCgZTdGF0dXMSHS5jdm0uYWdlbnQuVm9pY2VTdGF0dXNSZXF1ZXN0Gh4uY3ZtLmFnZW50LlZvaWNlU3RhdHVzUmVzcG9uc2Uy7wMKDVNraWxsc1NlcnZpY2USQwoETGlzdBIcLmN2bS5hZ2VudC5MaXN0U2tpbGxzUmVxdWVzdBodLmN2bS5hZ2VudC5MaXN0U2tpbGxzUmVzcG9uc2USOwoDR2V0EhouY3ZtLmFnZW50LkdldFNraWxsUmVxdWVzdBoYLmN2bS5hZ2VudC5Ta2lsbFJlc3BvbnNlEkEKBkNyZWF0ZRIdLmN2bS5hZ2VudC5DcmVhdGVTa2lsbFJlcXVlc3QaGC5jdm0uYWdlbnQuU2tpbGxSZXNwb25zZRJBCgZVcGRhdGUSHS5jdm0uYWdlbnQuVXBkYXRlU2tpbGxSZXF1ZXN0GhguY3ZtLmFnZW50LlNraWxsUmVzcG9uc2USRwoGRGVsZXRlEh0uY3ZtLmFnZW50LkRlbGV0ZVNraWxsUmVxdWVzdBoeLmN2bS5hZ2VudC5EZWxldGVTa2lsbFJlc3BvbnNlEkUKB0V4ZWN1dGUSHi5jdm0uYWdlbnQuRXhlY3V0ZVNraWxsUmVxdWVzdBoYLmN2bS5hZ2VudC5Ta2lsbFByb2dyZXNzMAESRgoFTWF0Y2gSHS5jdm0uYWdlbnQuTWF0Y2hTa2lsbHNSZXF1ZXN0Gh4uY3ZtLmFnZW50Lk1hdGNoU2tpbGxzUmVzcG9uc2UyzwMKDU1lbW9yeVNlcnZpY2USPwoFUXVlcnkSFi5jdm0uYWdlbnQuTWVtb3J5UXVlcnkaHi5jdm0uYWdlbnQuTWVtb3J5UXVlcnlSZXNwb25zZRJGCgVTdG9yZRIdLmN2bS5hZ2VudC5TdG9yZU1lbW9yeVJlcXVlc3QaHi5jdm0uYWdlbnQuU3RvcmVNZW1vcnlSZXNwb25zZRJhChNHZXRGb3JnZXRDYW5kaWRhdGVzEiUuY3ZtLmFnZW50LkdldEZvcmdldENhbmRpZGF0ZXNSZXF1ZXN0GiMuY3ZtLmFnZW50LkZvcmdldENhbmRpZGF0ZXNSZXNwb25zZRJMCg1Db25maXJtRm9yZ2V0EhkuY3ZtLmFnZW50LkZvcmdldERlY2lzaW9uGiAuY3ZtLmFnZW50LkNvbmZpcm1Gb3JnZXRSZXNwb25zZRI0CgNQaW4SFS5jdm0uYWdlbnQuUGluUmVxdWVzdBoWLmN2bS5hZ2VudC5QaW5SZXNwb25zZRJOCgxSZWZyZXNoRmFjdHMSHi5jdm0uYWdlbnQuUmVmcmVzaEZhY3RzUmVxdWVzdBoeLmN2bS5hZ2VudC5NZW1vcnlRdWVyeVJlc3BvbnNlYgZwcm90bzM");
 
 /**
  * @generated from message cvm.agent.HealthRequest
@@ -1927,6 +1927,353 @@ export const SkillMatchSchema: GenMessage<SkillMatch> = /*@__PURE__*/
   messageDesc(file_agent, 65);
 
 /**
+ * Memory Entry
+ *
+ * @generated from message cvm.agent.MemoryEntry
+ */
+export type MemoryEntry = Message<"cvm.agent.MemoryEntry"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: cvm.agent.MemoryLayer layer = 2;
+   */
+  layer: MemoryLayer;
+
+  /**
+   * @generated from field: string content = 3;
+   */
+  content: string;
+
+  /**
+   * @generated from field: map<string, string> metadata = 4;
+   */
+  metadata: { [key: string]: string };
+
+  /**
+   * Unix timestamp in milliseconds
+   *
+   * @generated from field: int64 created_at_ms = 5;
+   */
+  createdAtMs: bigint;
+
+  /**
+   * Unix timestamp in milliseconds
+   *
+   * @generated from field: int64 last_accessed_ms = 6;
+   */
+  lastAccessedMs: bigint;
+
+  /**
+   * Unix timestamp in milliseconds (0 = no expiry)
+   *
+   * @generated from field: int64 expires_at_ms = 7;
+   */
+  expiresAtMs: bigint;
+
+  /**
+   * @generated from field: bool pinned = 8;
+   */
+  pinned: boolean;
+
+  /**
+   * @generated from field: int32 access_count = 9;
+   */
+  accessCount: number;
+};
+
+/**
+ * Describes the message cvm.agent.MemoryEntry.
+ * Use `create(MemoryEntrySchema)` to create a new message.
+ */
+export const MemoryEntrySchema: GenMessage<MemoryEntry> = /*@__PURE__*/
+  messageDesc(file_agent, 66);
+
+/**
+ * Query memories
+ *
+ * @generated from message cvm.agent.MemoryQuery
+ */
+export type MemoryQuery = Message<"cvm.agent.MemoryQuery"> & {
+  /**
+   * Empty = all layers
+   *
+   * @generated from field: repeated cvm.agent.MemoryLayer layers = 1;
+   */
+  layers: MemoryLayer[];
+
+  /**
+   * Full-text search
+   *
+   * @generated from field: string search_text = 2;
+   */
+  searchText: string;
+
+  /**
+   * Metadata filters
+   *
+   * @generated from field: map<string, string> filters = 3;
+   */
+  filters: { [key: string]: string };
+
+  /**
+   * Max results (default 50)
+   *
+   * @generated from field: int32 limit = 4;
+   */
+  limit: number;
+};
+
+/**
+ * Describes the message cvm.agent.MemoryQuery.
+ * Use `create(MemoryQuerySchema)` to create a new message.
+ */
+export const MemoryQuerySchema: GenMessage<MemoryQuery> = /*@__PURE__*/
+  messageDesc(file_agent, 67);
+
+/**
+ * @generated from message cvm.agent.MemoryQueryResponse
+ */
+export type MemoryQueryResponse = Message<"cvm.agent.MemoryQueryResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.MemoryEntry entries = 1;
+   */
+  entries: MemoryEntry[];
+
+  /**
+   * @generated from field: int32 total_count = 2;
+   */
+  totalCount: number;
+};
+
+/**
+ * Describes the message cvm.agent.MemoryQueryResponse.
+ * Use `create(MemoryQueryResponseSchema)` to create a new message.
+ */
+export const MemoryQueryResponseSchema: GenMessage<MemoryQueryResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 68);
+
+/**
+ * Store memory
+ *
+ * @generated from message cvm.agent.StoreMemoryRequest
+ */
+export type StoreMemoryRequest = Message<"cvm.agent.StoreMemoryRequest"> & {
+  /**
+   * @generated from field: cvm.agent.MemoryLayer layer = 1;
+   */
+  layer: MemoryLayer;
+
+  /**
+   * @generated from field: string content = 2;
+   */
+  content: string;
+
+  /**
+   * @generated from field: map<string, string> metadata = 3;
+   */
+  metadata: { [key: string]: string };
+
+  /**
+   * Time-to-live in milliseconds (0 = no expiry)
+   *
+   * @generated from field: int64 ttl_ms = 4;
+   */
+  ttlMs: bigint;
+};
+
+/**
+ * Describes the message cvm.agent.StoreMemoryRequest.
+ * Use `create(StoreMemoryRequestSchema)` to create a new message.
+ */
+export const StoreMemoryRequestSchema: GenMessage<StoreMemoryRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 69);
+
+/**
+ * @generated from message cvm.agent.StoreMemoryResponse
+ */
+export type StoreMemoryResponse = Message<"cvm.agent.StoreMemoryResponse"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+};
+
+/**
+ * Describes the message cvm.agent.StoreMemoryResponse.
+ * Use `create(StoreMemoryResponseSchema)` to create a new message.
+ */
+export const StoreMemoryResponseSchema: GenMessage<StoreMemoryResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 70);
+
+/**
+ * Forgetting candidates
+ *
+ * @generated from message cvm.agent.GetForgetCandidatesRequest
+ */
+export type GetForgetCandidatesRequest = Message<"cvm.agent.GetForgetCandidatesRequest"> & {
+};
+
+/**
+ * Describes the message cvm.agent.GetForgetCandidatesRequest.
+ * Use `create(GetForgetCandidatesRequestSchema)` to create a new message.
+ */
+export const GetForgetCandidatesRequestSchema: GenMessage<GetForgetCandidatesRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 71);
+
+/**
+ * @generated from message cvm.agent.ForgetCandidate
+ */
+export type ForgetCandidate = Message<"cvm.agent.ForgetCandidate"> & {
+  /**
+   * @generated from field: cvm.agent.MemoryEntry entry = 1;
+   */
+  entry?: MemoryEntry;
+
+  /**
+   * Why this is a candidate
+   *
+   * @generated from field: string reason = 2;
+   */
+  reason: string;
+
+  /**
+   * True if will be auto-deleted
+   *
+   * @generated from field: bool auto_forget = 3;
+   */
+  autoForget: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.ForgetCandidate.
+ * Use `create(ForgetCandidateSchema)` to create a new message.
+ */
+export const ForgetCandidateSchema: GenMessage<ForgetCandidate> = /*@__PURE__*/
+  messageDesc(file_agent, 72);
+
+/**
+ * @generated from message cvm.agent.ForgetCandidatesResponse
+ */
+export type ForgetCandidatesResponse = Message<"cvm.agent.ForgetCandidatesResponse"> & {
+  /**
+   * @generated from field: repeated cvm.agent.ForgetCandidate candidates = 1;
+   */
+  candidates: ForgetCandidate[];
+};
+
+/**
+ * Describes the message cvm.agent.ForgetCandidatesResponse.
+ * Use `create(ForgetCandidatesResponseSchema)` to create a new message.
+ */
+export const ForgetCandidatesResponseSchema: GenMessage<ForgetCandidatesResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 73);
+
+/**
+ * @generated from message cvm.agent.ForgetDecision
+ */
+export type ForgetDecision = Message<"cvm.agent.ForgetDecision"> & {
+  /**
+   * IDs to forget
+   *
+   * @generated from field: repeated string forget_ids = 1;
+   */
+  forgetIds: string[];
+
+  /**
+   * IDs to keep (resets decay)
+   *
+   * @generated from field: repeated string keep_ids = 2;
+   */
+  keepIds: string[];
+};
+
+/**
+ * Describes the message cvm.agent.ForgetDecision.
+ * Use `create(ForgetDecisionSchema)` to create a new message.
+ */
+export const ForgetDecisionSchema: GenMessage<ForgetDecision> = /*@__PURE__*/
+  messageDesc(file_agent, 74);
+
+/**
+ * @generated from message cvm.agent.ConfirmForgetResponse
+ */
+export type ConfirmForgetResponse = Message<"cvm.agent.ConfirmForgetResponse"> & {
+  /**
+   * @generated from field: int32 deleted_count = 1;
+   */
+  deletedCount: number;
+
+  /**
+   * @generated from field: int32 kept_count = 2;
+   */
+  keptCount: number;
+};
+
+/**
+ * Describes the message cvm.agent.ConfirmForgetResponse.
+ * Use `create(ConfirmForgetResponseSchema)` to create a new message.
+ */
+export const ConfirmForgetResponseSchema: GenMessage<ConfirmForgetResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 75);
+
+/**
+ * Pin/unpin memories
+ *
+ * @generated from message cvm.agent.PinRequest
+ */
+export type PinRequest = Message<"cvm.agent.PinRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: bool pinned = 2;
+   */
+  pinned: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.PinRequest.
+ * Use `create(PinRequestSchema)` to create a new message.
+ */
+export const PinRequestSchema: GenMessage<PinRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 76);
+
+/**
+ * @generated from message cvm.agent.PinResponse
+ */
+export type PinResponse = Message<"cvm.agent.PinResponse"> & {
+  /**
+   * @generated from field: bool success = 1;
+   */
+  success: boolean;
+};
+
+/**
+ * Describes the message cvm.agent.PinResponse.
+ * Use `create(PinResponseSchema)` to create a new message.
+ */
+export const PinResponseSchema: GenMessage<PinResponse> = /*@__PURE__*/
+  messageDesc(file_agent, 77);
+
+/**
+ * @generated from message cvm.agent.RefreshFactsRequest
+ */
+export type RefreshFactsRequest = Message<"cvm.agent.RefreshFactsRequest"> & {
+};
+
+/**
+ * Describes the message cvm.agent.RefreshFactsRequest.
+ * Use `create(RefreshFactsRequestSchema)` to create a new message.
+ */
+export const RefreshFactsRequestSchema: GenMessage<RefreshFactsRequest> = /*@__PURE__*/
+  messageDesc(file_agent, 78);
+
+/**
  * @generated from enum cvm.agent.RiskLevel
  */
 export enum RiskLevel {
@@ -2010,6 +2357,52 @@ export enum SkillType {
  */
 export const SkillTypeSchema: GenEnum<SkillType> = /*@__PURE__*/
   enumDesc(file_agent, 2);
+
+/**
+ * Memory Layer Types
+ *
+ * @generated from enum cvm.agent.MemoryLayer
+ */
+export enum MemoryLayer {
+  /**
+   * @generated from enum value: MEMORY_LAYER_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * Current session context
+   *
+   * @generated from enum value: MEMORY_LAYER_WORKING = 1;
+   */
+  WORKING = 1,
+
+  /**
+   * Summarized past conversations
+   *
+   * @generated from enum value: MEMORY_LAYER_ARCHIVE = 2;
+   */
+  ARCHIVE = 2,
+
+  /**
+   * System state facts
+   *
+   * @generated from enum value: MEMORY_LAYER_FACTS = 3;
+   */
+  FACTS = 3,
+
+  /**
+   * Learned user preferences
+   *
+   * @generated from enum value: MEMORY_LAYER_PREFERENCES = 4;
+   */
+  PREFERENCES = 4,
+}
+
+/**
+ * Describes the enum cvm.agent.MemoryLayer.
+ */
+export const MemoryLayerSchema: GenEnum<MemoryLayer> = /*@__PURE__*/
+  enumDesc(file_agent, 3);
 
 /**
  * Health check
@@ -2386,4 +2779,73 @@ export const SkillsService: GenService<{
   },
 }> = /*@__PURE__*/
   serviceDesc(file_agent, 7);
+
+/**
+ * Memory management service
+ *
+ * @generated from service cvm.agent.MemoryService
+ */
+export const MemoryService: GenService<{
+  /**
+   * Query memories with filters
+   *
+   * @generated from rpc cvm.agent.MemoryService.Query
+   */
+  query: {
+    methodKind: "unary";
+    input: typeof MemoryQuerySchema;
+    output: typeof MemoryQueryResponseSchema;
+  },
+  /**
+   * Store a new memory
+   *
+   * @generated from rpc cvm.agent.MemoryService.Store
+   */
+  store: {
+    methodKind: "unary";
+    input: typeof StoreMemoryRequestSchema;
+    output: typeof StoreMemoryResponseSchema;
+  },
+  /**
+   * Get memories that are candidates for forgetting
+   *
+   * @generated from rpc cvm.agent.MemoryService.GetForgetCandidates
+   */
+  getForgetCandidates: {
+    methodKind: "unary";
+    input: typeof GetForgetCandidatesRequestSchema;
+    output: typeof ForgetCandidatesResponseSchema;
+  },
+  /**
+   * Confirm which candidates to forget/keep
+   *
+   * @generated from rpc cvm.agent.MemoryService.ConfirmForget
+   */
+  confirmForget: {
+    methodKind: "unary";
+    input: typeof ForgetDecisionSchema;
+    output: typeof ConfirmForgetResponseSchema;
+  },
+  /**
+   * Pin or unpin a memory
+   *
+   * @generated from rpc cvm.agent.MemoryService.Pin
+   */
+  pin: {
+    methodKind: "unary";
+    input: typeof PinRequestSchema;
+    output: typeof PinResponseSchema;
+  },
+  /**
+   * Refresh system facts (re-query and update)
+   *
+   * @generated from rpc cvm.agent.MemoryService.RefreshFacts
+   */
+  refreshFacts: {
+    methodKind: "unary";
+    input: typeof RefreshFactsRequestSchema;
+    output: typeof MemoryQueryResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_agent, 8);
 
