@@ -42,6 +42,11 @@ else
     NIX_OPTIONS=""
 fi
 
+# Remove conflicting packages from old channel before installing from new channel
+# hostname-net-tools conflicts with hostname-hostname-debian in newer nixpkgs
+echo "Removing potentially conflicting packages..."
+nix-env -e hostname 2>/dev/null || true
+
 # Install necessary packages for VNC/GUI setup
 echo "Installing VNC and GUI components..."
 nix-env $NIX_OPTIONS -iA \
