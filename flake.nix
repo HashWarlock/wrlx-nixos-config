@@ -44,7 +44,10 @@
     nixpkgs,
     home-manager,
      ...
-  } @ inputs: {
+  } @ inputs: let
+    # Package set for CVM development shell
+    cvmPkgs = import nixpkgs { system = "x86_64-linux"; };
+  in {
     # Please replace my-nixos with your hostname
     nixosConfigurations = {
       asus-g512lw = let
@@ -113,5 +116,54 @@
       };
     };
     overlays = import ./overlays {inherit inputs;};
+
+    # Development shell for CVM with all required packages from flake.lock
+    devShells.x86_64-linux.cvm = cvmPkgs.mkShell {
+      packages = with cvmPkgs; [
+        # VNC/GUI
+        tigervnc
+        xorg.xorgserver
+        xfce.xfce4-session
+        xfce.xfce4-panel
+        xfce.xfwm4
+        xfce.xfdesktop
+        xfce.xfce4-settings
+        xfce.xfce4-terminal
+        xfce.xfce4-appfinder
+        xfce.xfconf
+        xfce.thunar
+        novnc
+
+        # System tools
+        dbus
+        openssh
+        procps
+        which
+        bash
+        hostname
+        fontconfig
+        coreutils
+        gnused
+
+        # GUI automation
+        xdotool
+        scrot
+        at-spi2-core
+        python3Packages.pyatspi
+
+        # Voice transcription
+        whisper-cpp
+
+        # Rust toolchain (1.91.1 from nixos-25.11)
+        rustc
+        cargo
+        gcc
+        pkg-config
+        openssl
+
+        # Python for web server
+        python3
+      ];
+    };
   };
 }
