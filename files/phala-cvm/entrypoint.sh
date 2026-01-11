@@ -12,8 +12,8 @@ fi
 echo "Working directory: $(pwd)"
 echo "Repository cloned at: /app"
 
-# Nix sandbox doesn't work in Docker on macOS, so disable it
-NIX_OPTIONS="--option sandbox false"
+# Nix sandbox and seccomp don't work in Docker on macOS/emulation, so disable them
+NIX_OPTIONS="--option sandbox false --option filter-syscalls false"
 
 # Install necessary packages for VNC/GUI setup
 echo "Installing VNC and GUI components..."
