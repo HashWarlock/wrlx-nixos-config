@@ -160,6 +160,7 @@
         gcc
         pkg-config
         openssl
+        protobuf  # Required for gRPC/protobuf compilation
 
         # Python for web server
         python3
