@@ -232,10 +232,17 @@ echo "Updating nix channel to nixos-25.11 for rustc 1.91.1..."
 nix-channel --add https://nixos.org/channels/nixos-25.11 nixpkgs
 nix-channel --update
 
-# Install Rust toolchain if not present
-if ! command -v cargo > /dev/null 2>&1; then
-    echo "Installing Rust toolchain..."
+# Install/upgrade Rust toolchain to ensure we have rustc 1.87.0+ (required by zune-jpeg)
+CURRENT_RUSTC=$(rustc --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo "0.0.0")
+REQUIRED_RUSTC="1.87.0"
+
+# Compare versions - reinstall if current < required
+if [ "$(printf '%s\n' "$REQUIRED_RUSTC" "$CURRENT_RUSTC" | sort -V | head -n1)" != "$REQUIRED_RUSTC" ]; then
+    echo "Rust toolchain outdated ($CURRENT_RUSTC < $REQUIRED_RUSTC), installing from nixos-25.11..."
     nix-env $NIX_OPTIONS -iA nixpkgs.rustc nixpkgs.cargo nixpkgs.gcc nixpkgs.pkg-config nixpkgs.openssl
+    echo "Installed rustc version: $(rustc --version)"
+else
+    echo "Rust toolchain OK: rustc $CURRENT_RUSTC"
 fi
 
 # Build the agent binary if source exists
