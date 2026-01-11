@@ -19,7 +19,7 @@
   programs.home-manager.enable = true;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  home.stateVersion = "24.05";
+  home.stateVersion = "25.11";
 
   programs.git = {
     userName = "Joshua W";
