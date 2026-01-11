@@ -12,8 +12,35 @@ fi
 echo "Working directory: $(pwd)"
 echo "Repository cloned at: /app"
 
-# Nix sandbox and seccomp don't work in Docker on macOS/emulation, so disable them
-NIX_OPTIONS="--option sandbox false --option filter-syscalls false"
+# Detect if running on macOS (Docker emulation) vs native Linux
+# Seccomp/sandbox issues occur on macOS/ARM emulation
+if [ -f /proc/version ] && grep -qi "darwin\|mac\|rosetta" /proc/version 2>/dev/null; then
+    IS_MACOS_EMULATION=true
+elif [ "$(uname -m)" = "aarch64" ] && [ -f /sys/devices/system/cpu/cpu0/regs/identification/midr_el1 ] 2>/dev/null; then
+    # Check for Apple Silicon fingerprint in CPU identification
+    IS_MACOS_EMULATION=true
+elif [ -n "$DOCKER_HOST" ] && echo "$DOCKER_HOST" | grep -qi "darwin"; then
+    IS_MACOS_EMULATION=true
+else
+    IS_MACOS_EMULATION=false
+fi
+
+# Check for Rosetta emulation marker or other macOS indicators
+if [ "$IS_MACOS_EMULATION" = "false" ]; then
+    # Additional check: Rosetta leaves markers in /proc/sys
+    if dmesg 2>/dev/null | grep -qi "rosetta\|apple"; then
+        IS_MACOS_EMULATION=true
+    fi
+fi
+
+# Set NIX_OPTIONS based on environment
+if [ "$IS_MACOS_EMULATION" = "true" ]; then
+    echo "Detected macOS/emulation environment - disabling nix sandbox and seccomp"
+    NIX_OPTIONS="--option sandbox false --option filter-syscalls false"
+else
+    echo "Detected native Linux environment - using default nix options"
+    NIX_OPTIONS=""
+fi
 
 # Install necessary packages for VNC/GUI setup
 echo "Installing VNC and GUI components..."
@@ -199,6 +226,11 @@ fi
 # CVM Agent Service Setup
 # =========================
 echo "Setting up CVM Agent service..."
+
+# Update nix channel to use newer nixpkgs (25.11) for compatible rust toolchain
+echo "Updating nix channel to nixos-25.11 for rustc 1.91.1..."
+nix-channel --add https://nixos.org/channels/nixos-25.11 nixpkgs
+nix-channel --update
 
 # Install Rust toolchain if not present
 if ! command -v cargo > /dev/null 2>&1; then
