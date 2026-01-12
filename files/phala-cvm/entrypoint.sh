@@ -11,29 +11,28 @@ fi
 
 cd /app
 
-# Detect if running on macOS (Docker emulation) vs native Linux
-# Seccomp/sandbox issues occur on macOS/ARM emulation
-IS_MACOS_EMULATION=false
+# Detect if we're in a Docker container
+# Docker containers already provide isolation, so nix sandbox is redundant
+# and can cause seccomp issues especially on Docker Desktop (macOS/Windows)
+IS_DOCKER_CONTAINER=false
 
-if [ -f /proc/version ] && grep -qi "darwin\|mac\|rosetta" /proc/version 2>/dev/null; then
-    IS_MACOS_EMULATION=true
-elif [ "$(uname -m)" = "aarch64" ] && [ -f /sys/devices/system/cpu/cpu0/regs/identification/midr_el1 ] 2>/dev/null; then
-    # Check for Apple Silicon fingerprint in CPU identification
-    IS_MACOS_EMULATION=true
-elif [ -n "$DOCKER_HOST" ] && echo "$DOCKER_HOST" | grep -qi "darwin"; then
-    IS_MACOS_EMULATION=true
+# Check for Docker container indicators
+if [ -f /.dockerenv ]; then
+    IS_DOCKER_CONTAINER=true
+elif grep -sq docker /proc/1/cgroup 2>/dev/null; then
+    IS_DOCKER_CONTAINER=true
+elif grep -sq docker /proc/self/cgroup 2>/dev/null; then
+    IS_DOCKER_CONTAINER=true
 fi
 
-# Additional check: Rosetta leaves markers in /proc/sys
-if [ "$IS_MACOS_EMULATION" = "false" ]; then
-    if dmesg 2>/dev/null | grep -qi "rosetta\|apple"; then
-        IS_MACOS_EMULATION=true
-    fi
+# Also allow explicit override via environment variable
+if [ "$DISABLE_NIX_SANDBOX" = "true" ]; then
+    IS_DOCKER_CONTAINER=true
 fi
 
 # Set NIX_OPTIONS based on environment
-if [ "$IS_MACOS_EMULATION" = "true" ]; then
-    echo "Detected macOS/emulation environment - disabling nix sandbox and seccomp"
+if [ "$IS_DOCKER_CONTAINER" = "true" ]; then
+    echo "Detected Docker container - disabling nix sandbox (container provides isolation)"
     NIX_OPTIONS="--option sandbox false --option filter-syscalls false"
 else
     echo "Detected native Linux environment - using default nix options"
