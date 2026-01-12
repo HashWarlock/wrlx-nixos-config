@@ -12,6 +12,7 @@ pub struct RedpillClient {
     model: String,
 }
 
+/// OpenAI-compatible chat completion request
 #[derive(Serialize)]
 struct ChatRequest {
     model: String,
@@ -26,19 +27,20 @@ pub struct Message {
     pub content: String,
 }
 
+/// OpenAI-compatible streaming response chunk
 #[derive(Deserialize)]
-struct StreamEvent {
-    #[serde(rename = "type")]
-    event_type: String,
-    delta: Option<Delta>,
+struct StreamChunk {
+    choices: Vec<StreamChoice>,
 }
 
 #[derive(Deserialize)]
-struct Delta {
-    #[serde(rename = "type")]
-    #[allow(dead_code)]
-    delta_type: Option<String>,
-    text: Option<String>,
+struct StreamChoice {
+    delta: Option<StreamDelta>,
+}
+
+#[derive(Deserialize)]
+struct StreamDelta {
+    content: Option<String>,
 }
 
 impl RedpillClient {
@@ -94,12 +96,12 @@ impl RedpillClient {
             stream: true,
         };
 
+        // Use OpenAI-compatible endpoint with Bearer auth (works with RedPill, OpenRouter, etc.)
         let response = self
             .client
-            .post(format!("{}/v1/messages", self.base_url))
-            .header("x-api-key", &self.api_key)
-            .header("anthropic-version", "2023-06-01")
-            .header("content-type", "application/json")
+            .post(format!("{}/v1/chat/completions", self.base_url))
+            .header("Authorization", format!("Bearer {}", self.api_key))
+            .header("Content-Type", "application/json")
             .json(&request)
             .send()
             .await?;
@@ -124,29 +126,27 @@ impl RedpillClient {
             };
             buffer.push_str(&String::from_utf8_lossy(&chunk));
 
-            // Process complete SSE events
-            while let Some(pos) = buffer.find("\n\n") {
-                let event_block = buffer[..pos].to_string();
-                buffer = buffer[pos + 2..].to_string();
+            // Process complete SSE events (OpenAI format: "data: {...}\n\n")
+            while let Some(pos) = buffer.find("\n") {
+                let line = buffer[..pos].to_string();
+                buffer = buffer[pos + 1..].to_string();
 
-                // Parse all lines in the event block to find the data line
-                // SSE format: "event: type\ndata: {...}"
-                let mut data_line: Option<&str> = None;
-                for line in event_block.lines() {
-                    if let Some(data) = line.strip_prefix("data: ") {
-                        data_line = Some(data);
-                    }
+                // Skip empty lines
+                if line.trim().is_empty() {
+                    continue;
                 }
 
-                if let Some(data) = data_line {
+                // Parse data lines
+                if let Some(data) = line.strip_prefix("data: ") {
                     if data == "[DONE]" {
                         continue;
                     }
-                    if let Ok(event) = serde_json::from_str::<StreamEvent>(data) {
-                        if event.event_type == "content_block_delta" {
-                            if let Some(delta) = event.delta {
-                                if let Some(text) = delta.text {
-                                    tx.send(Ok(text)).await.ok();
+                    // Parse OpenAI-compatible streaming chunk
+                    if let Ok(chunk) = serde_json::from_str::<StreamChunk>(data) {
+                        if let Some(choice) = chunk.choices.first() {
+                            if let Some(delta) = &choice.delta {
+                                if let Some(content) = &delta.content {
+                                    tx.send(Ok(content.clone())).await.ok();
                                 }
                             }
                         }
