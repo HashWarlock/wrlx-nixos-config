@@ -1,5 +1,6 @@
 #!/bin/sh
-set -e
+# Note: set -e intentionally removed to allow graceful degradation
+# Individual service failures are logged but don't stop other services
 
 # =============================================================================
 # Phala CVM NixOS Environment Startup Script
