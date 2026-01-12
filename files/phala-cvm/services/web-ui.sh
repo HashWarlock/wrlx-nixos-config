@@ -60,28 +60,39 @@ start() {
         return 0
     fi
 
+    # Check for pre-built dist
     if [ ! -d "$SERVE_DIR" ]; then
         log_warn "Web UI dist not found at $SERVE_DIR"
-        log_info "Attempting to build Web UI..."
-        build_webui || {
-            log_error "Run 'npm run build' in the web-ui directory to build it"
+        if command -v npm > /dev/null 2>&1; then
+            log_info "Attempting to build Web UI..."
+            if ! build_webui; then
+                log_error "Web UI build failed"
+                log_error "Try running manually: cd $BUILD_DIR && npm install && npm run build"
+                return 1
+            fi
+        else
+            log_error "npm not available and dist not pre-built"
+            log_error "Pre-build the Web UI or ensure npm is in PATH"
             return 1
-        }
+        fi
     fi
 
     if [ ! -d "$SERVE_DIR" ]; then
-        log_error "Web UI dist still not found after build"
+        log_error "Web UI dist still not found after build attempt"
         return 1
     fi
 
-    cd "$SERVE_DIR"
-    WEB_UI_PID=$(start_service "Web UI" "python3 -m http.server $PORT --bind 0.0.0.0" "$PORT")
-    if [ $? -eq 0 ]; then
-        echo "$WEB_UI_PID" > /tmp/web-ui.pid
-        cd - > /dev/null
+    cd "$SERVE_DIR" || return 1
+    local pid
+    pid=$(start_service "Web UI" "python3 -m http.server $PORT --bind 0.0.0.0" "$PORT")
+    local ret=$?
+    cd - > /dev/null || true
+
+    if [ $ret -eq 0 ] && [ -n "$pid" ]; then
+        echo "$pid" > /tmp/web-ui.pid
         return 0
     fi
-    cd - > /dev/null
+    log_error "start_service returned $ret with pid='$pid'"
     return 1
 }
 
