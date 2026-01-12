@@ -9,7 +9,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SERVICE_NAME="agent-api"
 DEFAULT_PORT=8080
 BUILD_DIR="${AGENT_API_DIR:-/app/cvm-agent/agent-api}"
-BINARY="$BUILD_DIR/target/release/agent-api"
+# Workspace puts target in workspace root, not member directory
+WORKSPACE_DIR="${WORKSPACE_DIR:-/app/cvm-agent}"
+BINARY="$WORKSPACE_DIR/target/release/agent-api"
 
 # Get port from config or environment
 PORT=$(get_service_port "$SERVICE_NAME" "$DEFAULT_PORT")
@@ -62,18 +64,19 @@ build_agent() {
         log_success "Agent API built successfully"
 
         # Find the actual binary - Cargo may use hyphens or underscores
+        # Workspace builds output to workspace root target directory
         ACTUAL_BINARY=""
         for name in "agent-api" "agent_api"; do
-            if [ -f "$BUILD_DIR/target/release/$name" ]; then
-                ACTUAL_BINARY="$BUILD_DIR/target/release/$name"
+            if [ -f "$WORKSPACE_DIR/target/release/$name" ]; then
+                ACTUAL_BINARY="$WORKSPACE_DIR/target/release/$name"
                 break
             fi
         done
 
         if [ -z "$ACTUAL_BINARY" ]; then
             log_error "Binary not found after successful build"
-            log_info "Checking target/release directory..."
-            ls -la "$BUILD_DIR/target/release/" 2>&1 | head -20
+            log_info "Checking workspace target/release directory..."
+            ls -la "$WORKSPACE_DIR/target/release/" 2>&1 | head -20
             cd - > /dev/null
             return 1
         fi
@@ -112,8 +115,8 @@ start() {
     # After build, BINARY should be set to the actual path
     if [ ! -x "$BINARY" ]; then
         log_error "Agent binary not found or not executable at $BINARY"
-        log_info "Listing target/release directory..."
-        ls -la "$BUILD_DIR/target/release/" 2>&1 | grep -E "^-|agent" | head -10
+        log_info "Listing workspace target/release directory..."
+        ls -la "$WORKSPACE_DIR/target/release/" 2>&1 | grep -E "^-|agent" | head -10
         return 1
     fi
 
