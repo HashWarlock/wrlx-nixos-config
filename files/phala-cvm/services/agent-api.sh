@@ -23,17 +23,49 @@ build_agent() {
     fi
 
     log_info "Building Agent API..."
+    log_info "Build directory: $BUILD_DIR"
+
     cd "$BUILD_DIR"
 
-    # Set OpenSSL environment for build
-    export PKG_CONFIG_PATH=$(find /nix/store -name "pkgconfig" -type d 2>/dev/null | head -1):$PKG_CONFIG_PATH
+    # Verify build tools are available (should be provided by nix develop)
+    if ! command -v cargo > /dev/null 2>&1; then
+        log_error "cargo not found in PATH. Ensure you're running inside 'nix develop .#cvm'"
+        cd - > /dev/null
+        return 1
+    fi
 
-    if cargo build --release; then
+    if ! command -v rustc > /dev/null 2>&1; then
+        log_error "rustc not found in PATH. Ensure you're running inside 'nix develop .#cvm'"
+        cd - > /dev/null
+        return 1
+    fi
+
+    log_info "Using rustc: $(rustc --version)"
+    log_info "Using cargo: $(cargo --version)"
+
+    # PKG_CONFIG_PATH should already be set by nix develop shell
+    # Only add OpenSSL path if not already configured
+    if [ -z "$PKG_CONFIG_PATH" ]; then
+        log_warn "PKG_CONFIG_PATH not set, attempting to find OpenSSL..."
+        OPENSSL_PKG=$(find /nix/store -maxdepth 2 -name "openssl-*" -type d 2>/dev/null | grep -v "\-dev$" | head -1)
+        if [ -n "$OPENSSL_PKG" ] && [ -d "$OPENSSL_PKG/lib/pkgconfig" ]; then
+            export PKG_CONFIG_PATH="$OPENSSL_PKG/lib/pkgconfig"
+            log_info "Set PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
+        fi
+    else
+        log_info "PKG_CONFIG_PATH already set: $PKG_CONFIG_PATH"
+    fi
+
+    # Run cargo build with verbose output on failure
+    log_info "Running cargo build --release..."
+    if cargo build --release 2>&1; then
         log_success "Agent API built successfully"
+        log_info "Binary location: $BINARY"
         cd - > /dev/null
         return 0
     else
-        log_error "Agent API build failed"
+        log_error "Agent API build failed. Cargo output above."
+        log_error "Try running manually: cd $BUILD_DIR && cargo build --release"
         cd - > /dev/null
         return 1
     fi

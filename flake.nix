@@ -160,6 +160,7 @@
         gcc
         pkg-config
         openssl
+        openssl.dev  # Development headers for Rust openssl crate
         protobuf  # Required for gRPC/protobuf compilation
 
         # Python for web server
@@ -169,6 +170,14 @@
         nodejs
         nodePackages.npm
       ];
+
+      # Set up environment for Rust openssl crate
+      shellHook = ''
+        export OPENSSL_DIR="${cvmPkgs.openssl.dev}"
+        export OPENSSL_LIB_DIR="${cvmPkgs.openssl.out}/lib"
+        export OPENSSL_INCLUDE_DIR="${cvmPkgs.openssl.dev}/include"
+        export PKG_CONFIG_PATH="${cvmPkgs.openssl.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
+      '';
     };
   };
 }

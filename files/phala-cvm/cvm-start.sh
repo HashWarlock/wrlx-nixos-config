@@ -201,17 +201,41 @@ fi
 
 log_info "Starting application services..."
 
+# Log environment for debugging
+log_info "Build environment:"
+log_info "  OPENSSL_DIR=${OPENSSL_DIR:-not set}"
+log_info "  PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-not set}"
+log_info "  PATH includes cargo: $(which cargo 2>/dev/null || echo 'not found')"
+
 # Start Agent API
-"$SERVICES_DIR/agent-api.sh" start
-AGENT_STARTED=$?
+log_info "Starting Agent API service..."
+if "$SERVICES_DIR/agent-api.sh" start; then
+    AGENT_STARTED=0
+    log_success "Agent API started successfully"
+else
+    AGENT_STARTED=1
+    log_error "Agent API failed to start - check logs above for details"
+fi
 
 # Start Web UI
-"$SERVICES_DIR/web-ui.sh" start
-WEBUI_STARTED=$?
+log_info "Starting Web UI service..."
+if "$SERVICES_DIR/web-ui.sh" start; then
+    WEBUI_STARTED=0
+    log_success "Web UI started successfully"
+else
+    WEBUI_STARTED=1
+    log_warn "Web UI failed to start"
+fi
 
 # Start Whisper
-"$SERVICES_DIR/whisper.sh" start
-WHISPER_STARTED=$?
+log_info "Starting Whisper service..."
+if "$SERVICES_DIR/whisper.sh" start; then
+    WHISPER_STARTED=0
+    log_success "Whisper started successfully"
+else
+    WHISPER_STARTED=1
+    log_warn "Whisper failed to start"
+fi
 
 # =============================================================================
 # Startup Summary
