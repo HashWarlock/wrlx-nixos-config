@@ -82,7 +82,8 @@ start_service() {
 
     log_info "Starting $name..."
 
-    eval "$cmd" &
+    # Redirect stdout/stderr to prevent blocking command substitution
+    eval "$cmd" > /dev/null 2>&1 &
     local pid=$!
 
     sleep 2
