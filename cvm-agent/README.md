@@ -11,7 +11,7 @@ The CVM Agent provides a conversational interface for managing NixOS systems run
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      Web UI (React)                         │
-│                                                             │
+│                        Port 3000                            │
 │  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐  │
 │  │   Chat    │ │   Diff    │ │  Memory   │ │    GUI    │  │
 │  │  Overlay  │ │  Preview  │ │   Panel   │ │ Inspector │  │
@@ -22,7 +22,7 @@ The CVM Agent provides a conversational interface for managing NixOS systems run
                            │
 ┌──────────────────────────┼─────────────────────────────────┐
 │                    Agent API (Rust/Tonic)                   │
-│                          │                                  │
+│                        Port 8080                            │
 │  ┌───────────────────────┴───────────────────────────────┐ │
 │  │                    gRPC Services                       │ │
 │  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐        │ │
@@ -34,10 +34,10 @@ The CVM Agent provides a conversational interface for managing NixOS systems run
 │  └───────────────────────────────────────────────────────┘ │
 │                          │                                  │
 │  ┌───────────────────────┴───────────────────────────────┐ │
-│  │                 Support Modules                        │ │
+│  │                 Core Modules                           │ │
 │  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐     │ │
-│  │  │   LLM   │ │  Risk   │ │Forgetting│ │Recovery │     │ │
-│  │  │ Client  │ │Classify │ │ Manager │ │ Actions │     │ │
+│  │  │ Config  │ │ Context │ │  Skill  │ │   LLM   │     │ │
+│  │  │ ::get() │ │ (DI)    │ │Registry │ │ Client  │     │ │
 │  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘     │ │
 │  └───────────────────────────────────────────────────────┘ │
 │                          │                                  │
@@ -86,6 +86,8 @@ cvm-agent/
 ├── agent-api/              # Rust gRPC server
 │   ├── src/
 │   │   ├── main.rs         # Entry point, service registration
+│   │   ├── config.rs       # Centralized configuration (Config::get())
+│   │   ├── context.rs      # Service context for dependency injection
 │   │   ├── db/             # SQLite database layer
 │   │   │   ├── mod.rs      # Connection pool
 │   │   │   ├── schema.rs   # MemoryRecord struct
@@ -104,53 +106,49 @@ cvm-agent/
 │   │   │   ├── gui/        # GUI automation
 │   │   │   ├── voice.rs    # Voice transcription
 │   │   │   ├── skills.rs   # Skills management
-│   │   │   ├── memory.rs   # Memory service
-│   │   │   ├── forgetting.rs # Active forgetting
-│   │   │   └── recovery.rs # Error recovery
+│   │   │   └── memory.rs   # Memory service
 │   │   └── skills/         # Skills engine
+│   │       ├── registry.rs # SkillAction trait & registry
+│   │       ├── actions/    # Built-in skill actions
+│   │       │   ├── mod.rs      # Action registration
+│   │       │   ├── prelude.rs  # Common imports
+│   │       │   ├── git.rs      # Git operations
+│   │       │   ├── nixops.rs   # NixOS operations
+│   │       │   ├── prompt.rs   # Chat/prompt actions
+│   │       │   └── template.rs.example  # New action template
 │   │       ├── loader.rs   # Load skills from disk
 │   │       ├── matcher.rs  # Trigger matching
 │   │       ├── executor.rs # Workflow execution
 │   │       └── types.rs    # Skill types
 │   ├── Cargo.toml
-│   └── build.rs            # Proto compilation
-├── web-ui/                 # React frontend
+│   ├── build.rs            # Proto compilation
+│   └── SKILLS.md           # Skill development guide
+├── web-ui/                 # React frontend (port 3000)
 │   ├── src/
 │   │   ├── App.tsx         # Main application
 │   │   ├── components/     # UI components
-│   │   │   ├── ChatOverlay.tsx
-│   │   │   ├── DiffPreview.tsx
-│   │   │   ├── GenerationsList.tsx
-│   │   │   ├── GUIInspector.tsx
-│   │   │   ├── MemoryPanel.tsx
-│   │   │   ├── ForgetConfirmDialog.tsx
-│   │   │   └── VoiceInput.tsx
-│   │   ├── hooks/          # React hooks
-│   │   │   ├── useAgent.ts
-│   │   │   ├── useNixOps.ts
-│   │   │   ├── useGitOps.ts
-│   │   │   ├── useGUI.ts
-│   │   │   ├── useVoice.ts
-│   │   │   ├── useSkills.ts
-│   │   │   ├── useMemory.ts
-│   │   │   └── useOverlayState.ts
-│   │   └── gen/            # Generated proto types
-│   │       └── agent_pb.ts
+│   │   └── hooks/          # React hooks
 │   ├── package.json
 │   └── buf.gen.yaml        # Proto generation config
 ├── proto/                  # Protocol definitions
 │   ├── agent.proto         # All service definitions
 │   └── buf.yaml            # Buf configuration
-└── skills/                 # Built-in skills
+└── skills/                 # Built-in skill workflows (YAML)
     ├── nixos-rebuild.yaml
-    ├── system-update.yaml
-    └── ...
+    └── system-update.yaml
 ```
 
 ## Development
 
 ### Prerequisites
 
+Using Nix (recommended):
+```bash
+cd cvm-agent/agent-api
+nix develop .#cvm
+```
+
+Or manually:
 - Rust 1.75+
 - Node.js 20+
 - Protocol Buffers compiler
@@ -159,13 +157,13 @@ cvm-agent/
 
 ```bash
 # Build Rust server
-cargo build -p agent-api
+cargo build
 
 # Build release
-cargo build -p agent-api --release
+cargo build --release
 
 # Build web UI
-cd web-ui
+cd ../web-ui
 npm install
 npm run build
 ```
@@ -173,32 +171,53 @@ npm run build
 ### Run Tests
 
 ```bash
-# All Rust tests
-cargo test -p agent-api
+# All Rust tests (use single thread to avoid env var race conditions)
+cargo test -- --test-threads=1
 
 # Specific test
-cargo test -p agent-api test_memory_lifecycle
+cargo test test_memory_lifecycle
 
 # With output
-cargo test -p agent-api -- --nocapture
+cargo test -- --nocapture
 ```
 
 ### Development Server
 
 ```bash
 # Terminal 1: Run API server
-RUST_LOG=debug cargo run -p agent-api
+RUST_LOG=debug cargo run
 
 # Terminal 2: Run web UI dev server
-cd web-ui
+cd ../web-ui
 npm run dev
 ```
+
+### Adding New Skill Actions
+
+New actions can be added in ~30 seconds:
+
+```bash
+# 1. Copy template
+cp src/skills/actions/template.rs.example src/skills/actions/myaction.rs
+
+# 2. Edit: rename struct, change action name, implement execute()
+
+# 3. Register in src/skills/actions/mod.rs:
+#    - Add: mod myaction;
+#    - Add: pub use myaction::MyAction;
+#    - In register_all(): registry.register(MyAction);
+
+# 4. Build
+cargo build
+```
+
+See `SKILLS.md` for detailed documentation.
 
 ### Regenerate Proto Types
 
 ```bash
 # TypeScript client
-cd web-ui
+cd ../web-ui
 npx buf generate ../proto
 ```
 
@@ -263,10 +282,10 @@ grpcurl -plaintext -d '{"layers": [1, 3], "limit": 10}' \
 
 ```bash
 # Run all tests
-cargo test -p agent-api
+cargo test -- --test-threads=1
 
 # Test summary:
-# - 73 tests passing
+# - 66 tests passing
 # - 10 ignored (require display for GUI tests)
 ```
 
@@ -274,10 +293,53 @@ cargo test -p agent-api
 
 ```bash
 # Memory lifecycle test
-cargo test -p agent-api test_memory_lifecycle_integration
+cargo test test_memory_lifecycle_integration
 
 # Cross-layer search test
-cargo test -p agent-api test_cross_layer_search_integration
+cargo test test_cross_layer_search_integration
+```
+
+## Deployment
+
+See `../files/phala-cvm/README.md` for full deployment documentation.
+
+### Quick Start (Local Docker)
+
+```bash
+cd ../files/phala-cvm
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your values (REDPILL_API_KEY, VNC_PASSWORD, etc.)
+
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+```
+
+### Access Points
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **Agent UI** | http://localhost:3000 | Web interface |
+| **Agent API** | localhost:8080 | gRPC endpoint |
+| **noVNC** | http://localhost:6080/vnc.html | Desktop access |
+| **SSH** | `ssh -p 2222 confidant@localhost` | Terminal |
+| **Whisper** | localhost:8082 | Voice API |
+
+### Phala Cloud Deployment
+
+```bash
+cd ../files/phala-cvm
+
+# Deploy to Phala Cloud
+phala cvms create \
+  --name nixos-cvm-agent \
+  --compose docker-compose.yml \
+  --teepod-id <your-teepod-id> \
+  -e .env
 ```
 
 ## License
