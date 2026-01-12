@@ -107,25 +107,31 @@ start() {
     fi
 
     # Build if binary doesn't exist or isn't executable
-    # BINARY may be updated by build_agent to the actual binary path
     if [ ! -x "$BINARY" ]; then
-        build_agent || return 1
+        log_info "Agent API binary not found, building..."
+        if ! build_agent; then
+            log_error "Agent API build failed - service will not start"
+            log_error "Try running manually: nix develop .#cvm -c cargo build --release"
+            return 1
+        fi
     fi
 
-    # After build, BINARY should be set to the actual path
+    # Verify binary exists after build
     if [ ! -x "$BINARY" ]; then
         log_error "Agent binary not found or not executable at $BINARY"
-        log_info "Listing workspace target/release directory..."
-        ls -la "$WORKSPACE_DIR/target/release/" 2>&1 | grep -E "^-|agent" | head -10
+        log_error "Build appeared to succeed but binary is missing"
         return 1
     fi
 
     log_info "Starting Agent API from: $BINARY"
-    AGENT_PID=$(start_service "Agent API" "$BINARY" "$PORT")
-    if [ $? -eq 0 ]; then
-        echo "$AGENT_PID" > /tmp/agent-api.pid
+    local pid
+    pid=$(start_service "Agent API" "$BINARY" "$PORT")
+    local ret=$?
+    if [ $ret -eq 0 ] && [ -n "$pid" ]; then
+        echo "$pid" > /tmp/agent-api.pid
         return 0
     fi
+    log_error "start_service returned $ret with pid='$pid'"
     return 1
 }
 
