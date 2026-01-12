@@ -6,7 +6,8 @@ use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
-use crate::skills::{SkillsLoader, SkillMatcher, WorkflowExecutor, Skill};
+use crate::context::ServiceContext;
+use crate::skills::{SkillsLoader, SkillMatcher, WorkflowExecutor, Skill, SkillRegistry};
 use super::health::proto::skills_service_server::SkillsService;
 use super::health::proto::{
     skill_progress, CreateSkillRequest, DeleteSkillRequest, DeleteSkillResponse,
@@ -17,10 +18,12 @@ use super::health::proto::{
 
 pub struct SkillsServiceImpl {
     loader: Arc<RwLock<SkillsLoader>>,
+    registry: Arc<SkillRegistry>,
+    ctx: ServiceContext,
 }
 
 impl SkillsServiceImpl {
-    pub async fn new(skills_dir: &str) -> Self {
+    pub async fn new(skills_dir: &str, registry: Arc<SkillRegistry>, ctx: ServiceContext) -> Self {
         let mut loader = SkillsLoader::new(skills_dir);
         if let Err(e) = loader.load_all().await {
             tracing::error!("Failed to load skills: {}", e);
@@ -28,6 +31,8 @@ impl SkillsServiceImpl {
 
         Self {
             loader: Arc::new(RwLock::new(loader)),
+            registry,
+            ctx,
         }
     }
 }
@@ -114,12 +119,15 @@ impl SkillsService for SkillsServiceImpl {
 
         let (tx, rx) = mpsc::channel(128);
         let parameters: HashMap<String, String> = req.parameters.into_iter().collect();
+        let registry = self.registry.clone();
+        let ctx = self.ctx.clone();
 
         tokio::spawn(async move {
             let (exec_tx, mut exec_rx) = mpsc::channel(128);
+            let executor = WorkflowExecutor::new(registry, ctx);
 
             let exec_handle = tokio::spawn(async move {
-                WorkflowExecutor::execute(&workflow, parameters, exec_tx).await
+                executor.execute(&workflow, parameters, exec_tx).await
             });
 
             while let Some((step_num, total, desc, output, error, completed)) = exec_rx.recv().await {

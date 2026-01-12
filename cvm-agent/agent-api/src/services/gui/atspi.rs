@@ -37,6 +37,7 @@ pub struct ATSPIElement {
 }
 
 /// Represents a tree node of AT-SPI elements.
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ATSPITreeNode {
     /// The element at this node.
@@ -113,6 +114,7 @@ impl ATSPIClient {
     }
 
     /// Creates a new AT-SPI client for a specific display.
+    #[allow(dead_code)]
     pub fn with_display(display: impl Into<String>) -> Self {
         Self {
             display: display.into(),

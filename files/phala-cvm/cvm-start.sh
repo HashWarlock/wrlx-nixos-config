@@ -1,36 +1,67 @@
 #!/bin/sh
 set -e
 
+# =============================================================================
+# Phala CVM NixOS Environment Startup Script
+# =============================================================================
+# This script initializes the CVM environment including:
+# - Virtual display (Xvfb) and VNC server
+# - D-Bus session for desktop integration
+# - XFCE desktop environment
+# - SSH server
+# - Application services (Agent API, Web UI, Whisper)
+#
+# Services are managed via modular scripts in the services/ directory.
+# Configuration is loaded from config/services.conf.
+# =============================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SERVICES_DIR="$SCRIPT_DIR/services"
+CONFIG_FILE="$SCRIPT_DIR/config/services.conf"
+export CONFIG_FILE
+
+# Source common utilities
+. "$SERVICES_DIR/common.sh"
+
 echo "=== Phala CVM NixOS Environment Setup ==="
 echo "All packages loaded from flake.lock (deterministic)"
 
 # Verify repository was cloned
 if [ ! -d "/app" ]; then
-    echo "ERROR: /app directory not found."
+    log_error "/app directory not found."
     exit 1
 fi
 
-echo "Working directory: $(pwd)"
-echo "Repository at: /app"
+log_info "Working directory: $(pwd)"
+log_info "Repository at: /app"
+log_info "Config file: $CONFIG_FILE"
+
+# =============================================================================
+# Display and VNC Setup
+# =============================================================================
 
 export DISPLAY=:1
 VNC_PASSWORD=${VNC_PASSWORD:-"changeme"}
-VNC_RESOLUTION=${VNC_RESOLUTION:-"1920x1080"}
+VNC_RESOLUTION=$(get_config "vnc" "resolution" "${VNC_RESOLUTION:-1920x1080}")
 
 # Setup VNC password
 mkdir -p ~/.vnc
 echo "$VNC_PASSWORD" | vncpasswd -f > ~/.vnc/passwd
 chmod 600 ~/.vnc/passwd
-echo "VNC password configured"
+log_success "VNC password configured"
 
 # Start Xvfb (virtual framebuffer)
-echo "Starting Xvfb with resolution ${VNC_RESOLUTION}..."
+log_info "Starting Xvfb with resolution ${VNC_RESOLUTION}..."
 Xvfb :1 -screen 0 ${VNC_RESOLUTION}x24 &
 XVFB_PID=$!
 sleep 2
 
+# =============================================================================
+# D-Bus Setup
+# =============================================================================
+
 # Setup machine-id for D-Bus
-echo "Setting up machine-id..."
+log_info "Setting up machine-id..."
 mkdir -p /var/lib/dbus /etc
 if [ ! -f /var/lib/dbus/machine-id ]; then
     dbus-uuidgen --ensure=/var/lib/dbus/machine-id
@@ -40,7 +71,7 @@ if [ ! -f /etc/machine-id ]; then
 fi
 
 # Setup D-Bus session config
-echo "Setting up D-Bus configuration..."
+log_info "Setting up D-Bus configuration..."
 mkdir -p /etc/dbus-1/session.d /etc/dbus-1/system.d
 cat > /etc/dbus-1/session.conf << 'EOF'
 <!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
@@ -57,13 +88,17 @@ cat > /etc/dbus-1/session.conf << 'EOF'
 EOF
 
 # Start D-Bus session
-echo "Starting D-Bus session..."
+log_info "Starting D-Bus session..."
 eval $(dbus-launch --sh-syntax)
 export DBUS_SESSION_BUS_ADDRESS
 export DBUS_SESSION_BUS_PID
 
+# =============================================================================
+# XFCE Desktop Environment
+# =============================================================================
+
 # Set XDG environment variables for XFCE
-echo "Setting up XDG environment variables..."
+log_info "Setting up XDG environment variables..."
 export XDG_DATA_DIRS="/nix/var/nix/profiles/default/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 export XDG_CONFIG_DIRS="/nix/var/nix/profiles/default/etc/xdg:${XDG_CONFIG_DIRS:-/etc/xdg}"
 
@@ -71,57 +106,74 @@ export XDG_CONFIG_DIRS="/nix/var/nix/profiles/default/etc/xdg:${XDG_CONFIG_DIRS:
 XFCE_SESSION_DIR=$(find /nix/store -name "xfce4-session-*" -type d 2>/dev/null | head -1)
 if [ -n "$XFCE_SESSION_DIR" ]; then
     export XDG_CONFIG_DIRS="${XFCE_SESSION_DIR}/etc:${XDG_CONFIG_DIRS}"
-    echo "Added XFCE session directory: ${XFCE_SESSION_DIR}/etc"
+    log_info "Added XFCE session directory: ${XFCE_SESSION_DIR}/etc"
 fi
 
 # Start xfconfd (XFCE configuration daemon) if available
 if command -v xfconfd > /dev/null 2>&1; then
-    echo "Starting xfconfd..."
+    log_info "Starting xfconfd..."
     xfconfd &
     sleep 1
 fi
 
 # Start window manager first (required for _NET_* properties)
-echo "Starting xfwm4 window manager..."
+log_info "Starting xfwm4 window manager..."
 xfwm4 --daemon &
 sleep 2
 
 # Start desktop manager
-echo "Starting xfdesktop..."
+log_info "Starting xfdesktop..."
 xfdesktop &
 sleep 1
 
 # Start XFCE panel
-echo "Starting xfce4-panel..."
+log_info "Starting xfce4-panel..."
 xfce4-panel &
 sleep 1
 
-# Start VNC server
-echo "Starting VNC server on display :1..."
-x0vncserver -display :1 -passwordfile ~/.vnc/passwd -rfbport 5900 &
-VNC_PID=$!
+# =============================================================================
+# VNC Server
+# =============================================================================
 
-# Start noVNC websocket proxy
-echo "Starting noVNC..."
-novnc --vnc localhost:5900 --listen 6080 &
-NOVNC_PID=$!
-
-# Start SSH daemon
-echo "Starting SSH daemon..."
-mkdir -p /run/sshd /etc/ssh
-
-# Generate host keys if they don't exist
-if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
-    echo "Generating SSH host keys..."
-    ssh-keygen -A 2>/dev/null || true
+if is_service_enabled "vnc"; then
+    VNC_PORT=$(get_service_port "vnc" "5900")
+    log_info "Starting VNC server on display :1..."
+    x0vncserver -display :1 -passwordfile ~/.vnc/passwd -rfbport $VNC_PORT &
+    VNC_PID=$!
 fi
 
-# Create sshd_config if it doesn't exist
-if [ ! -f /etc/ssh/sshd_config ]; then
-    echo "Creating sshd_config..."
-    SFTP_SERVER=$(find /nix/store -name "sftp-server" 2>/dev/null | head -1)
-    cat > /etc/ssh/sshd_config << EOFSSH
-Port 22
+# =============================================================================
+# noVNC Web Client
+# =============================================================================
+
+if is_service_enabled "novnc"; then
+    NOVNC_PORT=$(get_service_port "novnc" "6080")
+    log_info "Starting noVNC on port $NOVNC_PORT..."
+    novnc --vnc localhost:${VNC_PORT:-5900} --listen $NOVNC_PORT &
+    NOVNC_PID=$!
+fi
+
+# =============================================================================
+# SSH Server
+# =============================================================================
+
+if is_service_enabled "ssh"; then
+    SSH_PORT=$(get_service_port "ssh" "22")
+    log_info "Starting SSH daemon on port $SSH_PORT..."
+    mkdir -p /run/sshd /etc/ssh
+
+    # Generate host keys if they don't exist
+    if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
+        log_info "Generating SSH host keys..."
+        ssh-keygen -A 2>/dev/null || true
+    fi
+
+    # Create sshd_config if it doesn't exist
+    if [ ! -f /etc/ssh/sshd_config ]; then
+        log_info "Creating sshd_config..."
+        SFTP_SERVER=$(find /nix/store -name "sftp-server" 2>/dev/null | head -1)
+        cat > /etc/ssh/sshd_config << EOFSSH
+Port $SSH_PORT
 PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
@@ -131,144 +183,92 @@ PrintMotd no
 AcceptEnv LANG LC_*
 Subsystem sftp ${SFTP_SERVER:-/usr/lib/openssh/sftp-server}
 EOFSSH
-fi
-
-# Start SSH daemon
-SSHD_BIN=$(which sshd 2>/dev/null)
-SSH_PID=""
-if [ -n "$SSHD_BIN" ]; then
-    $SSHD_BIN -D -e &
-    SSH_PID=$!
-else
-    echo "WARNING: sshd not found in PATH"
-fi
-
-# =========================
-# CVM Agent Service Setup
-# =========================
-echo "Setting up CVM Agent service..."
-
-AGENT_API_DIR="/app/cvm-agent/agent-api"
-AGENT_BINARY="$AGENT_API_DIR/target/release/agent-api"
-AGENT_PID=""
-
-if [ -d "$AGENT_API_DIR" ]; then
-    echo "Building CVM Agent API..."
-    cd "$AGENT_API_DIR"
-
-    # Set OpenSSL environment for build
-    export PKG_CONFIG_PATH=$(find /nix/store -name "pkgconfig" -type d 2>/dev/null | head -1):$PKG_CONFIG_PATH
-
-    # Build in release mode
-    if cargo build --release; then
-        echo "Agent API built successfully"
-    else
-        echo "WARNING: Agent API build failed"
     fi
 
-    cd /app
-else
-    echo "WARNING: Agent API source not found at $AGENT_API_DIR"
-fi
-
-# Start the agent API service
-if [ -x "$AGENT_BINARY" ]; then
-    echo "Starting CVM Agent API on port 8080..."
-    $AGENT_BINARY &
-    AGENT_PID=$!
-    sleep 2
-
-    if kill -0 $AGENT_PID 2>/dev/null; then
-        echo "Agent API started with PID $AGENT_PID"
+    # Start SSH daemon
+    SSHD_BIN=$(which sshd 2>/dev/null)
+    if [ -n "$SSHD_BIN" ]; then
+        $SSHD_BIN -D -e &
+        SSH_PID=$!
     else
-        echo "WARNING: Agent API failed to start"
-        AGENT_PID=""
+        log_warn "sshd not found in PATH"
     fi
-else
-    echo "WARNING: Agent binary not found or not executable at $AGENT_BINARY"
 fi
 
-# Start web UI server
-WEB_UI_DIR="/app/cvm-agent/web-ui/dist"
-WEB_UI_PID=""
+# =============================================================================
+# Application Services (Modular)
+# =============================================================================
 
-if [ -d "$WEB_UI_DIR" ]; then
-    echo "Starting Web UI server on port 8081..."
+log_info "Starting application services..."
 
-    cd "$WEB_UI_DIR"
-    python3 -m http.server 8081 --bind 0.0.0.0 &
-    WEB_UI_PID=$!
-    sleep 1
+# Start Agent API
+"$SERVICES_DIR/agent-api.sh" start
+AGENT_STARTED=$?
 
-    if kill -0 $WEB_UI_PID 2>/dev/null; then
-        echo "Web UI server started with PID $WEB_UI_PID"
-    else
-        echo "WARNING: Web UI server failed to start"
-        WEB_UI_PID=""
-    fi
+# Start Web UI
+"$SERVICES_DIR/web-ui.sh" start
+WEBUI_STARTED=$?
 
-    cd /app
-else
-    echo "WARNING: Web UI dist not found at $WEB_UI_DIR"
-    echo "Run 'npm run build' in the web-ui directory to build it"
-fi
+# Start Whisper
+"$SERVICES_DIR/whisper.sh" start
+WHISPER_STARTED=$?
 
-# =========================
-# Whisper Server Setup
-# =========================
-echo "Starting Whisper server for voice transcription..."
-WHISPER_MODEL=${WHISPER_MODEL:-base}
-WHISPER_MODEL_PATH="/nix/store/*/share/whisper-cpp/models/ggml-${WHISPER_MODEL}.bin"
+# =============================================================================
+# Startup Summary
+# =============================================================================
 
-# Find the actual model path
-ACTUAL_MODEL=$(ls $WHISPER_MODEL_PATH 2>/dev/null | head -1)
-WHISPER_PID=""
-if [ -n "$ACTUAL_MODEL" ]; then
-    whisper-server --model "$ACTUAL_MODEL" --port 8082 &
-    WHISPER_PID=$!
-    sleep 2
-    if kill -0 $WHISPER_PID 2>/dev/null; then
-        echo "Whisper server started on port 8082 (model: $WHISPER_MODEL)"
-    else
-        echo "WARNING: Whisper server failed to start"
-        WHISPER_PID=""
-    fi
-else
-    echo "WARNING: Whisper model not found, voice input disabled"
-fi
-
+echo ""
 echo "=== CVM Services Started Successfully ==="
 echo "Repository: ${GITHUB_REPO:-local}"
 echo "Commit: ${GIT_COMMIT_HASH:-HEAD}"
-echo "SSH: port 22 (mapped to host port 2222)"
-echo "VNC: port 5900"
-echo "noVNC: http://localhost:6080/vnc.html"
-echo "Display Resolution: $VNC_RESOLUTION"
-[ -n "$AGENT_PID" ] && echo "Agent API: http://localhost:8080 (gRPC)"
-[ -n "$WEB_UI_PID" ] && echo "Web UI: http://localhost:8081"
-[ -n "$WHISPER_PID" ] && echo "Whisper: http://localhost:8082 (model: $WHISPER_MODEL)"
+echo ""
+echo "Infrastructure:"
+[ -n "$SSH_PID" ] && echo "  SSH: port $(get_service_port ssh 22) (mapped to host port 2222)"
+echo "  VNC: port $(get_service_port vnc 5900)"
+echo "  noVNC: http://localhost:$(get_service_port novnc 6080)/vnc.html"
+echo "  Display Resolution: $VNC_RESOLUTION"
+echo ""
+echo "Application Services:"
+[ $AGENT_STARTED -eq 0 ] && echo "  Agent API: http://localhost:$(get_service_port agent-api 8080) (gRPC)"
+[ $WEBUI_STARTED -eq 0 ] && echo "  Web UI: http://localhost:$(get_service_port web-ui 3000)"
+[ $WHISPER_STARTED -eq 0 ] && echo "  Whisper: http://localhost:$(get_service_port whisper 8082) (model: ${WHISPER_MODEL:-base})"
+echo ""
 [ -n "$AGENT_DOMAIN" ] && echo "Phala Cloud Domain: $AGENT_DOMAIN"
 echo "==="
 
-# Trap signals for graceful shutdown
+# =============================================================================
+# Signal Handling and Cleanup
+# =============================================================================
+
 cleanup() {
-    echo "Shutting down..."
-    [ -n "$WHISPER_PID" ] && kill $WHISPER_PID 2>/dev/null
-    [ -n "$WEB_UI_PID" ] && kill $WEB_UI_PID 2>/dev/null
-    [ -n "$AGENT_PID" ] && kill $AGENT_PID 2>/dev/null
+    echo ""
+    log_info "Shutting down CVM services..."
+
+    # Stop application services
+    "$SERVICES_DIR/whisper.sh" stop 2>/dev/null
+    "$SERVICES_DIR/web-ui.sh" stop 2>/dev/null
+    "$SERVICES_DIR/agent-api.sh" stop 2>/dev/null
+
+    # Stop infrastructure services
     [ -n "$SSH_PID" ] && kill $SSH_PID 2>/dev/null
     [ -n "$NOVNC_PID" ] && kill $NOVNC_PID 2>/dev/null
     [ -n "$VNC_PID" ] && kill $VNC_PID 2>/dev/null
     [ -n "$XVFB_PID" ] && kill $XVFB_PID 2>/dev/null
     [ -n "$DBUS_SESSION_BUS_PID" ] && kill $DBUS_SESSION_BUS_PID 2>/dev/null
+
+    log_success "All services stopped"
     exit 0
 }
 trap cleanup SIGTERM SIGINT
 
-# Wait for all processes (only wait for those that exist)
-WAIT_PIDS="$XVFB_PID $VNC_PID $NOVNC_PID"
+# =============================================================================
+# Wait for Services
+# =============================================================================
+
+# Wait for infrastructure processes
+WAIT_PIDS="$XVFB_PID"
+[ -n "$VNC_PID" ] && WAIT_PIDS="$WAIT_PIDS $VNC_PID"
+[ -n "$NOVNC_PID" ] && WAIT_PIDS="$WAIT_PIDS $NOVNC_PID"
 [ -n "$SSH_PID" ] && WAIT_PIDS="$WAIT_PIDS $SSH_PID"
-[ -n "$AGENT_PID" ] && WAIT_PIDS="$WAIT_PIDS $AGENT_PID"
-[ -n "$WEB_UI_PID" ] && WAIT_PIDS="$WAIT_PIDS $WEB_UI_PID"
-[ -n "$WHISPER_PID" ] && WAIT_PIDS="$WAIT_PIDS $WHISPER_PID"
+
 wait $WAIT_PIDS

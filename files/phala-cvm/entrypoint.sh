@@ -50,4 +50,6 @@ echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
 # Enter the CVM development shell and run the startup script
 # This loads all packages from the locked nixpkgs version (nixos-25.11)
 # --accept-flake-config trusts the flake's extra-substituters without prompting
-exec nix develop --accept-flake-config $NIX_OPTIONS .#cvm --command /app/files/phala-cvm/cvm-start.sh
+# --verbose shows download progress
+echo "Starting nix develop (this may take several minutes on first run)..."
+exec nix develop --accept-flake-config --verbose $NIX_OPTIONS .#cvm --command /app/files/phala-cvm/cvm-start.sh

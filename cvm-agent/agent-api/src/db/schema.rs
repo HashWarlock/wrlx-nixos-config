@@ -34,6 +34,7 @@ impl MemoryRecord {
 }
 
 /// Memory layer constants matching proto enum values
+#[allow(dead_code)]
 pub mod layer {
     pub const UNSPECIFIED: i32 = 0;
     pub const WORKING: i32 = 1;

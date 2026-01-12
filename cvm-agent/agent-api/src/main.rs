@@ -1,3 +1,5 @@
+mod config;
+mod context;
 mod db;
 mod llm;
 mod risk;
@@ -6,6 +8,7 @@ mod skills;
 
 use std::net::SocketAddr;
 use std::sync::Arc;
+use skills::SkillRegistry;
 use tonic::transport::Server;
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -31,7 +34,11 @@ async fn main() -> anyhow::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let addr: SocketAddr = "0.0.0.0:8080".parse()?;
+    // Initialize configuration
+    let config = config::Config::init();
+    tracing::info!("Configuration loaded");
+
+    let addr: SocketAddr = config.server.listen_addr.parse()?;
     tracing::info!("CVM Agent API listening on {}", addr);
 
     let cors = CorsLayer::new()
@@ -40,7 +47,7 @@ async fn main() -> anyhow::Result<()> {
         .allow_methods(Any);
 
     // Initialize database
-    let db_path = std::env::var("AGENT_DB_PATH").unwrap_or_else(|_| "./data/agent.db".to_string());
+    let db_path = config.db.path.to_string_lossy();
     let db = db::init_db(&db_path).expect("Failed to initialize database");
     tracing::info!("Database initialized at {}", db_path);
 
@@ -56,6 +63,16 @@ async fn main() -> anyhow::Result<()> {
         }
     };
 
+    // Initialize skill registry with all built-in actions
+    let mut registry = SkillRegistry::new();
+    skills::register_all(&mut registry);
+    let registry = Arc::new(registry);
+    tracing::info!("Skill registry initialized with {} actions", registry.len());
+
+    // Create service context for skill actions
+    let service_ctx = context::ServiceContext::new(db.clone(), llm_client.clone());
+    tracing::info!("Service context initialized");
+
     let health_service = HealthServiceImpl;
     let shell_service = ShellServiceImpl;
     let chat_service = ChatServiceImpl::new(llm_client);
@@ -63,7 +80,8 @@ async fn main() -> anyhow::Result<()> {
     let gitops_service = GitOpsServiceImpl;
     let gui_service = GUIServiceImpl::new();
     let voice_service = VoiceServiceImpl::new();
-    let skills_service = SkillsServiceImpl::new("/app/cvm-agent/skills").await;
+    let skills_dir = config.skills.dir.to_string_lossy();
+    let skills_service = SkillsServiceImpl::new(&skills_dir, registry, service_ctx).await;
     let memory_service = MemoryServiceImpl::new(db);
 
     tracing::info!("GUI service initialized (vision: {})",

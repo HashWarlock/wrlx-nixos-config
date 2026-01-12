@@ -5,13 +5,15 @@ This directory contains the configuration for deploying a NixOS-based Confidenti
 ## Features
 
 - **Lightweight GUI**: XFCE desktop environment
-- **CVM Agent**: AI-powered system administration interface
+- **CVM Agent**: AI-powered system administration interface with modular skills
 - **Remote Access**:
   - SSH on port 2222
   - VNC on port 5900
   - Web-based noVNC on port 6080
-  - Agent Web UI on port 8081
+  - Agent Web UI on port 3000
   - Agent gRPC API on port 8080
+  - Whisper voice transcription on port 8082
+- **Modular Services**: Configurable service startup via `config/services.conf`
 - **Confidential Computing**: Runs on Phala Cloud's TEE infrastructure
 - **User**: `confidant` with SSH key authentication
 
@@ -56,10 +58,11 @@ docker-compose logs -f
 | Service | URL | Description |
 |---------|-----|-------------|
 | **noVNC** | http://localhost:6080/vnc.html | Web-based desktop access |
-| **Agent UI** | http://localhost:8081 | AI agent web interface |
+| **Agent UI** | http://localhost:3000 | AI agent web interface |
+| **Agent API** | localhost:8080 | gRPC API endpoint |
+| **Whisper** | localhost:8082 | Voice transcription API |
 | **VNC** | vnc://localhost:5900 | Direct VNC connection |
 | **SSH** | `ssh -p 2222 confidant@localhost` | Terminal access |
-| **Agent API** | localhost:8080 | gRPC API endpoint |
 
 ## CVM Agent
 
@@ -80,7 +83,7 @@ The CVM Agent provides an AI-powered interface for managing the NixOS system.
 
 ### Using the Agent
 
-**Via Web UI (http://localhost:8081):**
+**Via Web UI (http://localhost:3000):**
 - Chat interface with the AI agent
 - View and approve NixOS configuration changes
 - Browse system generations
@@ -91,6 +94,23 @@ The CVM Agent provides an AI-powered interface for managing the NixOS system.
 # Using grpcurl
 grpcurl -plaintext localhost:8080 cvm.agent.HealthService/Check
 ```
+
+### Adding Custom Skills
+
+The agent supports a trait-based skill system. Add new automation actions in under 30 seconds:
+
+```bash
+# 1. Copy the template
+cp cvm-agent/agent-api/src/skills/actions/template.rs.example \
+   cvm-agent/agent-api/src/skills/actions/myaction.rs
+
+# 2. Edit myaction.rs (change name, implement execute())
+
+# 3. Register in mod.rs and rebuild
+cargo build --release
+```
+
+See `cvm-agent/agent-api/SKILLS.md` for detailed documentation.
 
 ### Agent Configuration
 
@@ -103,6 +123,61 @@ Environment variables for the agent:
 | `REDPILL_MODEL` | gpt-4 | Model to use for chat |
 | `WHISPER_MODEL` | base | Whisper model size (tiny/base/small/medium/large) |
 | `AGENT_DB_PATH` | ./data/agent.db | SQLite database path |
+
+## Modular Service Architecture
+
+Services are managed via modular scripts in the `services/` directory, with configuration in `config/services.conf`.
+
+### Service Control
+
+```bash
+# Individual service control
+./services/agent-api.sh start|stop|restart|status
+./services/web-ui.sh start|stop|restart|status|build
+./services/whisper.sh start|stop|restart|status|models
+```
+
+### Configuration
+
+Edit `config/services.conf` to enable/disable services or change ports:
+
+```ini
+[agent-api]
+enabled=true
+port=8080
+
+[web-ui]
+enabled=true
+port=3000
+
+[whisper]
+enabled=true
+port=8082
+
+[notify]
+enabled=false    # Future service
+port=8000
+
+[backend]
+enabled=false    # Future service
+port=8001
+```
+
+### Directory Structure
+
+```
+files/phala-cvm/
+├── config/
+│   └── services.conf      # Service configuration
+├── services/
+│   ├── common.sh          # Shared utilities
+│   ├── agent-api.sh       # Agent API lifecycle
+│   ├── web-ui.sh          # Web UI lifecycle
+│   └── whisper.sh         # Whisper lifecycle
+├── cvm-start.sh           # Main startup script
+├── entrypoint.sh          # Container entrypoint
+└── docker-compose.yml     # Container orchestration
+```
 
 ## Detailed Setup
 
@@ -152,7 +227,7 @@ phala cvms logs nixos-cvm-agent
 
 Access after deployment:
 - noVNC: `https://{DSTACK_APP_ID}.{DSTACK_GATEWAY_DOMAIN}:6080/vnc.html`
-- Agent UI: `https://{DSTACK_APP_ID}.{DSTACK_GATEWAY_DOMAIN}:8081`
+- Agent UI: `https://{DSTACK_APP_ID}.{DSTACK_GATEWAY_DOMAIN}:3000`
 
 ## Architecture
 
@@ -170,20 +245,20 @@ Access after deployment:
 │  │  │            CVM Agent                  │              ││
 │  │  │  ┌─────────┐  ┌─────────┐            │              ││
 │  │  │  │ Agent   │  │  Web    │            │              ││
-│  │  │  │  API    │──│   UI    │──────────────► :8081     ││
+│  │  │  │  API    │──│   UI    │──────────────► :3000     ││
 │  │  │  │ (Rust)  │  │ (React) │            │              ││
 │  │  │  └────┬────┘  └─────────┘            │              ││
 │  │  │       │ gRPC ─────────────────────────► :8080      ││
-│  │  │  ┌────┴────┐                         │              ││
-│  │  │  │ SQLite  │                         │              ││
-│  │  │  │ Memory  │                         │              ││
-│  │  │  └─────────┘                         │              ││
+│  │  │  ┌────┴────┐  ┌─────────┐            │              ││
+│  │  │  │ SQLite  │  │ Skill   │            │              ││
+│  │  │  │ Memory  │  │Registry │            │              ││
+│  │  │  └─────────┘  └─────────┘            │              ││
 │  │  └──────────────────────────────────────┘              ││
 │  │                                                         ││
-│  │  ┌──────────┐                                          ││
-│  │  │   SSH    │────────────────────────────► :2222       ││
-│  │  │  Server  │                                          ││
-│  │  └──────────┘                                          ││
+│  │  ┌──────────┐  ┌──────────┐                            ││
+│  │  │   SSH    │  │ Whisper  │                            ││
+│  │  │  Server  │──► :2222    │──────────────► :8082       ││
+│  │  └──────────┘  └──────────┘                            ││
 │  └─────────────────────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────┘
 ```

@@ -50,7 +50,9 @@ services:
       - "6080:6080"    # noVNC web interface
       - "5900:5900"    # VNC direct connection (optional)
       - "8080:8080"    # Agent API (gRPC)
-      - "8081:8081"    # Web UI
+      - "3000:3000"    # Web UI (frontend)
+      - "8000:8000"    # Notify service (future)
+      - "8001:8001"    # Backend service (future)
       - "8082:8082"    # Whisper server (voice)
 
     # Privileged mode may be needed for systemd and full NixOS functionality

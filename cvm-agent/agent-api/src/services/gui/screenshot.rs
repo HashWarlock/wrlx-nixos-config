@@ -32,6 +32,7 @@ impl ImageFormat {
     }
 
     /// Returns the MIME type for this format.
+    #[allow(dead_code)]
     pub fn mime_type(&self) -> &'static str {
         match self {
             ImageFormat::Png => "image/png",
@@ -89,6 +90,7 @@ impl ScreenshotOptions {
     }
 
     /// Creates options for capturing the focused window.
+    #[allow(dead_code)]
     pub fn focused_window() -> Self {
         Self {
             full_screen: false,
@@ -117,12 +119,14 @@ impl ScreenshotOptions {
     }
 
     /// Sets the X display to use.
+    #[allow(dead_code)]
     pub fn with_display(mut self, display: impl Into<String>) -> Self {
         self.display = display.into();
         self
     }
 
     /// Sets a delay before capturing.
+    #[allow(dead_code)]
     pub fn with_delay(mut self, seconds: u32) -> Self {
         self.delay = Some(seconds);
         self
@@ -149,6 +153,7 @@ impl ScreenshotResult {
     }
 
     /// Returns a data URL suitable for embedding in HTML or passing to vision APIs.
+    #[allow(dead_code)]
     pub fn to_data_url(&self) -> String {
         format!(
             "data:{};base64,{}",
@@ -174,6 +179,7 @@ impl ScreenshotCapture {
     }
 
     /// Creates a new screenshot capture service with custom default options.
+    #[allow(dead_code)]
     pub fn with_options(options: ScreenshotOptions) -> Self {
         Self {
             default_options: options,
@@ -277,6 +283,7 @@ impl ScreenshotCapture {
     }
 
     /// Captures a screenshot with options and returns it as base64-encoded data.
+    #[allow(dead_code)]
     #[instrument(skip(self))]
     pub async fn capture_base64_with_options(&self, options: ScreenshotOptions) -> Result<String> {
         let result = self.capture_with_options(options).await?;

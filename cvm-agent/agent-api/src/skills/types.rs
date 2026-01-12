@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum SkillType {
     Instruction,
@@ -41,6 +42,7 @@ impl Skill {
         }
     }
 
+    #[allow(dead_code)]
     pub fn skill_type(&self) -> SkillType {
         match self {
             Skill::Instruction(_) => SkillType::Instruction,

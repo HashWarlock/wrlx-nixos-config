@@ -6,15 +6,11 @@
 //! - Input automation (xdotool)
 //! - Vision-based element detection
 
-pub mod screenshot;
-pub mod atspi;
-pub mod xdotool;
-pub mod vision;
-
+mod screenshot;
+mod atspi;
+mod xdotool;
+mod vision;
 mod service;
 
-pub use screenshot::ScreenshotCapture;
-pub use atspi::{ATSPIClient, ATSPIElement, ATSPIQueryFilter, ATSPITreeNode};
-pub use xdotool::{XDoTool, MouseButton, MousePosition};
-pub use vision::{VisionService, VisionConfig, IdentifiedElement};
+// Only export what's actually used externally
 pub use service::GUIServiceImpl;

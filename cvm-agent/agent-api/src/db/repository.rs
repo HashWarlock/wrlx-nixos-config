@@ -207,6 +207,7 @@ impl MemoryRepository {
     }
 
     /// Get a single memory by ID
+    #[allow(dead_code)]
     pub fn get_by_id(&self, id: &str) -> Result<Option<MemoryRecord>, rusqlite::Error> {
         let conn = self.db.lock().unwrap();
         let mut stmt = conn.prepare(

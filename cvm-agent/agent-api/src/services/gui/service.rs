@@ -53,6 +53,7 @@ impl GUIServiceImpl {
     }
 
     /// Creates a GUI service with a specific display.
+    #[allow(dead_code)]
     pub fn with_display(display: impl Into<String>) -> Self {
         let display = display.into();
         let vision = VisionService::from_env()
@@ -70,6 +71,7 @@ impl GUIServiceImpl {
     }
 
     /// Creates a GUI service with explicit vision configuration.
+    #[allow(dead_code)]
     pub fn with_vision(vision_config: VisionConfig) -> Self {
         let vision = VisionService::new(vision_config)
             .ok()
@@ -84,21 +86,25 @@ impl GUIServiceImpl {
     }
 
     /// Returns a reference to the screenshot capture service.
+    #[allow(dead_code)]
     pub fn screenshot(&self) -> &ScreenshotCapture {
         &self.screenshot
     }
 
     /// Returns a reference to the AT-SPI client.
+    #[allow(dead_code)]
     pub fn atspi(&self) -> &ATSPIClient {
         &self.atspi
     }
 
     /// Returns a reference to the xdotool wrapper.
+    #[allow(dead_code)]
     pub fn xdotool(&self) -> &XDoTool {
         &self.xdotool
     }
 
     /// Returns whether vision service is available.
+    #[allow(dead_code)]
     pub fn has_vision(&self) -> bool {
         self.vision.is_some()
     }

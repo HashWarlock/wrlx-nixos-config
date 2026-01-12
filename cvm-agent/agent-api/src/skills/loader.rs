@@ -177,6 +177,7 @@ impl SkillsLoader {
         self.skills.values().collect()
     }
 
+    #[allow(dead_code)]
     pub fn list_by_type(&self, skill_type: super::types::SkillType) -> Vec<&Skill> {
         self.skills
             .values()

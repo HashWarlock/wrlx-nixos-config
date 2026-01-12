@@ -164,6 +164,10 @@
 
         # Python for web server
         python3
+
+        # Node.js for web UI build
+        nodejs
+        nodePackages.npm
       ];
     };
   };

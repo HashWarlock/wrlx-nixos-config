@@ -50,6 +50,7 @@ impl VisionConfig {
     }
 
     /// Creates a configuration with explicit values.
+    #[allow(dead_code)]
     pub fn new(api_key: impl Into<String>, base_url: impl Into<String>, model: impl Into<String>) -> Self {
         Self {
             api_key: api_key.into(),
@@ -83,6 +84,7 @@ impl IdentifiedElement {
     }
 
     /// Returns the bounding box as (x, y, width, height).
+    #[allow(dead_code)]
     pub fn bounds(&self) -> (i32, i32, i32, i32) {
         (self.x, self.y, self.width, self.height)
     }
@@ -161,6 +163,7 @@ pub struct VisionService {
 
 impl VisionService {
     /// Creates a new vision service with the given configuration.
+    #[allow(dead_code)]
     pub fn new(config: VisionConfig) -> Result<Self> {
         let client = Client::builder()
             .timeout(Duration::from_secs(120))

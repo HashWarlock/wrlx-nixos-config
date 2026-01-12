@@ -1,13 +1,26 @@
+//! Workflow executor using the skill registry.
+//!
+//! Executes workflow steps by dispatching actions through the registry.
+
 use anyhow::Result;
 use std::collections::HashMap;
+use std::sync::Arc;
 use tokio::sync::mpsc;
 
+use crate::context::ServiceContext;
+use super::registry::SkillRegistry;
 use super::types::{WorkflowSkill, WorkflowStep};
 
-pub struct WorkflowExecutor;
+/// Executor for workflow skills.
+pub struct WorkflowExecutor {
+    registry: Arc<SkillRegistry>,
+    ctx: ServiceContext,
+}
 
+/// Result of executing a workflow step.
 #[derive(Debug, Clone)]
 pub struct StepResult {
+    #[allow(dead_code)]
     pub step_id: String,
     pub success: bool,
     pub output: Option<String>,
@@ -15,6 +28,7 @@ pub struct StepResult {
     pub data: HashMap<String, serde_json::Value>,
 }
 
+/// Context for workflow execution, tracking parameters and step results.
 #[derive(Debug)]
 pub struct ExecutionContext {
     pub parameters: HashMap<String, String>,
@@ -22,7 +36,19 @@ pub struct ExecutionContext {
 }
 
 impl WorkflowExecutor {
+    /// Creates a new executor with the given registry and service context.
+    pub fn new(registry: Arc<SkillRegistry>, ctx: ServiceContext) -> Self {
+        Self { registry, ctx }
+    }
+
+    /// Executes a workflow skill.
+    ///
+    /// # Arguments
+    /// * `skill` - The workflow to execute
+    /// * `parameters` - Parameters for the workflow
+    /// * `progress_tx` - Channel for progress updates
     pub async fn execute(
+        &self,
         skill: &WorkflowSkill,
         parameters: HashMap<String, String>,
         progress_tx: mpsc::Sender<(i32, i32, String, Option<String>, Option<String>, bool)>,
@@ -41,110 +67,130 @@ impl WorkflowExecutor {
             // Check condition
             if let Some(condition) = &step.condition {
                 if !Self::evaluate_condition(condition, &context) {
-                    let _ = progress_tx.send((
-                        step_num,
-                        total_steps,
-                        format!("Skipped: {}", description),
-                        Some("Condition not met".to_string()),
-                        None,
-                        false,
-                    )).await;
+                    let _ = progress_tx
+                        .send((
+                            step_num,
+                            total_steps,
+                            format!("Skipped: {}", description),
+                            Some("Condition not met".to_string()),
+                            None,
+                            false,
+                        ))
+                        .await;
                     continue;
                 }
             }
 
             // Send progress update
-            let _ = progress_tx.send((
-                step_num,
-                total_steps,
-                description.clone(),
-                None,
-                None,
-                false,
-            )).await;
+            let _ = progress_tx
+                .send((step_num, total_steps, description.clone(), None, None, false))
+                .await;
 
-            // Execute step
-            let result = Self::execute_step(step, &context).await;
+            // Execute step using registry
+            let result = self.execute_step(step, &context).await;
 
             match &result {
                 Ok(step_result) => {
-                    context.step_results.insert(step.id.clone(), step_result.clone());
+                    context
+                        .step_results
+                        .insert(step.id.clone(), step_result.clone());
 
                     if step_result.success {
-                        let _ = progress_tx.send((
-                            step_num,
-                            total_steps,
-                            description,
-                            step_result.output.clone(),
-                            None,
-                            false,
-                        )).await;
+                        let _ = progress_tx
+                            .send((
+                                step_num,
+                                total_steps,
+                                description,
+                                step_result.output.clone(),
+                                None,
+                                false,
+                            ))
+                            .await;
                     } else {
-                        let _ = progress_tx.send((
-                            step_num,
-                            total_steps,
-                            description,
-                            None,
-                            step_result.error.clone(),
-                            false,
-                        )).await;
+                        let _ = progress_tx
+                            .send((
+                                step_num,
+                                total_steps,
+                                description,
+                                None,
+                                step_result.error.clone(),
+                                false,
+                            ))
+                            .await;
                         break;
                     }
                 }
                 Err(e) => {
-                    let _ = progress_tx.send((
-                        step_num,
-                        total_steps,
-                        description,
-                        None,
-                        Some(e.to_string()),
-                        false,
-                    )).await;
+                    let _ = progress_tx
+                        .send((
+                            step_num,
+                            total_steps,
+                            description,
+                            None,
+                            Some(e.to_string()),
+                            false,
+                        ))
+                        .await;
                     break;
                 }
             }
         }
 
         // Send completion
-        let _ = progress_tx.send((
-            total_steps,
-            total_steps,
-            "Workflow complete".to_string(),
-            None,
-            None,
-            true,
-        )).await;
+        let _ = progress_tx
+            .send((
+                total_steps,
+                total_steps,
+                "Workflow complete".to_string(),
+                None,
+                None,
+                true,
+            ))
+            .await;
 
         Ok(())
     }
 
-    async fn execute_step(step: &WorkflowStep, context: &ExecutionContext) -> Result<StepResult> {
-        let action_parts: Vec<&str> = step.action.split('.').collect();
-        let service = action_parts.get(0).unwrap_or(&"");
-        let method = action_parts.get(1).unwrap_or(&"");
+    /// Executes a single workflow step using the registry.
+    async fn execute_step(
+        &self,
+        step: &WorkflowStep,
+        context: &ExecutionContext,
+    ) -> Result<StepResult> {
+        // Resolve templates in args
+        let args = step
+            .args
+            .as_ref()
+            .map(|a| Self::resolve_templates(a, context))
+            .unwrap_or_else(|| serde_json::json!({}));
 
-        let args = step.args.as_ref().map(|a| Self::resolve_templates(a, context));
+        // For chat.respond, we need to include the resolved message in args
+        let args = if step.action == "chat.respond" {
+            let message = step.message.as_ref().map(|m| {
+                Self::resolve_templates(&serde_json::Value::String(m.clone()), context)
+            });
+            let mut args_map = args.as_object().cloned().unwrap_or_default();
+            if let Some(serde_json::Value::String(msg)) = message {
+                args_map.insert("message".to_string(), serde_json::Value::String(msg));
+            }
+            serde_json::Value::Object(args_map)
+        } else {
+            args
+        };
 
-        match (*service, *method) {
-            ("git", "status") => Self::action_git_status().await,
-            ("git", "add") => Self::action_git_add(&args).await,
-            ("git", "commit") => Self::action_git_commit(&args).await,
-            ("git", "push") => Self::action_git_push().await,
-            ("nixops", "rebuild") => Self::action_nixops_rebuild(&args).await,
-            ("nixops", "rollback") => Self::action_nixops_rollback(&args).await,
-            ("nixops", "list_generations") => Self::action_nixops_list_generations().await,
-            ("prompt", "confirm") => Self::action_prompt_confirm(&step.message).await,
-            ("chat", "respond") => Self::action_chat_respond(&step.message, context).await,
-            _ => Ok(StepResult {
-                step_id: step.id.clone(),
-                success: false,
-                output: None,
-                error: Some(format!("Unknown action: {}", step.action)),
-                data: HashMap::new(),
-            }),
-        }
+        // Execute via registry with service context
+        let action_result = self.registry.execute(&step.action, &self.ctx, args).await?;
+
+        Ok(StepResult {
+            step_id: step.id.clone(),
+            success: action_result.success,
+            output: action_result.output,
+            error: action_result.error,
+            data: action_result.data,
+        })
     }
 
+    /// Evaluates a condition expression.
     fn evaluate_condition(condition: &str, context: &ExecutionContext) -> bool {
         if condition.starts_with("steps.") {
             let parts: Vec<&str> = condition[6..].split('.').collect();
@@ -155,10 +201,14 @@ impl WorkflowExecutor {
                 if let Some(result) = context.step_results.get(step_id) {
                     return match field {
                         "success" => result.success,
-                        "has_changes" => result.data.get("has_changes")
+                        "has_changes" => result
+                            .data
+                            .get("has_changes")
                             .and_then(|v| v.as_bool())
                             .unwrap_or(false),
-                        "confirmed" => result.data.get("confirmed")
+                        "confirmed" => result
+                            .data
+                            .get("confirmed")
                             .and_then(|v| v.as_bool())
                             .unwrap_or(false),
                         _ => false,
@@ -169,16 +219,22 @@ impl WorkflowExecutor {
         true
     }
 
-    fn resolve_templates(value: &serde_json::Value, context: &ExecutionContext) -> serde_json::Value {
+    /// Resolves template expressions in a JSON value.
+    fn resolve_templates(
+        value: &serde_json::Value,
+        context: &ExecutionContext,
+    ) -> serde_json::Value {
         match value {
             serde_json::Value::String(s) => {
                 let mut result = s.clone();
 
+                // Resolve parameter references
                 for (key, val) in &context.parameters {
                     let pattern = format!("{{{{ parameters.{} }}}}", key);
                     result = result.replace(&pattern, val);
                 }
 
+                // Resolve step result references
                 for (step_id, step_result) in &context.step_results {
                     if let Some(output) = &step_result.output {
                         let pattern = format!("{{{{ steps.{}.output }}}}", step_id);
@@ -208,218 +264,5 @@ impl WorkflowExecutor {
             }
             _ => value.clone(),
         }
-    }
-
-    // Action implementations
-    async fn action_git_status() -> Result<StepResult> {
-        let output = tokio::process::Command::new("git")
-            .args(["status", "--porcelain"])
-            .current_dir("/app")
-            .output()
-            .await?;
-
-        let has_changes = !output.stdout.is_empty();
-        let mut data = HashMap::new();
-        data.insert("has_changes".to_string(), serde_json::json!(has_changes));
-
-        Ok(StepResult {
-            step_id: "git_status".to_string(),
-            success: true,
-            output: Some(String::from_utf8_lossy(&output.stdout).to_string()),
-            error: None,
-            data,
-        })
-    }
-
-    async fn action_git_add(args: &Option<serde_json::Value>) -> Result<StepResult> {
-        let paths = args
-            .as_ref()
-            .and_then(|a| a.get("paths"))
-            .and_then(|p| p.as_array())
-            .map(|arr| arr.iter().filter_map(|v| v.as_str()).collect::<Vec<_>>())
-            .unwrap_or_else(|| vec!["."]);
-
-        let mut cmd = tokio::process::Command::new("git");
-        cmd.arg("add").current_dir("/app");
-        for path in paths {
-            cmd.arg(path);
-        }
-
-        let output = cmd.output().await?;
-
-        Ok(StepResult {
-            step_id: "git_add".to_string(),
-            success: output.status.success(),
-            output: Some("Files staged".to_string()),
-            error: if output.status.success() { None } else {
-                Some(String::from_utf8_lossy(&output.stderr).to_string())
-            },
-            data: HashMap::new(),
-        })
-    }
-
-    async fn action_git_commit(args: &Option<serde_json::Value>) -> Result<StepResult> {
-        let message = args
-            .as_ref()
-            .and_then(|a| a.get("message"))
-            .and_then(|m| m.as_str())
-            .unwrap_or("Update configuration");
-
-        let output = tokio::process::Command::new("git")
-            .args(["commit", "-m", message])
-            .current_dir("/app")
-            .output()
-            .await?;
-
-        let mut data = HashMap::new();
-        if output.status.success() {
-            let hash_output = tokio::process::Command::new("git")
-                .args(["rev-parse", "HEAD"])
-                .current_dir("/app")
-                .output()
-                .await?;
-            let hash = String::from_utf8_lossy(&hash_output.stdout).trim().to_string();
-            data.insert("hash".to_string(), serde_json::json!(hash));
-        }
-
-        Ok(StepResult {
-            step_id: "git_commit".to_string(),
-            success: output.status.success(),
-            output: if output.status.success() { Some("Committed".to_string()) } else { None },
-            error: if output.status.success() { None } else {
-                Some(String::from_utf8_lossy(&output.stderr).to_string())
-            },
-            data,
-        })
-    }
-
-    async fn action_git_push() -> Result<StepResult> {
-        let output = tokio::process::Command::new("git")
-            .args(["push"])
-            .current_dir("/app")
-            .output()
-            .await?;
-
-        Ok(StepResult {
-            step_id: "git_push".to_string(),
-            success: output.status.success(),
-            output: if output.status.success() { Some("Pushed".to_string()) } else { None },
-            error: if output.status.success() { None } else {
-                Some(String::from_utf8_lossy(&output.stderr).to_string())
-            },
-            data: HashMap::new(),
-        })
-    }
-
-    async fn action_nixops_rebuild(args: &Option<serde_json::Value>) -> Result<StepResult> {
-        let action = args
-            .as_ref()
-            .and_then(|a| a.get("action"))
-            .and_then(|a| a.as_str())
-            .unwrap_or("switch");
-
-        let output = tokio::process::Command::new("nixos-rebuild")
-            .args([action, "--flake", "/app#phala-cvm"])
-            .output()
-            .await?;
-
-        let mut data = HashMap::new();
-        data.insert("status".to_string(), serde_json::json!(
-            if output.status.success() { "success" } else { "failed" }
-        ));
-
-        Ok(StepResult {
-            step_id: "nixops_rebuild".to_string(),
-            success: output.status.success(),
-            output: Some(String::from_utf8_lossy(&output.stdout).to_string()),
-            error: if output.status.success() { None } else {
-                Some(String::from_utf8_lossy(&output.stderr).to_string())
-            },
-            data,
-        })
-    }
-
-    async fn action_nixops_rollback(args: &Option<serde_json::Value>) -> Result<StepResult> {
-        let generation = args
-            .as_ref()
-            .and_then(|a| a.get("generation"))
-            .and_then(|g| g.as_str());
-
-        let mut cmd = tokio::process::Command::new("nixos-rebuild");
-        cmd.arg("switch").arg("--rollback");
-        if let Some(gen) = generation {
-            cmd.arg("--generation").arg(gen);
-        }
-
-        let output = cmd.output().await?;
-
-        Ok(StepResult {
-            step_id: "nixops_rollback".to_string(),
-            success: output.status.success(),
-            output: Some("Rollback complete".to_string()),
-            error: if output.status.success() { None } else {
-                Some(String::from_utf8_lossy(&output.stderr).to_string())
-            },
-            data: HashMap::new(),
-        })
-    }
-
-    async fn action_nixops_list_generations() -> Result<StepResult> {
-        let output = tokio::process::Command::new("nix-env")
-            .args(["--list-generations", "-p", "/nix/var/nix/profiles/system"])
-            .output()
-            .await?;
-
-        let mut data = HashMap::new();
-        data.insert("list".to_string(), serde_json::json!(
-            String::from_utf8_lossy(&output.stdout).to_string()
-        ));
-
-        Ok(StepResult {
-            step_id: "nixops_list_generations".to_string(),
-            success: output.status.success(),
-            output: Some(String::from_utf8_lossy(&output.stdout).to_string()),
-            error: None,
-            data,
-        })
-    }
-
-    async fn action_prompt_confirm(_message: &Option<String>) -> Result<StepResult> {
-        let mut data = HashMap::new();
-        data.insert("confirmed".to_string(), serde_json::json!(true));
-
-        Ok(StepResult {
-            step_id: "prompt_confirm".to_string(),
-            success: true,
-            output: Some("Confirmed".to_string()),
-            error: None,
-            data,
-        })
-    }
-
-    async fn action_chat_respond(message: &Option<String>, context: &ExecutionContext) -> Result<StepResult> {
-        let resolved_message = message.clone().map(|m| {
-            let mut result = m;
-            for (key, val) in &context.parameters {
-                result = result.replace(&format!("{{{{ parameters.{} }}}}", key), val);
-            }
-            for (step_id, step_result) in &context.step_results {
-                if let Some(output) = &step_result.output {
-                    result = result.replace(&format!("{{{{ steps.{}.output }}}}", step_id), output);
-                }
-                for (k, v) in &step_result.data {
-                    result = result.replace(&format!("{{{{ steps.{}.{} }}}}", step_id, k), &v.to_string());
-                }
-            }
-            result
-        });
-
-        Ok(StepResult {
-            step_id: "chat_respond".to_string(),
-            success: true,
-            output: resolved_message,
-            error: None,
-            data: HashMap::new(),
-        })
     }
 }

@@ -1,19 +1,15 @@
 pub mod chat;
-pub mod forgetting;
 pub mod gitops;
 pub mod gui;
 pub mod health;
 pub mod memory;
 pub mod nixops;
-pub mod recovery;
 pub mod shell;
 pub mod skills;
 pub mod voice;
 
 pub use chat::ChatServiceImpl;
-pub use forgetting::{create_trigger_channel, ForgettingManager, ForgettingTrigger};
 pub use gitops::GitOpsServiceImpl;
-pub use recovery::{ErrorCategory, ErrorTracker, RecoveryAction, get_recovery_actions};
 pub use gui::GUIServiceImpl;
 pub use health::HealthServiceImpl;
 pub use memory::MemoryServiceImpl;

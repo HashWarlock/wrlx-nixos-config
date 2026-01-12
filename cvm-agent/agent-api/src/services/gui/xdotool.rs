@@ -29,6 +29,7 @@ impl MouseButton {
     }
 
     /// Parses a button string to MouseButton.
+    #[allow(dead_code)]
     pub fn from_str(s: &str) -> Option<Self> {
         match s.to_lowercase().as_str() {
             "left" | "1" => Some(MouseButton::Left),
@@ -46,6 +47,7 @@ impl Default for MouseButton {
 }
 
 /// Mouse position on screen.
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MousePosition {
     pub x: i32,
@@ -77,6 +79,7 @@ impl XDoTool {
     }
 
     /// Creates a new XDoTool instance for a specific display.
+    #[allow(dead_code)]
     pub fn with_display(display: impl Into<String>) -> Self {
         Self {
             display: display.into(),
@@ -254,6 +257,7 @@ impl XDoTool {
     /// # Arguments
     ///
     /// * `window_name` - Name (or partial name) of the window to focus
+    #[allow(dead_code)]
     #[instrument(skip(self))]
     pub fn focus_window(&self, window_name: &str) -> Result<()> {
         debug!(window_name, "Focusing window");
@@ -267,6 +271,7 @@ impl XDoTool {
     /// Gets the current mouse cursor position.
     ///
     /// Returns the X and Y coordinates of the mouse cursor.
+    #[allow(dead_code)]
     #[instrument(skip(self))]
     pub fn get_mouse_position(&self) -> Result<MousePosition> {
         debug!("Getting mouse position");
@@ -321,6 +326,7 @@ impl XDoTool {
     /// * `to_x` - Ending X coordinate
     /// * `to_y` - Ending Y coordinate
     /// * `button` - Mouse button to hold during drag
+    #[allow(dead_code)]
     #[instrument(skip(self))]
     pub fn drag(&self, from_x: i32, from_y: i32, to_x: i32, to_y: i32, button: MouseButton) -> Result<()> {
         debug!(from_x, from_y, to_x, to_y, ?button, "Performing drag");
@@ -346,6 +352,7 @@ impl XDoTool {
     ///
     /// * `direction` - "up" or "down"
     /// * `clicks` - Number of scroll clicks
+    #[allow(dead_code)]
     #[instrument(skip(self))]
     pub fn scroll(&self, direction: &str, clicks: u32) -> Result<()> {
         debug!(direction, clicks, "Scrolling");
@@ -363,6 +370,7 @@ impl XDoTool {
     }
 
     /// Gets the currently active window ID.
+    #[allow(dead_code)]
     #[instrument(skip(self))]
     pub fn get_active_window(&self) -> Result<String> {
         debug!("Getting active window");
@@ -372,6 +380,7 @@ impl XDoTool {
     }
 
     /// Gets the title of a window by its ID.
+    #[allow(dead_code)]
     #[instrument(skip(self))]
     pub fn get_window_name(&self, window_id: &str) -> Result<String> {
         debug!(window_id, "Getting window name");
