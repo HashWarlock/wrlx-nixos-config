@@ -60,7 +60,32 @@ build_agent() {
     log_info "Running cargo build --release..."
     if cargo build --release 2>&1; then
         log_success "Agent API built successfully"
+
+        # Find the actual binary - Cargo may use hyphens or underscores
+        ACTUAL_BINARY=""
+        for name in "agent-api" "agent_api"; do
+            if [ -f "$BUILD_DIR/target/release/$name" ]; then
+                ACTUAL_BINARY="$BUILD_DIR/target/release/$name"
+                break
+            fi
+        done
+
+        if [ -z "$ACTUAL_BINARY" ]; then
+            log_error "Binary not found after successful build"
+            log_info "Checking target/release directory..."
+            ls -la "$BUILD_DIR/target/release/" 2>&1 | head -20
+            cd - > /dev/null
+            return 1
+        fi
+
+        # Make executable if needed
+        chmod +x "$ACTUAL_BINARY" 2>/dev/null || true
+
+        # Update BINARY variable for later use
+        BINARY="$ACTUAL_BINARY"
+        export BINARY
         log_info "Binary location: $BINARY"
+
         cd - > /dev/null
         return 0
     else
@@ -78,16 +103,21 @@ start() {
         return 0
     fi
 
-    # Build if binary doesn't exist
+    # Build if binary doesn't exist or isn't executable
+    # BINARY may be updated by build_agent to the actual binary path
     if [ ! -x "$BINARY" ]; then
         build_agent || return 1
     fi
 
+    # After build, BINARY should be set to the actual path
     if [ ! -x "$BINARY" ]; then
         log_error "Agent binary not found or not executable at $BINARY"
+        log_info "Listing target/release directory..."
+        ls -la "$BUILD_DIR/target/release/" 2>&1 | grep -E "^-|agent" | head -10
         return 1
     fi
 
+    log_info "Starting Agent API from: $BINARY"
     AGENT_PID=$(start_service "Agent API" "$BINARY" "$PORT")
     if [ $? -eq 0 ]; then
         echo "$AGENT_PID" > /tmp/agent-api.pid
