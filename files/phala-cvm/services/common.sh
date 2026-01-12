@@ -19,19 +19,19 @@ fi
 
 # Log functions
 log_info() {
-    echo "${BLUE}[INFO]${NC} $1"
+    echo "${BLUE}[INFO]${NC} $1" >&2
 }
 
 log_success() {
-    echo "${GREEN}[OK]${NC} $1"
+    echo "${GREEN}[OK]${NC} $1" >&2
 }
 
 log_warn() {
-    echo "${YELLOW}[WARN]${NC} $1"
+    echo "${YELLOW}[WARN]${NC} $1" >&2
 }
 
 log_error() {
-    echo "${RED}[ERROR]${NC} $1"
+    echo "${RED}[ERROR]${NC} $1" >&2
 }
 
 # Check if a process is running by PID
