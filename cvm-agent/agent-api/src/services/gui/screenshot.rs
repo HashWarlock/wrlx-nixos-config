@@ -1,6 +1,6 @@
 //! Screenshot capture service for the CVM Agent.
 //!
-//! This module provides functionality to capture screenshots using the `scrot` command.
+//! This module provides functionality to capture screenshots using ImageMagick's `import` command.
 //! It supports full screen capture, specific window capture, and various output formats.
 
 use anyhow::{Context, Result};
@@ -165,7 +165,7 @@ impl ScreenshotResult {
 
 /// Screenshot capture service.
 ///
-/// Uses the `scrot` command-line tool to capture screenshots from an X11 display.
+/// Uses ImageMagick's `import` command-line tool to capture screenshots from an X11 display.
 #[derive(Debug, Clone, Default)]
 pub struct ScreenshotCapture {
     /// Default options for screenshot capture.
@@ -206,47 +206,59 @@ impl ScreenshotCapture {
             "Capturing screenshot"
         );
 
-        // Build scrot command
-        let mut cmd = Command::new("scrot");
+        // Handle delay if specified
+        if let Some(delay) = options.delay {
+            tokio::time::sleep(tokio::time::Duration::from_secs(delay as u64)).await;
+        }
+
+        // Build ImageMagick import command
+        let mut cmd = Command::new("import");
 
         // Set display environment variable
         cmd.env("DISPLAY", &options.display);
 
-        // Add options
-        if !options.include_cursor {
-            cmd.arg("--hidecursor");
-        }
+        // Determine window target
+        if options.full_screen {
+            // Capture root window (full screen)
+            cmd.arg("-window").arg("root");
+        } else if let Some(window_id) = options.window_id {
+            // Capture specific window by ID
+            cmd.arg("-window").arg(format!("0x{:x}", window_id));
+        } else {
+            // Capture focused window - use xdotool to get active window
+            let active_output = Command::new("xdotool")
+                .env("DISPLAY", &options.display)
+                .args(["getactivewindow"])
+                .output()
+                .context("Failed to get active window")?;
 
-        if !options.full_screen {
-            if let Some(window_id) = options.window_id {
-                // Capture specific window by ID
-                cmd.arg("--window").arg(format!("{}", window_id));
+            if active_output.status.success() {
+                let window_id_str = String::from_utf8_lossy(&active_output.stdout)
+                    .trim()
+                    .to_string();
+                cmd.arg("-window").arg(&window_id_str);
             } else {
-                // Capture focused window
-                cmd.arg("--focused");
+                // Fallback to root window if no active window
+                cmd.arg("-window").arg("root");
             }
         }
 
-        if let Some(delay) = options.delay {
-            cmd.arg("--delay").arg(delay.to_string());
-        }
-
-        // Set quality for JPEG
+        // Set quality for JPEG (import uses -quality flag too)
         if options.format == ImageFormat::Jpeg {
-            cmd.arg("--quality").arg(options.jpeg_quality.to_string());
+            cmd.arg("-quality").arg(options.jpeg_quality.to_string());
         }
 
         // Output file
         cmd.arg(&temp_file);
 
-        // Execute scrot
+        // Execute import
         let output = cmd
             .output()
-            .context("Failed to execute scrot command")?;
+            .context("Failed to execute import command")?;
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            anyhow::bail!("scrot failed: {}", stderr);
+            anyhow::bail!("import failed: {}", stderr);
         }
 
         // Read the captured image
