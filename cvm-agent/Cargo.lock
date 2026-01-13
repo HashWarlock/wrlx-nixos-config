@@ -742,6 +742,8 @@ dependencies = [
 name = "cvm-desktop"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "futures",
  "prost",
  "serde",
  "serde_json",
@@ -751,6 +753,7 @@ dependencies = [
  "tauri-plugin-shell",
  "tokio",
  "tonic",
+ "tonic-build",
 ]
 
 [[package]]
