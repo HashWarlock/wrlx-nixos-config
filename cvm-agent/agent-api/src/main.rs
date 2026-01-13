@@ -18,12 +18,13 @@ use services::health::proto::chat_service_server::ChatServiceServer;
 use services::health::proto::git_ops_service_server::GitOpsServiceServer;
 use services::health::proto::gui_service_server::GuiServiceServer;
 use services::health::proto::health_service_server::HealthServiceServer;
+use services::health::proto::lessons_service_server::LessonsServiceServer;
 use services::health::proto::memory_service_server::MemoryServiceServer;
 use services::health::proto::nix_ops_service_server::NixOpsServiceServer;
 use services::health::proto::shell_service_server::ShellServiceServer;
 use services::health::proto::skills_service_server::SkillsServiceServer;
 use services::health::proto::voice_service_server::VoiceServiceServer;
-use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, MemoryServiceImpl, NixOpsServiceImpl, ShellServiceImpl, SkillsServiceImpl, VoiceServiceImpl};
+use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, LessonsServiceImpl, MemoryServiceImpl, NixOpsServiceImpl, ShellServiceImpl, SkillsServiceImpl, VoiceServiceImpl};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -82,13 +83,15 @@ async fn main() -> anyhow::Result<()> {
     let voice_service = VoiceServiceImpl::new();
     let skills_dir = config.skills.dir.to_string_lossy();
     let skills_service = SkillsServiceImpl::new(&skills_dir, registry, service_ctx).await;
-    let memory_service = MemoryServiceImpl::new(db);
+    let memory_service = MemoryServiceImpl::new(db.clone());
+    let lessons_service = LessonsServiceImpl::new(db);
 
     tracing::info!("GUI service initialized (vision: {})",
         if gui_service.has_vision() { "enabled" } else { "disabled" });
     tracing::info!("Voice service initialized");
     tracing::info!("Skills service initialized");
     tracing::info!("Memory service initialized");
+    tracing::info!("Lessons service initialized");
 
     Server::builder()
         .accept_http1(true)
@@ -103,6 +106,7 @@ async fn main() -> anyhow::Result<()> {
         .add_service(VoiceServiceServer::new(voice_service))
         .add_service(SkillsServiceServer::new(skills_service))
         .add_service(MemoryServiceServer::new(memory_service))
+        .add_service(LessonsServiceServer::new(lessons_service))
         .serve(addr)
         .await?;
 

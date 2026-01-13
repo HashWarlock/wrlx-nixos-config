@@ -639,3 +639,109 @@ message PinResponse {
 }
 
 message RefreshFactsRequest {}
+
+// Lessons learned service - tracks problem->solution mappings
+service LessonsService {
+  // Search for lessons matching a pattern
+  rpc Search(SearchLessonsRequest) returns (SearchLessonsResponse);
+
+  // Store a new lesson
+  rpc Store(StoreLessonRequest) returns (StoreLessonResponse);
+
+  // Get a lesson by ID
+  rpc Get(GetLessonRequest) returns (LessonEntry);
+
+  // List all lessons (paginated)
+  rpc List(ListLessonsRequest) returns (ListLessonsResponse);
+
+  // Record that a lesson's solution worked
+  rpc RecordSuccess(RecordLessonOutcomeRequest) returns (RecordLessonOutcomeResponse);
+
+  // Record that a lesson's solution failed
+  rpc RecordFailure(RecordLessonOutcomeRequest) returns (RecordLessonOutcomeResponse);
+
+  // Update a lesson's solution
+  rpc Update(UpdateLessonRequest) returns (LessonEntry);
+
+  // Delete a lesson
+  rpc Delete(DeleteLessonRequest) returns (DeleteLessonResponse);
+}
+
+// A single lesson entry
+message LessonEntry {
+  string id = 1;
+  string trigger_pattern = 2;        // The problem/situation
+  string solution = 3;               // What worked
+  string context = 4;                // JSON context data
+  int32 success_count = 5;
+  int32 failure_count = 6;
+  double confidence = 7;             // Calculated: success/(success+failure)
+  int64 created_at_ms = 8;
+  int64 last_used_ms = 9;
+}
+
+// Search for lessons
+message SearchLessonsRequest {
+  string query = 1;                  // Full-text search query
+  int32 limit = 2;                   // Max results (default 10)
+  double min_confidence = 3;         // Filter by minimum confidence (0-1)
+}
+
+message SearchLessonsResponse {
+  repeated LessonEntry lessons = 1;
+}
+
+// Store a new lesson
+message StoreLessonRequest {
+  string trigger_pattern = 1;
+  string solution = 2;
+  string context = 3;                // Optional JSON context
+}
+
+message StoreLessonResponse {
+  string id = 1;
+}
+
+// Get lesson by ID
+message GetLessonRequest {
+  string id = 1;
+}
+
+// List all lessons
+message ListLessonsRequest {
+  int32 limit = 1;                   // Max results (default 50)
+  int32 offset = 2;                  // Pagination offset
+}
+
+message ListLessonsResponse {
+  repeated LessonEntry lessons = 1;
+  int32 total_count = 2;
+}
+
+// Record success or failure outcome
+message RecordLessonOutcomeRequest {
+  string id = 1;
+}
+
+message RecordLessonOutcomeResponse {
+  bool success = 1;
+  int32 new_success_count = 2;
+  int32 new_failure_count = 3;
+  double new_confidence = 4;
+}
+
+// Update a lesson
+message UpdateLessonRequest {
+  string id = 1;
+  string solution = 2;               // New solution text
+  string context = 3;                // New context (optional)
+}
+
+// Delete a lesson
+message DeleteLessonRequest {
+  string id = 1;
+}
+
+message DeleteLessonResponse {
+  bool success = 1;
+}
