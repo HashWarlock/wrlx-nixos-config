@@ -10,3 +10,4 @@ logs/
 # Environment files with secrets
 .env
 *.env.local
+.playwright-mcp/

@@ -31,10 +31,10 @@ services:
       # Whisper voice transcription configuration
       - WHISPER_MODEL=${WHISPER_MODEL:-base}
 
-      # Phala Cloud domain (auto-populated in CVM)
-      - AGENT_DOMAIN=${AGENT_DOMAIN}
-      - DSTACK_APP_ID=${DSTACK_APP_ID}
-      - DSTACK_GATEWAY_DOMAIN=${DSTACK_GATEWAY_DOMAIN}
+      # Phala Cloud domain (auto-populated in CVM, empty for local dev)
+      - AGENT_DOMAIN=${AGENT_DOMAIN:-}
+      - DSTACK_APP_ID=${DSTACK_APP_ID:-}
+      - DSTACK_GATEWAY_DOMAIN=${DSTACK_GATEWAY_DOMAIN:-}
 
     # Volumes for persistence and dstack socket
     volumes:
