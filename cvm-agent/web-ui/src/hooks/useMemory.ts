@@ -15,7 +15,7 @@ import {
 import type { MemoryEntry, ForgetCandidate } from "../gen/agent_pb";
 
 const transport = createGrpcWebTransport({
-  baseUrl: "/api",
+  baseUrl: "http://localhost:8080",
 });
 
 const memoryClient = createClient(MemoryService, transport);

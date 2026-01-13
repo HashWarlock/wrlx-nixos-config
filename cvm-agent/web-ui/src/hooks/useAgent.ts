@@ -5,7 +5,7 @@ import { create } from "@bufbuild/protobuf";
 import { useState, useCallback } from "react";
 
 const transport = createGrpcWebTransport({
-  baseUrl: "/api",
+  baseUrl: "http://localhost:8080",
 });
 
 const chatClient = createClient(ChatService, transport);

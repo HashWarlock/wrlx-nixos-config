@@ -4,7 +4,7 @@ import { SkillsService, SkillType } from "../gen/agent_pb";
 import { useState, useCallback } from "react";
 
 const transport = createGrpcWebTransport({
-  baseUrl: "/api",
+  baseUrl: "http://localhost:8080",
 });
 
 const skillsClient = createClient(SkillsService, transport);
