@@ -5,8 +5,9 @@
 . "$(dirname "$0")/common.sh"
 
 DESKTOP_DIR="/app/cvm-agent/desktop"
-DESKTOP_BIN="/app/cvm-agent/desktop/src-tauri/target/release/cvm-desktop"
-DESKTOP_DEV_BIN="/app/cvm-agent/desktop/src-tauri/target/debug/cvm-desktop"
+# Workspace puts binaries in root target directory
+DESKTOP_BIN="/app/cvm-agent/target/release/cvm-desktop"
+DESKTOP_DEV_BIN="/app/cvm-agent/target/debug/cvm-desktop"
 PIDFILE="/tmp/cvm-desktop.pid"
 
 # Build the Tauri desktop app
