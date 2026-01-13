@@ -46,6 +46,13 @@ echo "All package versions are deterministic and reproducible."
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
 
+# Allow bypassing nix develop for testing/debugging (docker exec won't work inside sandbox)
+if [ "${RUN_NIX_DEVELOP:-true}" = "false" ]; then
+    echo "Skipping nix develop (RUN_NIX_DEVELOP=false)"
+    echo "Warning: Some packages may not be available without nix develop"
+    exec /app/files/phala-cvm/cvm-start.sh
+fi
+
 # Enter the CVM development shell and run the startup script
 # This loads all packages from the locked nixpkgs version (nixos-25.11)
 # --accept-flake-config trusts the flake's extra-substituters without prompting
