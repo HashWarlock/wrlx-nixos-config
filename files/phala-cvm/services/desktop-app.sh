@@ -1,12 +1,47 @@
 #!/bin/sh
 # CVM Desktop App Service
-# Manages the Tauri desktop application
+# Manages the Tauri desktop application (replaces web-ui)
 
 . "$(dirname "$0")/common.sh"
 
+DESKTOP_DIR="/app/cvm-agent/desktop"
 DESKTOP_BIN="/app/cvm-agent/desktop/src-tauri/target/release/cvm-desktop"
 DESKTOP_DEV_BIN="/app/cvm-agent/desktop/src-tauri/target/debug/cvm-desktop"
 PIDFILE="/tmp/cvm-desktop.pid"
+
+# Build the Tauri desktop app
+build() {
+    if [ ! -d "$DESKTOP_DIR" ]; then
+        log_error "Desktop app source not found at $DESKTOP_DIR"
+        return 1
+    fi
+
+    log_info "Building Tauri desktop app..."
+    cd "$DESKTOP_DIR" || return 1
+
+    # Install frontend dependencies if needed
+    if [ ! -d "node_modules" ]; then
+        log_info "Installing npm dependencies..."
+        npm install || {
+            log_error "npm install failed"
+            cd - > /dev/null
+            return 1
+        }
+    fi
+
+    # Build with cargo (release mode)
+    log_info "Building Rust backend (this may take a few minutes)..."
+    cd src-tauri || return 1
+    if cargo build --release; then
+        log_success "Desktop app built successfully"
+        cd - > /dev/null
+        return 0
+    else
+        log_error "Cargo build failed"
+        cd - > /dev/null
+        return 1
+    fi
+}
 
 start() {
     if [ -f "$PIDFILE" ] && is_running "$(cat "$PIDFILE")"; then
@@ -22,8 +57,21 @@ start() {
         bin="$DESKTOP_DEV_BIN"
         log_warn "Using debug build"
     else
-        log_error "Desktop app not built. Run: cd /app/cvm-agent/desktop && cargo tauri build"
-        return 1
+        log_warn "Desktop app not built, attempting to build..."
+        if build; then
+            # Try again after build
+            if [ -x "$DESKTOP_BIN" ]; then
+                bin="$DESKTOP_BIN"
+            elif [ -x "$DESKTOP_DEV_BIN" ]; then
+                bin="$DESKTOP_DEV_BIN"
+            else
+                log_error "Build succeeded but binary not found"
+                return 1
+            fi
+        else
+            log_error "Failed to build desktop app"
+            return 1
+        fi
     fi
 
     log_info "Starting CVM Desktop App..."
@@ -75,13 +123,14 @@ case "$1" in
     start)  start ;;
     stop)   stop ;;
     status) status ;;
+    build)  build ;;
     restart)
         stop
         sleep 1
         start
         ;;
     *)
-        echo "Usage: $0 {start|stop|status|restart}"
+        echo "Usage: $0 {start|stop|status|restart|build}"
         exit 1
         ;;
 esac

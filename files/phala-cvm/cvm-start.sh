@@ -223,14 +223,14 @@ else
     log_error "Agent API failed to start - check logs above for details"
 fi
 
-# Start Web UI
-log_info "Starting Web UI service..."
-if "$SERVICES_DIR/web-ui.sh" start; then
-    WEBUI_STARTED=0
-    log_success "Web UI started successfully"
+# Start Desktop App (Tauri - replaces Web UI)
+log_info "Starting Desktop App service..."
+if "$SERVICES_DIR/desktop-app.sh" start; then
+    DESKTOP_STARTED=0
+    log_success "Desktop app started successfully"
 else
-    WEBUI_STARTED=1
-    log_warn "Web UI failed to start"
+    DESKTOP_STARTED=1
+    log_warn "Desktop app failed to start (will retry on first use)"
 fi
 
 # Start Whisper
@@ -260,7 +260,7 @@ echo "  Display Resolution: $VNC_RESOLUTION"
 echo ""
 echo "Application Services:"
 [ $AGENT_STARTED -eq 0 ] && echo "  Agent API: http://localhost:$(get_service_port agent-api 8080) (gRPC)"
-[ $WEBUI_STARTED -eq 0 ] && echo "  Web UI: http://localhost:$(get_service_port web-ui 3000)"
+[ $DESKTOP_STARTED -eq 0 ] && echo "  Desktop App: Tauri (Ctrl+Shift+Space to toggle)"
 [ $WHISPER_STARTED -eq 0 ] && echo "  Whisper: http://localhost:$(get_service_port whisper 8082) (model: ${WHISPER_MODEL:-base})"
 echo ""
 [ -n "$AGENT_DOMAIN" ] && echo "Phala Cloud Domain: $AGENT_DOMAIN"
@@ -276,7 +276,7 @@ cleanup() {
 
     # Stop application services
     "$SERVICES_DIR/whisper.sh" stop 2>/dev/null
-    "$SERVICES_DIR/web-ui.sh" stop 2>/dev/null
+    "$SERVICES_DIR/desktop-app.sh" stop 2>/dev/null
     "$SERVICES_DIR/agent-api.sh" stop 2>/dev/null
 
     # Stop infrastructure services
