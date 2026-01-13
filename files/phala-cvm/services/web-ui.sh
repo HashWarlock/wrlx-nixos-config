@@ -82,9 +82,10 @@ start() {
         return 1
     fi
 
-    cd "$SERVE_DIR" || return 1
+    # Use Vite dev server which includes API proxy to agent-api:8080
+    cd "$BUILD_DIR" || return 1
     local pid
-    pid=$(start_service "Web UI" "python3 -m http.server $PORT --bind 0.0.0.0" "$PORT")
+    pid=$(start_service "Web UI" "npm run dev -- --host 0.0.0.0" "$PORT")
     local ret=$?
     cd - > /dev/null || true
 

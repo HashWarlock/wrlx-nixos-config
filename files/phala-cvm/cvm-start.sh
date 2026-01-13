@@ -132,6 +132,11 @@ log_info "Starting xfce4-panel..."
 xfce4-panel &
 sleep 1
 
+# Launch a terminal window for easy testing/development access
+log_info "Launching terminal window..."
+xfce4-terminal --geometry=100x30+50+50 --title="CVM Terminal" &
+sleep 1
+
 # =============================================================================
 # VNC Server
 # =============================================================================
