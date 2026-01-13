@@ -84,36 +84,8 @@
         ];
       };
 
-      # Phala Cloud Confidential VM Configuration
-      phala-cvm = let
-        username = "confidant";
-        specialArgs = {
-          inherit username;
-          inherit (self) outputs;
-        };
-      in
-        nixpkgs.lib.nixosSystem {
-        inherit specialArgs;
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/phala-cvm
-          ./users/${username}/nixos.nix
-          catppuccin.nixosModules.catppuccin
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = false;
-            home-manager.useUserPackages = true;
-
-            home-manager.extraSpecialArgs = inputs // specialArgs;
-            home-manager.users.${username} = {
-              imports = [
-                ./users/${username}/home.nix
-                catppuccin.homeManagerModules.catppuccin
-              ];
-            };
-          }
-        ];
-      };
+      # Note: phala-cvm nixosConfiguration removed - using Docker + devshell approach
+      # See files/phala-cvm/ for Docker-based deployment
     };
     overlays = import ./overlays {inherit inputs;};
 
@@ -163,12 +135,27 @@
         openssl.dev  # Development headers for Rust openssl crate
         protobuf  # Required for gRPC/protobuf compilation
 
-        # Python for web server
+        # Tauri native app dependencies
+        webkitgtk_4_1  # WebView for Tauri (GTK4-based)
+        gtk3
+        libsoup_3
+        glib
+        glib-networking  # TLS support for libsoup
+        gsettings-desktop-schemas  # Required for GIO
+        libayatana-appindicator  # System tray support
+
+        # Python for scripts
         python3
 
-        # Node.js for web UI build
+        # Node.js for Tauri frontend build
         nodejs
         nodePackages.npm
+
+        # Browser for in-VM browsing (user-facing, not required for agent)
+        firefox
+
+        # Better screenshot tool (provides 'import' command)
+        imagemagick
       ];
 
       # Set up environment for Rust openssl crate
