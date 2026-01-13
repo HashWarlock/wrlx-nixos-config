@@ -1,10 +1,10 @@
-import { createConnectTransport } from "@connectrpc/connect-web";
+import { createGrpcWebTransport } from "@connectrpc/connect-web";
 import { createClient } from "@connectrpc/connect";
 import { ChatService, ChatRequestSchema } from "../gen/agent_pb";
 import { create } from "@bufbuild/protobuf";
 import { useState, useCallback } from "react";
 
-const transport = createConnectTransport({
+const transport = createGrpcWebTransport({
   baseUrl: "/api",
 });
 

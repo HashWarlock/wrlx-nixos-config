@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { createConnectTransport } from "@connectrpc/connect-web";
+import { createGrpcWebTransport } from "@connectrpc/connect-web";
 import { createClient } from "@connectrpc/connect";
 import { create } from "@bufbuild/protobuf";
 import {
@@ -14,7 +14,7 @@ import {
 } from "../gen/agent_pb";
 import type { MemoryEntry, ForgetCandidate } from "../gen/agent_pb";
 
-const transport = createConnectTransport({
+const transport = createGrpcWebTransport({
   baseUrl: "/api",
 });
 
