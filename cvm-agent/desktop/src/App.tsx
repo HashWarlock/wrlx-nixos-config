@@ -1,28 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { sendMessage, healthCheck, HealthStatus } from "./hooks/useAgent";
 
 function App() {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<HealthStatus | null>(null);
 
-  const sendMessage = async () => {
-    // TODO: Call Tauri command to send gRPC message
-    setResponse(`Echo: ${message}`);
+  useEffect(() => {
+    // Check connection on mount
+    healthCheck()
+      .then(setStatus)
+      .catch(() => setStatus({ connected: false, healthy: false, version: "" }));
+  }, []);
+
+  const handleSend = async () => {
+    if (!message.trim()) return;
+
+    setLoading(true);
+    try {
+      const result = await sendMessage(message);
+      setResponse(result);
+      setMessage("");
+    } catch (err) {
+      setResponse(`Error: ${err}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="container">
-      <h1>CVM Agent</h1>
+      <header>
+        <h1>CVM Agent</h1>
+        <span className={`status ${status?.connected ? "connected" : "disconnected"}`}>
+          {status?.connected ? "Connected" : "Disconnected"}
+        </span>
+      </header>
+
       <div className="chat-input">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onKeyDown={(e) => e.key === "Enter" && !loading && handleSend()}
           placeholder="Type a message..."
+          disabled={loading}
         />
-        <button onClick={sendMessage}>Send</button>
+        <button onClick={handleSend} disabled={loading || !message.trim()}>
+          {loading ? "..." : "Send"}
+        </button>
       </div>
-      {response && <div className="response">{response}</div>}
+
+      {response && (
+        <div className="response">
+          {response}
+        </div>
+      )}
     </div>
   );
 }

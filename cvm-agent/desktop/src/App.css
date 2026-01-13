@@ -50,3 +50,31 @@ h1 {
   border-radius: 6px;
   white-space: pre-wrap;
 }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.status {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.status.connected {
+  background: #10b981;
+  color: white;
+}
+
+.status.disconnected {
+  background: #ef4444;
+  color: white;
+}
+
+.chat-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
