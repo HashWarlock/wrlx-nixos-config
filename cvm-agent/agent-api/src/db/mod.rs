@@ -5,7 +5,7 @@ mod schema;
 mod tests;
 
 pub use migrations::run_migrations;
-pub use repository::MemoryRepository;
+pub use repository::{LessonsRepository, MemoryRepository};
 pub use schema::*;
 
 use rusqlite::Connection;

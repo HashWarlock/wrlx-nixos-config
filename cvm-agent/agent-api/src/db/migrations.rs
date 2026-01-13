@@ -43,6 +43,43 @@ pub fn run_migrations(conn: &Connection) -> Result<()> {
             INSERT INTO memories_fts(memories_fts, rowid, content) VALUES('delete', old.rowid, old.content);
             INSERT INTO memories_fts(rowid, content) VALUES (new.rowid, new.content);
         END;
+
+        -- Lessons learned table for tracking problem -> solution mappings
+        -- Used by the agent to remember what worked for specific situations
+        CREATE TABLE IF NOT EXISTS lessons_learned (
+            id TEXT PRIMARY KEY,
+            trigger_pattern TEXT NOT NULL,   -- The problem/situation (e.g., 'install vscode')
+            solution TEXT NOT NULL,          -- What worked (e.g., 'use vscode-fhs on NixOS')
+            context TEXT DEFAULT '{}',       -- JSON with additional context
+            success_count INTEGER DEFAULT 1, -- How many times this solution worked
+            failure_count INTEGER DEFAULT 0, -- How many times it failed after working
+            created_at_ms INTEGER NOT NULL,
+            last_used_ms INTEGER NOT NULL
+        );
+
+        -- Index for searching lessons by trigger pattern
+        CREATE INDEX IF NOT EXISTS idx_lessons_trigger ON lessons_learned(trigger_pattern);
+
+        -- FTS for lessons search
+        CREATE VIRTUAL TABLE IF NOT EXISTS lessons_fts USING fts5(
+            trigger_pattern,
+            solution,
+            content='lessons_learned',
+            content_rowid='rowid'
+        );
+
+        CREATE TRIGGER IF NOT EXISTS lessons_ai AFTER INSERT ON lessons_learned BEGIN
+            INSERT INTO lessons_fts(rowid, trigger_pattern, solution) VALUES (new.rowid, new.trigger_pattern, new.solution);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS lessons_ad AFTER DELETE ON lessons_learned BEGIN
+            INSERT INTO lessons_fts(lessons_fts, rowid, trigger_pattern, solution) VALUES('delete', old.rowid, old.trigger_pattern, old.solution);
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS lessons_au AFTER UPDATE ON lessons_learned BEGIN
+            INSERT INTO lessons_fts(lessons_fts, rowid, trigger_pattern, solution) VALUES('delete', old.rowid, old.trigger_pattern, old.solution);
+            INSERT INTO lessons_fts(rowid, trigger_pattern, solution) VALUES (new.rowid, new.trigger_pattern, new.solution);
+        END;
         "
     )?;
     Ok(())

@@ -1,4 +1,4 @@
-use super::{DbPool, MemoryRecord};
+use super::{DbPool, LessonRecord, MemoryRecord};
 use chrono::Utc;
 use rusqlite::params;
 use uuid::Uuid;
@@ -347,5 +347,203 @@ mod tests {
         let after = repo.get_by_id(&id).unwrap().unwrap();
         assert_eq!(after.access_count, 1);
         assert!(after.last_accessed_ms > before.last_accessed_ms);
+    }
+}
+
+/// Repository for lessons learned CRUD operations
+pub struct LessonsRepository {
+    db: DbPool,
+}
+
+impl LessonsRepository {
+    pub fn new(db: DbPool) -> Self {
+        Self { db }
+    }
+
+    /// Store a new lesson learned
+    pub fn store(
+        &self,
+        trigger_pattern: &str,
+        solution: &str,
+        context: &str,
+    ) -> Result<String, rusqlite::Error> {
+        let id = Uuid::new_v4().to_string();
+        let now_ms = Utc::now().timestamp_millis();
+
+        let conn = self.db.lock().unwrap();
+        conn.execute(
+            "INSERT INTO lessons_learned (id, trigger_pattern, solution, context, created_at_ms, last_used_ms)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+            params![id, trigger_pattern, solution, context, now_ms, now_ms],
+        )?;
+
+        Ok(id)
+    }
+
+    /// Search for lessons matching a trigger pattern
+    pub fn search(&self, query: &str, limit: i32) -> Result<Vec<LessonRecord>, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let limit = if limit <= 0 { 10 } else { limit };
+
+        let mut stmt = conn.prepare(
+            "SELECT l.id, l.trigger_pattern, l.solution, l.context, l.success_count, l.failure_count, l.created_at_ms, l.last_used_ms
+             FROM lessons_learned l
+             JOIN lessons_fts f ON l.rowid = f.rowid
+             WHERE lessons_fts MATCH ?1
+             ORDER BY l.success_count DESC, rank
+             LIMIT ?2"
+        )?;
+
+        let rows = stmt.query_map(params![query, limit], |row| LessonRecord::from_row(row))?;
+        rows.collect()
+    }
+
+    /// Find lessons by exact trigger pattern match
+    pub fn find_by_trigger(&self, trigger_pattern: &str) -> Result<Option<LessonRecord>, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id, trigger_pattern, solution, context, success_count, failure_count, created_at_ms, last_used_ms
+             FROM lessons_learned
+             WHERE trigger_pattern = ?1
+             ORDER BY success_count DESC
+             LIMIT 1"
+        )?;
+
+        let mut rows = stmt.query_map([trigger_pattern], |row| LessonRecord::from_row(row))?;
+        match rows.next() {
+            Some(Ok(record)) => Ok(Some(record)),
+            Some(Err(e)) => Err(e),
+            None => Ok(None),
+        }
+    }
+
+    /// Record a successful use of a lesson
+    pub fn record_success(&self, id: &str) -> Result<bool, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let now_ms = Utc::now().timestamp_millis();
+        let affected = conn.execute(
+            "UPDATE lessons_learned SET success_count = success_count + 1, last_used_ms = ?1 WHERE id = ?2",
+            params![now_ms, id],
+        )?;
+        Ok(affected > 0)
+    }
+
+    /// Record a failed use of a lesson
+    pub fn record_failure(&self, id: &str) -> Result<bool, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let now_ms = Utc::now().timestamp_millis();
+        let affected = conn.execute(
+            "UPDATE lessons_learned SET failure_count = failure_count + 1, last_used_ms = ?1 WHERE id = ?2",
+            params![now_ms, id],
+        )?;
+        Ok(affected > 0)
+    }
+
+    /// Get all lessons ordered by confidence score
+    pub fn get_all(&self, limit: i32) -> Result<Vec<LessonRecord>, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let limit = if limit <= 0 { 50 } else { limit };
+
+        let mut stmt = conn.prepare(
+            "SELECT id, trigger_pattern, solution, context, success_count, failure_count, created_at_ms, last_used_ms
+             FROM lessons_learned
+             ORDER BY (CAST(success_count AS REAL) / MAX(success_count + failure_count, 1)) DESC, last_used_ms DESC
+             LIMIT ?1"
+        )?;
+
+        let rows = stmt.query_map([limit], |row| LessonRecord::from_row(row))?;
+        rows.collect()
+    }
+
+    /// Delete a lesson by ID
+    pub fn delete(&self, id: &str) -> Result<bool, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let affected = conn.execute("DELETE FROM lessons_learned WHERE id = ?1", [id])?;
+        Ok(affected > 0)
+    }
+
+    /// Update an existing lesson's solution
+    pub fn update_solution(&self, id: &str, solution: &str) -> Result<bool, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let now_ms = Utc::now().timestamp_millis();
+        let affected = conn.execute(
+            "UPDATE lessons_learned SET solution = ?1, last_used_ms = ?2 WHERE id = ?3",
+            params![solution, now_ms, id],
+        )?;
+        Ok(affected > 0)
+    }
+}
+
+#[cfg(test)]
+mod lessons_tests {
+    use super::*;
+    use crate::db::init_memory_db;
+
+    fn setup_lessons_repo() -> LessonsRepository {
+        let db = init_memory_db().unwrap();
+        LessonsRepository::new(db)
+    }
+
+    #[test]
+    fn test_store_and_search_lesson() {
+        let repo = setup_lessons_repo();
+
+        let id = repo.store(
+            "install vscode",
+            "Use vscode-fhs package on NixOS for better compatibility",
+            "{}",
+        ).unwrap();
+
+        assert!(!id.is_empty());
+
+        let results = repo.search("vscode", 10).unwrap();
+        assert_eq!(results.len(), 1);
+        assert!(results[0].solution.contains("vscode-fhs"));
+    }
+
+    #[test]
+    fn test_find_by_trigger() {
+        let repo = setup_lessons_repo();
+
+        repo.store("install chrome", "Use google-chrome package", "{}").unwrap();
+        repo.store("install firefox", "Use firefox package", "{}").unwrap();
+
+        let lesson = repo.find_by_trigger("install chrome").unwrap();
+        assert!(lesson.is_some());
+        assert!(lesson.unwrap().solution.contains("google-chrome"));
+
+        let none = repo.find_by_trigger("install opera").unwrap();
+        assert!(none.is_none());
+    }
+
+    #[test]
+    fn test_success_failure_tracking() {
+        let repo = setup_lessons_repo();
+
+        let id = repo.store("test pattern", "test solution", "{}").unwrap();
+
+        // Record successes
+        repo.record_success(&id).unwrap();
+        repo.record_success(&id).unwrap();
+        repo.record_failure(&id).unwrap();
+
+        let lessons = repo.get_all(10).unwrap();
+        assert_eq!(lessons.len(), 1);
+        assert_eq!(lessons[0].success_count, 3); // 1 initial + 2 recorded
+        assert_eq!(lessons[0].failure_count, 1);
+
+        // Confidence should be 3/4 = 0.75
+        assert!((lessons[0].confidence() - 0.75).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_update_solution() {
+        let repo = setup_lessons_repo();
+
+        let id = repo.store("pattern", "old solution", "{}").unwrap();
+        repo.update_solution(&id, "new improved solution").unwrap();
+
+        let lesson = repo.find_by_trigger("pattern").unwrap().unwrap();
+        assert_eq!(lesson.solution, "new improved solution");
     }
 }
