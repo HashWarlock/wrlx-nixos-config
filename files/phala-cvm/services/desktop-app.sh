@@ -29,6 +29,14 @@ build() {
         }
     fi
 
+    # Build frontend (required for Tauri - creates dist directory)
+    log_info "Building frontend..."
+    npm run build || {
+        log_error "Frontend build failed"
+        cd - > /dev/null
+        return 1
+    }
+
     # Build with cargo (release mode)
     log_info "Building Rust backend (this may take a few minutes)..."
     cd src-tauri || return 1
