@@ -21,10 +21,11 @@ use services::health::proto::health_service_server::HealthServiceServer;
 use services::health::proto::lessons_service_server::LessonsServiceServer;
 use services::health::proto::memory_service_server::MemoryServiceServer;
 use services::health::proto::nix_ops_service_server::NixOpsServiceServer;
+use services::health::proto::setup_service_server::SetupServiceServer;
 use services::health::proto::shell_service_server::ShellServiceServer;
 use services::health::proto::skills_service_server::SkillsServiceServer;
 use services::health::proto::voice_service_server::VoiceServiceServer;
-use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, LessonsServiceImpl, MemoryServiceImpl, NixOpsServiceImpl, ShellServiceImpl, SkillsServiceImpl, VoiceServiceImpl};
+use services::{ChatServiceImpl, GitOpsServiceImpl, GUIServiceImpl, HealthServiceImpl, LessonsServiceImpl, MemoryServiceImpl, NixOpsServiceImpl, SetupServiceImpl, ShellServiceImpl, SkillsServiceImpl, VoiceServiceImpl};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -85,6 +86,7 @@ async fn main() -> anyhow::Result<()> {
     let skills_service = SkillsServiceImpl::new(&skills_dir, registry, service_ctx).await;
     let memory_service = MemoryServiceImpl::new(db.clone());
     let lessons_service = LessonsServiceImpl::new(db);
+    let setup_service = SetupServiceImpl::new();
 
     tracing::info!("GUI service initialized (vision: {})",
         if gui_service.has_vision() { "enabled" } else { "disabled" });
@@ -92,6 +94,7 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("Skills service initialized");
     tracing::info!("Memory service initialized");
     tracing::info!("Lessons service initialized");
+    tracing::info!("Setup service initialized (config_dir: {})", config.paths.config_dir.display());
 
     Server::builder()
         .accept_http1(true)
@@ -107,6 +110,7 @@ async fn main() -> anyhow::Result<()> {
         .add_service(SkillsServiceServer::new(skills_service))
         .add_service(MemoryServiceServer::new(memory_service))
         .add_service(LessonsServiceServer::new(lessons_service))
+        .add_service(SetupServiceServer::new(setup_service))
         .serve(addr)
         .await?;
 

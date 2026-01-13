@@ -53,6 +53,8 @@ pub struct PathsConfig {
     pub working_dir: PathBuf,
     /// Flake reference for NixOS operations (e.g., "/app#phala-cvm")
     pub flake_ref: String,
+    /// Configuration directory for user preferences and setup state
+    pub config_dir: PathBuf,
 }
 
 /// LLM (Language Model) configuration.
@@ -105,6 +107,16 @@ impl Config {
                 ),
                 flake_ref: std::env::var("AGENT_FLAKE_REF")
                     .unwrap_or_else(|_| "/app#phala-cvm".to_string()),
+                config_dir: PathBuf::from(
+                    std::env::var("AGENT_CONFIG_DIR")
+                        .unwrap_or_else(|_| {
+                            dirs::home_dir()
+                                .map(|h| h.join(".cvm-agent"))
+                                .unwrap_or_else(|| PathBuf::from("/tmp/.cvm-agent"))
+                                .to_string_lossy()
+                                .to_string()
+                        }),
+                ),
             },
             llm: LlmConfig {
                 api_key: std::env::var("REDPILL_API_KEY")

@@ -745,3 +745,110 @@ message DeleteLessonRequest {
 message DeleteLessonResponse {
   bool success = 1;
 }
+
+// First-run setup service
+service SetupService {
+  // Check if setup has been completed
+  rpc GetStatus(SetupStatusRequest) returns (SetupStatusResponse);
+
+  // Get current preferences (returns defaults if not set)
+  rpc GetPreferences(GetPreferencesRequest) returns (UserPreferences);
+
+  // Save user preferences
+  rpc SavePreferences(UserPreferences) returns (SavePreferencesResponse);
+
+  // Mark setup as complete
+  rpc CompleteSetup(CompleteSetupRequest) returns (CompleteSetupResponse);
+
+  // Reset setup (for testing or re-configuration)
+  rpc ResetSetup(ResetSetupRequest) returns (ResetSetupResponse);
+}
+
+// Setup status
+message SetupStatusRequest {}
+
+message SetupStatusResponse {
+  bool setup_complete = 1;
+  string setup_version = 2;          // Version of setup completed
+  int64 setup_completed_at_ms = 3;   // When setup was completed
+}
+
+// User preferences
+message GetPreferencesRequest {}
+
+message UserPreferences {
+  // Interaction mode
+  InteractionMode interaction_mode = 1;
+
+  // Desktop preferences
+  DesktopTheme theme = 2;
+
+  // Usage profile
+  UsageProfile usage_profile = 3;
+
+  // Memory preferences
+  MemoryPreference memory_preference = 4;
+
+  // Sensitive data handling
+  SensitiveDataHandling sensitive_data = 5;
+
+  // Custom settings (JSON for extensibility)
+  string custom_settings_json = 6;
+}
+
+enum InteractionMode {
+  INTERACTION_UNSPECIFIED = 0;
+  INTERACTION_TEXT = 1;        // Text chat only
+  INTERACTION_VOICE = 2;       // Voice (Whisper) primary
+  INTERACTION_BOTH = 3;        // Both available
+}
+
+enum DesktopTheme {
+  THEME_UNSPECIFIED = 0;
+  THEME_DARK = 1;
+  THEME_LIGHT = 2;
+  THEME_SYSTEM = 3;            // Follow system preference
+}
+
+enum UsageProfile {
+  PROFILE_UNSPECIFIED = 0;
+  PROFILE_DEVELOPER = 1;       // Development tools focus
+  PROFILE_CREATIVE = 2;        // Creative/design tools
+  PROFILE_GENERAL = 3;         // General productivity
+  PROFILE_CUSTOM = 4;          // Custom setup
+}
+
+enum MemoryPreference {
+  MEMORY_UNSPECIFIED = 0;
+  MEMORY_REMEMBER_ALL = 1;     // Remember everything
+  MEMORY_MINIMAL = 2;          // Remember only essentials
+  MEMORY_ASK_FIRST = 3;        // Ask before storing
+}
+
+enum SensitiveDataHandling {
+  SENSITIVE_UNSPECIFIED = 0;
+  SENSITIVE_ENCRYPT = 1;       // Encrypt sensitive data
+  SENSITIVE_ASK = 2;           // Ask before storing
+  SENSITIVE_SKIP = 3;          // Never store sensitive data
+}
+
+message SavePreferencesResponse {
+  bool success = 1;
+}
+
+// Complete setup
+message CompleteSetupRequest {
+  string setup_version = 1;    // Version being completed (e.g., "1.0")
+}
+
+message CompleteSetupResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Reset setup (for testing)
+message ResetSetupRequest {}
+
+message ResetSetupResponse {
+  bool success = 1;
+}
