@@ -3,6 +3,17 @@ use chrono::Utc;
 use rusqlite::params;
 use uuid::Uuid;
 
+/// Escape a search string for safe use in FTS5 MATCH queries.
+/// Wraps the input in double quotes and escapes internal quotes.
+/// This treats the entire input as a literal phrase, preventing
+/// FTS5 special characters (", *, :, -, (, )) from being interpreted.
+fn escape_fts5_query(input: &str) -> String {
+    // FTS5 treats content inside double quotes as a literal phrase
+    // Internal quotes need to be doubled to escape them
+    let escaped = input.replace('"', "\"\"");
+    format!("\"{}\"", escaped)
+}
+
 /// Repository for memory CRUD operations
 pub struct MemoryRepository {
     db: DbPool,
@@ -126,7 +137,7 @@ impl MemoryRepository {
 
         // Build params: search text + layers + limit
         let mut params_vec: Vec<rusqlite::types::Value> = vec![
-            rusqlite::types::Value::Text(text.to_string())
+            rusqlite::types::Value::Text(escape_fts5_query(text))
         ];
         for &layer in layers {
             params_vec.push(rusqlite::types::Value::Integer(layer as i64));
@@ -284,6 +295,49 @@ mod tests {
     }
 
     #[test]
+    fn test_fts5_escape_special_chars() {
+        // Test the escape function directly
+        assert_eq!(escape_fts5_query("simple"), "\"simple\"");
+        assert_eq!(escape_fts5_query("hello world"), "\"hello world\"");
+        assert_eq!(escape_fts5_query("word*"), "\"word*\"");
+        assert_eq!(escape_fts5_query("foo:bar"), "\"foo:bar\"");
+        assert_eq!(escape_fts5_query("-excluded"), "\"-excluded\"");
+        assert_eq!(escape_fts5_query("(grouped)"), "\"(grouped)\"");
+        // Quotes should be doubled
+        assert_eq!(escape_fts5_query("with \"quotes\""), "\"with \"\"quotes\"\"\"");
+        assert_eq!(escape_fts5_query("\""), "\"\"\"\"");
+    }
+
+    #[test]
+    fn test_search_with_special_characters() {
+        let repo = setup_test_repo();
+
+        // Store content that includes special FTS5 characters
+        repo.store(layer::WORKING, "Using word* wildcards", "{}", None).unwrap();
+        repo.store(layer::WORKING, "Config key:value pairs", "{}", None).unwrap();
+        repo.store(layer::WORKING, "Exclude -things from search", "{}", None).unwrap();
+        repo.store(layer::WORKING, "Grouping (with) parentheses", "{}", None).unwrap();
+
+        // These searches should not fail with FTS5 syntax errors
+        let results = repo.search("word*", &[], 10).unwrap();
+        assert_eq!(results.len(), 1);
+
+        let results = repo.search("key:value", &[], 10).unwrap();
+        assert_eq!(results.len(), 1);
+
+        let results = repo.search("-things", &[], 10).unwrap();
+        assert_eq!(results.len(), 1);
+
+        let results = repo.search("(with)", &[], 10).unwrap();
+        assert_eq!(results.len(), 1);
+
+        // Search with quotes in content
+        repo.store(layer::WORKING, "She said \"hello\"", "{}", None).unwrap();
+        let results = repo.search("\"hello\"", &[], 10).unwrap();
+        assert_eq!(results.len(), 1);
+    }
+
+    #[test]
     fn test_pin_memory() {
         let repo = setup_test_repo();
 
@@ -394,7 +448,8 @@ impl LessonsRepository {
              LIMIT ?2"
         )?;
 
-        let rows = stmt.query_map(params![query, limit], |row| LessonRecord::from_row(row))?;
+        let escaped_query = escape_fts5_query(query);
+        let rows = stmt.query_map(params![escaped_query, limit], |row| LessonRecord::from_row(row))?;
         rows.collect()
     }
 
@@ -545,5 +600,30 @@ mod lessons_tests {
 
         let lesson = repo.find_by_trigger("pattern").unwrap().unwrap();
         assert_eq!(lesson.solution, "new improved solution");
+    }
+
+    #[test]
+    fn test_lessons_search_with_special_characters() {
+        let repo = setup_lessons_repo();
+
+        // Store lessons with special FTS5 characters
+        repo.store("use glob*", "Use * wildcards for matching", "{}").unwrap();
+        repo.store("config key:value", "Set key:value in config", "{}").unwrap();
+        repo.store("-flag option", "Use -flag for options", "{}").unwrap();
+
+        // These searches should not fail with FTS5 syntax errors
+        let results = repo.search("glob*", 10).unwrap();
+        assert_eq!(results.len(), 1);
+
+        let results = repo.search("key:value", 10).unwrap();
+        assert_eq!(results.len(), 1);
+
+        let results = repo.search("-flag", 10).unwrap();
+        assert_eq!(results.len(), 1);
+
+        // Search with quotes
+        repo.store("say \"hello\"", "greeting solution", "{}").unwrap();
+        let results = repo.search("\"hello\"", 10).unwrap();
+        assert_eq!(results.len(), 1);
     }
 }
