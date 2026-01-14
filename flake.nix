@@ -143,6 +143,8 @@
         glib-networking  # TLS support for libsoup
         gsettings-desktop-schemas  # Required for GIO
         libayatana-appindicator  # System tray support
+        gdk-pixbuf  # Image loading for GTK
+        hicolor-icon-theme  # Base icon theme
 
         # Python for scripts
         python3
@@ -158,12 +160,24 @@
         imagemagick
       ];
 
-      # Set up environment for Rust openssl crate
+      # Set up environment for Rust openssl crate and GUI dependencies
       shellHook = ''
+        # OpenSSL for Rust crates
         export OPENSSL_DIR="${cvmPkgs.openssl.dev}"
         export OPENSSL_LIB_DIR="${cvmPkgs.openssl.out}/lib"
         export OPENSSL_INCLUDE_DIR="${cvmPkgs.openssl.dev}/include"
         export PKG_CONFIG_PATH="${cvmPkgs.openssl.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+        # Fontconfig - required for GTK/Tauri font rendering
+        export FONTCONFIG_FILE="${cvmPkgs.fontconfig.out}/etc/fonts/fonts.conf"
+
+        # GTK/GDK environment for Tauri desktop app
+        export GDK_PIXBUF_MODULE_FILE="${cvmPkgs.gdk-pixbuf}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+        export GSETTINGS_SCHEMA_DIR="${cvmPkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas:${cvmPkgs.gtk3}/share/glib-2.0/schemas"
+        export GIO_EXTRA_MODULES="${cvmPkgs.glib-networking}/lib/gio/modules"
+
+        # XDG directories for desktop environment
+        export XDG_DATA_DIRS="${cvmPkgs.gsettings-desktop-schemas}/share:${cvmPkgs.gtk3}/share:${cvmPkgs.hicolor-icon-theme}/share:''${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
       '';
     };
   };
