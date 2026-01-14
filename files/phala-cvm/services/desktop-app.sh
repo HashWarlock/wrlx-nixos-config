@@ -89,10 +89,12 @@ start() {
     export DISPLAY="${DISPLAY:-:1}"
     export AGENT_GRPC_ADDR="${AGENT_GRPC_ADDR:-http://localhost:8080}"
 
-    # Disable WebKit hardware acceleration for Xvfb (software rendering)
+    # Force software rendering for Xvfb (no GPU available)
     # Without this, WebKitGTK crashes with "Could not create default EGL display"
+    export LIBGL_ALWAYS_SOFTWARE=1
     export WEBKIT_DISABLE_COMPOSITING_MODE=1
     export WEBKIT_DISABLE_DMABUF_RENDERER=1
+    export GDK_RENDERING=image  # Force GDK to use image backend instead of GL
 
     "$bin" > /tmp/cvm-desktop.log 2>&1 &
     echo $! > "$PIDFILE"
