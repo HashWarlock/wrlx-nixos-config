@@ -49,7 +49,10 @@ impl SkillsWatcher {
     pub fn start(&mut self) -> Result<mpsc::Receiver<SkillEvent>, anyhow::Error> {
         let (tx, rx) = mpsc::channel(16);
         let loader = self.loader.clone();
-        let skills_dir = self.skills_dir.clone();
+        let _skills_dir = self.skills_dir.clone();
+
+        // Get the runtime handle to spawn tasks from the callback thread
+        let handle = tokio::runtime::Handle::current();
 
         // Create debounced watcher
         let debouncer = new_debouncer(
@@ -57,10 +60,10 @@ impl SkillsWatcher {
             move |result: Result<Vec<notify_debouncer_mini::DebouncedEvent>, notify::Error>| {
                 let tx = tx.clone();
                 let loader = loader.clone();
-                let skills_dir = skills_dir.clone();
+                let handle = handle.clone();
 
-                // Spawn async task to handle the event
-                tokio::spawn(async move {
+                // Spawn async task to handle the event using the captured runtime handle
+                handle.spawn(async move {
                     match result {
                         Ok(events) => {
                             // Check if any skill files were affected
@@ -130,6 +133,9 @@ fn is_skill_file(path: &std::path::Path) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::super::loader::SkillsLoader;
+    use tempfile::TempDir;
+    use tokio::time::{timeout, Duration};
 
     #[test]
     fn test_is_skill_file() {
@@ -138,5 +144,176 @@ mod tests {
         assert!(is_skill_file(std::path::Path::new("flow.yml")));
         assert!(!is_skill_file(std::path::Path::new("readme.txt")));
         assert!(!is_skill_file(std::path::Path::new("data.json")));
+    }
+
+    /// Helper to create a valid skill file content
+    fn valid_skill_content(name: &str) -> String {
+        format!(
+            r#"---
+name: {}
+description: A test skill
+triggers:
+  - test trigger
+---
+
+# Test Skill
+
+This is the body content.
+"#,
+            name
+        )
+    }
+
+    /// Test 1: Create a skill file and verify reload event is received
+    #[tokio::test]
+    async fn test_watch_and_reload() {
+        let temp_dir = TempDir::new().unwrap();
+        let skills_dir = temp_dir.path().to_path_buf();
+
+        // Create instructions subdirectory
+        let instructions_dir = skills_dir.join("instructions");
+        std::fs::create_dir_all(&instructions_dir).unwrap();
+
+        // Create loader and watcher
+        let loader = Arc::new(RwLock::new(SkillsLoader::new(skills_dir.to_str().unwrap())));
+        let mut watcher = SkillsWatcher::new(skills_dir.clone(), loader.clone());
+
+        // Start watching
+        let mut rx = watcher.start().expect("Failed to start watcher");
+
+        // Give the watcher time to initialize
+        tokio::time::sleep(Duration::from_millis(100)).await;
+
+        // Write a new skill file
+        let skill_path = instructions_dir.join("new-skill.md");
+        std::fs::write(&skill_path, valid_skill_content("new-skill")).unwrap();
+
+        // Wait for the reload event with a generous timeout (debounce is 500ms + processing time)
+        let result = timeout(Duration::from_secs(3), rx.recv()).await;
+
+        assert!(result.is_ok(), "Should receive event within timeout");
+        let event = result.unwrap();
+        assert!(event.is_some(), "Channel should not be closed");
+
+        match event.unwrap() {
+            SkillEvent::Reloaded { count } => {
+                assert!(count >= 1, "Should have at least 1 skill loaded, got {}", count);
+            }
+            SkillEvent::Error { message } => {
+                panic!("Unexpected error event: {}", message);
+            }
+        }
+
+        // Verify the loader has the skill
+        let loader_guard = loader.read().await;
+        assert!(loader_guard.get("new-skill").is_some(), "Loader should have the new skill");
+    }
+
+    /// Test 2: Rapid file changes should be debounced into fewer events
+    #[tokio::test]
+    async fn test_debounce_multiple_changes() {
+        let temp_dir = TempDir::new().unwrap();
+        let skills_dir = temp_dir.path().to_path_buf();
+
+        // Create instructions subdirectory
+        let instructions_dir = skills_dir.join("instructions");
+        std::fs::create_dir_all(&instructions_dir).unwrap();
+
+        // Create an initial skill file
+        let skill_path = instructions_dir.join("debounce-test.md");
+        std::fs::write(&skill_path, valid_skill_content("debounce-test")).unwrap();
+
+        // Create loader and watcher
+        let loader = Arc::new(RwLock::new(SkillsLoader::new(skills_dir.to_str().unwrap())));
+        let mut watcher = SkillsWatcher::new(skills_dir.clone(), loader.clone());
+
+        // Start watching
+        let mut rx = watcher.start().expect("Failed to start watcher");
+
+        // Give the watcher time to initialize
+        tokio::time::sleep(Duration::from_millis(100)).await;
+
+        // Make multiple rapid changes (all within the 500ms debounce window)
+        for i in 0..5 {
+            std::fs::write(&skill_path, valid_skill_content(&format!("debounce-test-v{}", i))).unwrap();
+            tokio::time::sleep(Duration::from_millis(50)).await; // 50ms between changes
+        }
+
+        // Count how many events we receive
+        // Wait long enough for debounce to complete (500ms) plus processing time
+        let mut event_count = 0;
+        let collection_window = Duration::from_secs(2);
+        let start = std::time::Instant::now();
+
+        while start.elapsed() < collection_window {
+            match timeout(Duration::from_millis(200), rx.recv()).await {
+                Ok(Some(SkillEvent::Reloaded { .. })) => {
+                    event_count += 1;
+                }
+                Ok(Some(SkillEvent::Error { message })) => {
+                    panic!("Unexpected error: {}", message);
+                }
+                Ok(None) => break, // Channel closed
+                Err(_) => continue, // Timeout, keep waiting
+            }
+        }
+
+        // With debouncing, we should get significantly fewer events than the 5 changes we made
+        // The debouncer batches events within the 500ms window, so we expect 1-2 events max
+        assert!(
+            event_count >= 1 && event_count <= 2,
+            "Expected 1-2 debounced events, got {}",
+            event_count
+        );
+    }
+
+    /// Test 3: Stopping the watcher should prevent further events
+    #[tokio::test]
+    async fn test_stop_watching() {
+        let temp_dir = TempDir::new().unwrap();
+        let skills_dir = temp_dir.path().to_path_buf();
+
+        // Create instructions subdirectory
+        let instructions_dir = skills_dir.join("instructions");
+        std::fs::create_dir_all(&instructions_dir).unwrap();
+
+        // Create loader and watcher
+        let loader = Arc::new(RwLock::new(SkillsLoader::new(skills_dir.to_str().unwrap())));
+        let mut watcher = SkillsWatcher::new(skills_dir.clone(), loader.clone());
+
+        // Start watching
+        let mut rx = watcher.start().expect("Failed to start watcher");
+
+        // Give the watcher time to initialize
+        tokio::time::sleep(Duration::from_millis(100)).await;
+
+        // Stop the watcher
+        watcher.stop();
+
+        // Give the stop time to take effect
+        tokio::time::sleep(Duration::from_millis(100)).await;
+
+        // Make file changes after stopping
+        let skill_path = instructions_dir.join("after-stop.md");
+        std::fs::write(&skill_path, valid_skill_content("after-stop")).unwrap();
+
+        // Wait for potential events (longer than debounce window)
+        tokio::time::sleep(Duration::from_millis(700)).await;
+
+        // Try to receive - should timeout with no events
+        let result = timeout(Duration::from_millis(500), rx.recv()).await;
+
+        // Either timeout (no event) or channel closed (None) - both are acceptable
+        match result {
+            Err(_) => {
+                // Timeout - no event received, which is correct
+            }
+            Ok(None) => {
+                // Channel closed - also acceptable
+            }
+            Ok(Some(event)) => {
+                panic!("Should not receive events after stop, got: {:?}", event);
+            }
+        }
     }
 }
