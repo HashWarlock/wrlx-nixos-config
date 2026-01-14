@@ -145,6 +145,7 @@
         libayatana-appindicator  # System tray support
         gdk-pixbuf  # Image loading for GTK
         hicolor-icon-theme  # Base icon theme
+        mesa  # Software OpenGL (llvmpipe) for Xvfb
 
         # Python for scripts
         python3
