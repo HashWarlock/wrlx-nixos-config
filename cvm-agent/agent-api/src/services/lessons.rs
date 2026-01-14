@@ -97,19 +97,13 @@ impl LessonsService for LessonsServiceImpl {
     ) -> Result<Response<LessonEntry>, Status> {
         let req = request.into_inner();
 
-        // Search all lessons by ID
-        let all = self
+        let record = self
             .repo
-            .get_all(1000)
-            .map_err(|e| Status::internal(format!("Query error: {}", e)))?;
+            .get_by_id(&req.id)
+            .map_err(|e| Status::internal(format!("Query error: {}", e)))?
+            .ok_or_else(|| Status::not_found(format!("Lesson {} not found", req.id)))?;
 
-        for record in all {
-            if record.id == req.id {
-                return Ok(Response::new(Self::record_to_entry(record)));
-            }
-        }
-
-        Err(Status::not_found(format!("Lesson {} not found", req.id)))
+        Ok(Response::new(Self::record_to_entry(record)))
     }
 
     async fn list(
@@ -151,14 +145,10 @@ impl LessonsService for LessonsServiceImpl {
             .map_err(|e| Status::internal(format!("Update error: {}", e)))?;
 
         // Get updated record
-        let all = self
+        let record = self
             .repo
-            .get_all(1000)
-            .map_err(|e| Status::internal(format!("Query error: {}", e)))?;
-
-        let record = all
-            .into_iter()
-            .find(|r| r.id == req.id)
+            .get_by_id(&req.id)
+            .map_err(|e| Status::internal(format!("Query error: {}", e)))?
             .ok_or_else(|| Status::not_found(format!("Lesson {} not found", req.id)))?;
 
         tracing::debug!("Recorded success for lesson {}", req.id);
@@ -182,14 +172,10 @@ impl LessonsService for LessonsServiceImpl {
             .map_err(|e| Status::internal(format!("Update error: {}", e)))?;
 
         // Get updated record
-        let all = self
+        let record = self
             .repo
-            .get_all(1000)
-            .map_err(|e| Status::internal(format!("Query error: {}", e)))?;
-
-        let record = all
-            .into_iter()
-            .find(|r| r.id == req.id)
+            .get_by_id(&req.id)
+            .map_err(|e| Status::internal(format!("Query error: {}", e)))?
             .ok_or_else(|| Status::not_found(format!("Lesson {} not found", req.id)))?;
 
         tracing::debug!("Recorded failure for lesson {}", req.id);
@@ -217,14 +203,10 @@ impl LessonsService for LessonsServiceImpl {
             .map_err(|e| Status::internal(format!("Update error: {}", e)))?;
 
         // Get updated record
-        let all = self
+        let record = self
             .repo
-            .get_all(1000)
-            .map_err(|e| Status::internal(format!("Query error: {}", e)))?;
-
-        let record = all
-            .into_iter()
-            .find(|r| r.id == req.id)
+            .get_by_id(&req.id)
+            .map_err(|e| Status::internal(format!("Query error: {}", e)))?
             .ok_or_else(|| Status::not_found(format!("Lesson {} not found", req.id)))?;
 
         tracing::debug!("Updated lesson {}", req.id);

@@ -517,6 +517,23 @@ impl LessonsRepository {
         Ok(affected > 0)
     }
 
+    /// Get a lesson by ID
+    pub fn get_by_id(&self, id: &str) -> Result<Option<LessonRecord>, rusqlite::Error> {
+        let conn = self.db.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id, trigger_pattern, solution, context, success_count, failure_count, created_at_ms, last_used_ms
+             FROM lessons_learned
+             WHERE id = ?1"
+        )?;
+
+        let mut rows = stmt.query_map([id], |row| LessonRecord::from_row(row))?;
+        match rows.next() {
+            Some(Ok(record)) => Ok(Some(record)),
+            Some(Err(e)) => Err(e),
+            None => Ok(None),
+        }
+    }
+
     /// Update an existing lesson's solution
     pub fn update_solution(&self, id: &str, solution: &str) -> Result<bool, rusqlite::Error> {
         let conn = self.db.lock().unwrap();
@@ -625,5 +642,29 @@ mod lessons_tests {
         repo.store("say \"hello\"", "greeting solution", "{}").unwrap();
         let results = repo.search("\"hello\"", 10).unwrap();
         assert_eq!(results.len(), 1);
+    }
+
+    #[test]
+    fn test_get_by_id() {
+        let repo = setup_lessons_repo();
+
+        // Store a lesson
+        let id = repo.store(
+            "test trigger",
+            "test solution",
+            "{}",
+        ).unwrap();
+
+        // Get by ID should find it
+        let lesson = repo.get_by_id(&id).unwrap();
+        assert!(lesson.is_some());
+        let lesson = lesson.unwrap();
+        assert_eq!(lesson.id, id);
+        assert_eq!(lesson.trigger_pattern, "test trigger");
+        assert_eq!(lesson.solution, "test solution");
+
+        // Get non-existent ID should return None
+        let none = repo.get_by_id("non-existent-id").unwrap();
+        assert!(none.is_none());
     }
 }
