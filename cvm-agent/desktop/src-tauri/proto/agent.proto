@@ -1,0 +1,641 @@
+syntax = "proto3";
+package cvm.agent;
+
+// Health check
+service HealthService {
+  rpc Check(HealthRequest) returns (HealthResponse);
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  bool healthy = 1;
+  string version = 2;
+}
+
+// Chat service - main interaction point
+service ChatService {
+  rpc SendMessage(ChatRequest) returns (stream ChatResponse);
+}
+
+message ChatRequest {
+  string message = 1;
+  string conversation_id = 2;
+}
+
+message ChatResponse {
+  oneof response {
+    string text = 1;
+    string error = 2;
+  }
+  bool done = 3;  // Moved outside oneof
+}
+
+// Shell execution service
+service ShellService {
+  rpc Execute(ShellRequest) returns (stream ShellOutput);
+}
+
+message ShellRequest {
+  string command = 1;
+  string working_dir = 2;
+  int32 timeout_seconds = 3;
+}
+
+message ShellOutput {
+  oneof output {
+    string stdout = 1;
+    string stderr = 2;
+  }
+  optional int32 exit_code = 3;  // Set only on final message
+}
+
+// NixOS operations service
+service NixOpsService {
+  // Rebuild NixOS configuration
+  rpc Rebuild(RebuildRequest) returns (stream RebuildOutput);
+
+  // Rollback to previous generation
+  rpc Rollback(RollbackRequest) returns (stream RebuildOutput);
+
+  // List available generations
+  rpc ListGenerations(ListGenerationsRequest) returns (ListGenerationsResponse);
+
+  // Get current generation info
+  rpc CurrentGeneration(CurrentGenerationRequest) returns (GenerationInfo);
+}
+
+message RebuildRequest {
+  string flake_path = 1;        // Path to flake (default: current dir)
+  string hostname = 2;          // Target hostname
+  string action = 3;            // "switch", "boot", "test", "build"
+}
+
+message RebuildOutput {
+  oneof output {
+    string stdout = 1;
+    string stderr = 2;
+  }
+  optional int32 exit_code = 3;
+  optional string phase = 4;    // "evaluating", "building", "activating"
+}
+
+message RollbackRequest {
+  optional int32 generation = 1;  // Specific generation, or previous if not set
+}
+
+message ListGenerationsRequest {
+  int32 limit = 1;              // Max generations to return (default: 10)
+}
+
+message ListGenerationsResponse {
+  repeated GenerationInfo generations = 1;
+}
+
+message CurrentGenerationRequest {}
+
+message GenerationInfo {
+  int32 number = 1;
+  string date = 2;
+  string nixos_version = 3;
+  string kernel_version = 4;
+  string configuration_revision = 5;
+  bool current = 6;
+}
+
+// Git operations service
+service GitOpsService {
+  // Get repository status
+  rpc Status(GitStatusRequest) returns (GitStatusResponse);
+
+  // Get diff of changes
+  rpc Diff(GitDiffRequest) returns (GitDiffResponse);
+
+  // Stage files
+  rpc Add(GitAddRequest) returns (GitAddResponse);
+
+  // Create commit
+  rpc Commit(GitCommitRequest) returns (GitCommitResponse);
+
+  // Push to remote
+  rpc Push(GitPushRequest) returns (stream GitPushOutput);
+}
+
+message GitStatusRequest {
+  string repo_path = 1;         // Repository path (default: /app)
+}
+
+message GitStatusResponse {
+  string branch = 1;
+  repeated FileStatus modified = 2;
+  repeated FileStatus staged = 3;
+  repeated FileStatus untracked = 4;
+  bool has_upstream = 5;
+  int32 ahead = 6;
+  int32 behind = 7;
+}
+
+message FileStatus {
+  string path = 1;
+  string status = 2;            // "modified", "added", "deleted", "renamed"
+}
+
+message GitDiffRequest {
+  string repo_path = 1;
+  repeated string paths = 2;    // Specific paths, or all if empty
+  bool staged = 3;              // Show staged changes
+}
+
+message GitDiffResponse {
+  repeated FileDiff diffs = 1;
+}
+
+message FileDiff {
+  string path = 1;
+  string diff = 2;              // Unified diff format
+  RiskLevel risk_level = 3;
+}
+
+enum RiskLevel {
+  RISK_LOW = 0;
+  RISK_MEDIUM = 1;
+  RISK_HIGH = 2;
+  RISK_CRITICAL = 3;
+}
+
+message GitAddRequest {
+  string repo_path = 1;
+  repeated string paths = 2;    // Files to stage
+}
+
+message GitAddResponse {
+  bool success = 1;
+  repeated string staged_paths = 2;
+}
+
+message GitCommitRequest {
+  string repo_path = 1;
+  string message = 2;
+}
+
+message GitCommitResponse {
+  bool success = 1;
+  string commit_hash = 2;
+  string error = 3;
+}
+
+message GitPushRequest {
+  string repo_path = 1;
+  string remote = 2;            // Default: "origin"
+  string branch = 3;            // Default: current branch
+}
+
+message GitPushOutput {
+  oneof output {
+    string stdout = 1;
+    string stderr = 2;
+  }
+  optional int32 exit_code = 3;
+}
+
+// GUI automation service - screen capture, element interaction, and vision
+service GUIService {
+  // Capture a screenshot of the screen or specific window
+  rpc Screenshot(ScreenshotRequest) returns (ScreenshotResponse);
+
+  // Query UI elements by application, role, or name
+  rpc GetElements(ElementQuery) returns (ElementsResponse);
+
+  // Get the full UI element tree
+  rpc GetElementTree(ElementTreeRequest) returns (ElementTreeResponse);
+
+  // Click on an element or coordinates
+  rpc Click(ClickRequest) returns (ActionResponse);
+
+  // Type text into an element or at cursor
+  rpc Type(TypeRequest) returns (ActionResponse);
+
+  // Press keyboard keys
+  rpc KeyPress(KeyPressRequest) returns (ActionResponse);
+
+  // Move mouse to coordinates
+  rpc MoveMouse(MoveMouseRequest) returns (ActionResponse);
+
+  // Describe screen content using vision model
+  rpc Describe(DescribeRequest) returns (VisionResponse);
+
+  // Find an element by visual description
+  rpc FindByVision(FindByVisionRequest) returns (FindByVisionResponse);
+}
+
+// Screenshot request options
+message ScreenshotRequest {
+  optional string window_id = 1;     // Specific window, or full screen if not set
+  bool include_cursor = 2;           // Include mouse cursor in screenshot
+  int32 quality = 3;                 // JPEG quality (1-100), 0 for PNG
+}
+
+// Screenshot response with image data
+message ScreenshotResponse {
+  bytes image_data = 1;              // Raw image bytes
+  string format = 2;                 // "png" or "jpeg"
+  int32 width = 3;
+  int32 height = 4;
+}
+
+// Query for finding UI elements
+message ElementQuery {
+  optional string application = 1;   // Filter by application name
+  optional string role = 2;          // Filter by accessibility role (button, textfield, etc.)
+  optional string name = 3;          // Filter by element name/label
+  int32 max_depth = 4;               // Maximum tree depth to search (0 = unlimited)
+}
+
+// Response containing matched UI elements
+message ElementsResponse {
+  repeated UIElement elements = 1;
+}
+
+// A single UI element from the accessibility tree
+message UIElement {
+  string id = 1;                     // Unique element identifier
+  string application = 2;            // Parent application name
+  string role = 3;                   // Accessibility role (button, textfield, etc.)
+  string name = 4;                   // Element name/label
+  string description = 5;            // Element description or tooltip
+  BoundingBox bounds = 6;            // Screen coordinates
+  repeated string states = 7;        // Current states (focused, selected, enabled, etc.)
+  repeated string actions = 8;       // Available actions (click, type, etc.)
+}
+
+// Bounding box for element position
+message BoundingBox {
+  int32 x = 1;
+  int32 y = 2;
+  int32 width = 3;
+  int32 height = 4;
+}
+
+// Request for full element tree
+message ElementTreeRequest {
+  optional string application = 1;   // Filter to specific application
+  int32 max_depth = 2;               // Maximum depth (0 = unlimited)
+}
+
+// Response containing element tree
+message ElementTreeResponse {
+  repeated ElementNode roots = 1;    // Root nodes (usually applications)
+}
+
+// A node in the UI element tree
+message ElementNode {
+  UIElement element = 1;             // Element data
+  repeated ElementNode children = 2; // Child elements
+}
+
+// Click action request
+message ClickRequest {
+  oneof target {
+    string element_id = 1;           // Click on element by ID
+    Coordinates position = 2;        // Click at screen coordinates
+  }
+  MouseButton button = 3;            // Which mouse button
+  int32 clicks = 4;                  // Number of clicks (1=single, 2=double)
+}
+
+// Screen coordinates
+message Coordinates {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+// Mouse button options
+enum MouseButton {
+  MOUSE_LEFT = 0;
+  MOUSE_RIGHT = 1;
+  MOUSE_MIDDLE = 2;
+}
+
+// Type text request
+message TypeRequest {
+  string text = 1;                   // Text to type
+  optional string element_id = 2;   // Target element (optional, types at cursor if not set)
+  int32 delay_ms = 3;                // Delay between keystrokes in milliseconds
+  bool clear_first = 4;              // Clear existing content before typing
+}
+
+// Key press request
+message KeyPressRequest {
+  repeated string keys = 1;          // Keys to press (e.g., ["ctrl", "c"] or ["Return"])
+  optional string element_id = 2;   // Target element (optional)
+}
+
+// Mouse movement request
+message MoveMouseRequest {
+  int32 x = 1;
+  int32 y = 2;
+  bool smooth = 3;                   // Smooth movement vs instant
+}
+
+// Generic action response
+message ActionResponse {
+  bool success = 1;
+  string error = 2;                  // Error message if success is false
+}
+
+// Vision-based description request
+message DescribeRequest {
+  bytes screenshot = 1;              // Screenshot to analyze
+  optional BoundingBox focus_area = 2;  // Optional area to focus on
+  optional string question = 3;      // Optional specific question about the screen
+}
+
+// Vision model response
+message VisionResponse {
+  string description = 1;            // Natural language description
+  repeated IdentifiedElement elements = 2;  // Elements identified in the image
+}
+
+// An element identified by vision model
+message IdentifiedElement {
+  string description = 1;            // What the element appears to be
+  BoundingBox estimated_bounds = 2;  // Estimated bounding box
+  float confidence = 3;              // Confidence score (0.0-1.0)
+}
+
+// Find element by visual description
+message FindByVisionRequest {
+  string description = 1;            // Natural language description of element to find
+  optional bytes screenshot = 2;     // Screenshot to search (captures new one if not provided)
+}
+
+// Response for vision-based element finding
+message FindByVisionResponse {
+  bool found = 1;                    // Whether element was found
+  Coordinates center = 2;            // Center point of found element
+  BoundingBox bounds = 3;            // Bounding box of found element
+  float confidence = 4;              // Confidence score (0.0-1.0)
+  string element_description = 5;    // Description of what was found
+}
+
+// Voice transcription service
+service VoiceService {
+  // Stream audio for transcription
+  rpc Transcribe(stream AudioChunk) returns (stream TranscriptChunk);
+
+  // Get available models
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse);
+
+  // Check if voice service is available
+  rpc Status(VoiceStatusRequest) returns (VoiceStatusResponse);
+}
+
+message AudioChunk {
+  bytes data = 1;                 // Raw audio bytes (16-bit PCM, 16kHz mono)
+  bool is_final = 2;              // Last chunk in utterance
+}
+
+message TranscriptChunk {
+  string text = 1;                // Transcribed text
+  bool is_partial = 2;            // Partial (still processing) vs final
+  float confidence = 3;           // 0-1 confidence score
+  int32 start_ms = 4;             // Start time in audio
+  int32 end_ms = 5;               // End time in audio
+}
+
+message ListModelsRequest {}
+
+message ListModelsResponse {
+  repeated WhisperModel models = 1;
+}
+
+message WhisperModel {
+  string name = 1;                // "tiny", "base", "small", "medium", "large"
+  bool available = 2;
+  int64 size_bytes = 3;
+}
+
+message VoiceStatusRequest {}
+
+message VoiceStatusResponse {
+  bool available = 1;
+  string current_model = 2;
+  bool is_processing = 3;
+}
+
+// Skills management service
+service SkillsService {
+  // List all available skills
+  rpc List(ListSkillsRequest) returns (ListSkillsResponse);
+
+  // Get skill details
+  rpc Get(GetSkillRequest) returns (SkillResponse);
+
+  // Create new skill
+  rpc Create(CreateSkillRequest) returns (SkillResponse);
+
+  // Update existing skill
+  rpc Update(UpdateSkillRequest) returns (SkillResponse);
+
+  // Delete skill
+  rpc Delete(DeleteSkillRequest) returns (DeleteSkillResponse);
+
+  // Execute workflow skill
+  rpc Execute(ExecuteSkillRequest) returns (stream SkillProgress);
+
+  // Find matching skills for input
+  rpc Match(MatchSkillsRequest) returns (MatchSkillsResponse);
+}
+
+message ListSkillsRequest {
+  SkillType type_filter = 1;      // Filter by type, or SKILL_ALL
+}
+
+enum SkillType {
+  SKILL_ALL = 0;
+  SKILL_INSTRUCTION = 1;
+  SKILL_WORKFLOW = 2;
+}
+
+message ListSkillsResponse {
+  repeated SkillSummary skills = 1;
+}
+
+message SkillSummary {
+  string name = 1;
+  string description = 2;
+  SkillType type = 3;
+  repeated string triggers = 4;
+  string source = 5;              // "builtin", "user", "imported"
+}
+
+message GetSkillRequest {
+  string name = 1;
+}
+
+message SkillResponse {
+  string name = 1;
+  string description = 2;
+  SkillType type = 3;
+  repeated string triggers = 4;
+  string content = 5;             // Full skill content (markdown or YAML)
+  string source = 6;
+}
+
+message CreateSkillRequest {
+  string name = 1;
+  string description = 2;
+  SkillType type = 3;
+  repeated string triggers = 4;
+  string content = 5;
+}
+
+message UpdateSkillRequest {
+  string name = 1;
+  string description = 2;
+  repeated string triggers = 3;
+  string content = 4;
+}
+
+message DeleteSkillRequest {
+  string name = 1;
+}
+
+message DeleteSkillResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message ExecuteSkillRequest {
+  string name = 1;
+  map<string, string> parameters = 2;
+}
+
+message SkillProgress {
+  int32 step_number = 1;
+  int32 total_steps = 2;
+  string step_description = 3;
+  oneof result {
+    string output = 4;
+    string error = 5;
+  }
+  bool completed = 6;
+}
+
+message MatchSkillsRequest {
+  string input = 1;               // User input to match against triggers
+}
+
+message MatchSkillsResponse {
+  repeated SkillMatch matches = 1;
+}
+
+message SkillMatch {
+  string name = 1;
+  SkillType type = 2;
+  float relevance = 3;            // 0-1 relevance score
+  string matched_trigger = 4;
+}
+
+// Memory management service
+service MemoryService {
+  // Query memories with filters
+  rpc Query(MemoryQuery) returns (MemoryQueryResponse);
+
+  // Store a new memory
+  rpc Store(StoreMemoryRequest) returns (StoreMemoryResponse);
+
+  // Get memories that are candidates for forgetting
+  rpc GetForgetCandidates(GetForgetCandidatesRequest) returns (ForgetCandidatesResponse);
+
+  // Confirm which candidates to forget/keep
+  rpc ConfirmForget(ForgetDecision) returns (ConfirmForgetResponse);
+
+  // Pin or unpin a memory
+  rpc Pin(PinRequest) returns (PinResponse);
+
+  // Refresh system facts (re-query and update)
+  rpc RefreshFacts(RefreshFactsRequest) returns (MemoryQueryResponse);
+}
+
+// Memory Layer Types
+enum MemoryLayer {
+  MEMORY_LAYER_UNSPECIFIED = 0;
+  MEMORY_LAYER_WORKING = 1;      // Current session context
+  MEMORY_LAYER_ARCHIVE = 2;      // Summarized past conversations
+  MEMORY_LAYER_FACTS = 3;        // System state facts
+  MEMORY_LAYER_PREFERENCES = 4;  // Learned user preferences
+}
+
+// Memory Entry
+message MemoryEntry {
+  string id = 1;
+  MemoryLayer layer = 2;
+  string content = 3;
+  map<string, string> metadata = 4;
+  int64 created_at_ms = 5;        // Unix timestamp in milliseconds
+  int64 last_accessed_ms = 6;     // Unix timestamp in milliseconds
+  int64 expires_at_ms = 7;        // Unix timestamp in milliseconds (0 = no expiry)
+  bool pinned = 8;
+  int32 access_count = 9;
+}
+
+// Query memories
+message MemoryQuery {
+  repeated MemoryLayer layers = 1;  // Empty = all layers
+  string search_text = 2;           // Full-text search
+  map<string, string> filters = 3;  // Metadata filters
+  int32 limit = 4;                  // Max results (default 50)
+}
+
+message MemoryQueryResponse {
+  repeated MemoryEntry entries = 1;
+  int32 total_count = 2;
+}
+
+// Store memory
+message StoreMemoryRequest {
+  MemoryLayer layer = 1;
+  string content = 2;
+  map<string, string> metadata = 3;
+  int64 ttl_ms = 4;                 // Time-to-live in milliseconds (0 = no expiry)
+}
+
+message StoreMemoryResponse {
+  string id = 1;
+}
+
+// Forgetting candidates
+message GetForgetCandidatesRequest {}
+
+message ForgetCandidate {
+  MemoryEntry entry = 1;
+  string reason = 2;              // Why this is a candidate
+  bool auto_forget = 3;           // True if will be auto-deleted
+}
+
+message ForgetCandidatesResponse {
+  repeated ForgetCandidate candidates = 1;
+}
+
+message ForgetDecision {
+  repeated string forget_ids = 1;  // IDs to forget
+  repeated string keep_ids = 2;    // IDs to keep (resets decay)
+}
+
+message ConfirmForgetResponse {
+  int32 deleted_count = 1;
+  int32 kept_count = 2;
+}
+
+// Pin/unpin memories
+message PinRequest {
+  string id = 1;
+  bool pinned = 2;
+}
+
+message PinResponse {
+  bool success = 1;
+}
+
+message RefreshFactsRequest {}

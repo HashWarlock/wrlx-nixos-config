@@ -1,0 +1,55 @@
+name: deploy-config
+description: Rebuild NixOS and push configuration to GitHub
+triggers:
+  - deploy
+  - push my changes
+  - apply config
+  - rebuild and push
+
+parameters:
+  commit_message:
+    description: Commit message for changes
+    required: false
+    default: "Update NixOS configuration"
+
+steps:
+  - id: check_status
+    action: git.status
+    description: Check for uncommitted changes
+
+  - id: confirm_commit
+    action: prompt.confirm
+    condition: "steps.check_status.has_changes"
+    message: "You have uncommitted changes. Commit them before deploying?"
+
+  - id: stage_changes
+    action: git.add
+    condition: "steps.confirm_commit.confirmed"
+    args:
+      paths: ["."]
+
+  - id: commit
+    action: git.commit
+    condition: "steps.confirm_commit.confirmed"
+    args:
+      message: "{{ parameters.commit_message }}"
+
+  - id: rebuild
+    action: nixops.rebuild
+    description: Rebuild NixOS configuration
+    args:
+      action: switch
+    stream: true
+
+  - id: push
+    action: git.push
+    condition: "steps.rebuild.success"
+    description: Push changes to remote
+
+  - id: report
+    action: chat.respond
+    message: |
+      Deployment complete!
+      - Commit: {{ steps.commit.hash }}
+      - NixOS rebuild: {{ steps.rebuild.status }}
+      - Pushed to remote: {{ steps.push.success }}

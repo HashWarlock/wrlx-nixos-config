@@ -1,0 +1,149 @@
+//! Skill Action Template
+//!
+//! Copy this file to create a new skill action:
+//!
+//! 1. Copy to `myaction.rs` (rename appropriately)
+//! 2. Change `MyNewAction` to your action name
+//! 3. Change `"my.action"` to your action identifier (format: "service.method")
+//! 4. Implement your logic in `execute()`
+//! 5. In mod.rs:
+//!    - Add: `mod myaction;`
+//!    - Add: `pub use myaction::MyNewAction;`
+//!    - In `register_all()`: `registry.register(MyNewAction)?;`
+//!
+//! That's it! Your action is now available in workflows.
+
+use crate::skills::actions::prelude::*;
+
+/// Brief description of what this action does.
+///
+/// # Arguments (via JSON)
+/// - `arg_name` (string, required): Description
+/// - `optional_arg` (number, optional): Description with default
+///
+/// # Returns
+/// - On success: Description of output
+/// - On failure: When and why it fails
+///
+/// # Example Workflow Usage
+/// ```yaml
+/// steps:
+///   - id: my_step
+///     action: my.action
+///     args:
+///       arg_name: "value"
+/// ```
+pub struct MyNewAction;
+
+#[async_trait]
+impl SkillAction for MyNewAction {
+    fn name(&self) -> &'static str {
+        "my.action"  // Format: "service.method" (e.g., "git.status", "docker.build")
+    }
+
+    async fn execute(&self, _ctx: &ServiceContext, args: JsonValue) -> Result<ActionResult> {
+        // =================================================================
+        // 1. Parse arguments from JSON
+        // =================================================================
+        let arg_value = args
+            .get("arg_name")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing required argument: arg_name"))?;
+
+        let optional_value = args
+            .get("optional_arg")
+            .and_then(|v| v.as_i64())
+            .unwrap_or(42);  // Default value
+
+        // =================================================================
+        // 2. Access configuration if needed
+        // =================================================================
+        let working_dir = &Config::get().paths.working_dir;
+        let _ = working_dir;  // Remove this line when using
+
+        // =================================================================
+        // 3. Access services via context if needed
+        // =================================================================
+        // let db = ctx.db();        // Database access
+        // let llm = ctx.llm();      // LLM client access
+
+        // =================================================================
+        // 4. Execute your action logic
+        // =================================================================
+        // Example: Run a shell command
+        // let output = tokio::process::Command::new("my-command")
+        //     .args(["--flag", arg_value])
+        //     .current_dir(working_dir)
+        //     .output()
+        //     .await?;
+        //
+        // if !output.status.success() {
+        //     return Ok(ActionResult::failure(
+        //         String::from_utf8_lossy(&output.stderr).to_string()
+        //     ));
+        // }
+
+        // =================================================================
+        // 5. Return result
+        // =================================================================
+
+        // Simple success:
+        // Ok(ActionResult::success("Action completed successfully"))
+
+        // Success with data (accessible in workflow via steps.my_step.data_key):
+        let mut data = HashMap::new();
+        data.insert("processed".to_string(), serde_json::json!(arg_value));
+        data.insert("count".to_string(), serde_json::json!(optional_value));
+
+        Ok(ActionResult::success_with_data(
+            format!("Processed: {}", arg_value),
+            data,
+        ))
+
+        // Failure:
+        // Ok(ActionResult::failure("Something went wrong"))
+    }
+}
+
+// =============================================================================
+// Optional: Unit tests for your action
+// =============================================================================
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::db::init_memory_db;
+    use crate::llm::RedpillClient;
+    use std::sync::Arc;
+
+    fn test_context() -> ServiceContext {
+        let db = init_memory_db().expect("Failed to create test db");
+        let llm = Arc::new(RedpillClient::new_dummy());
+        ServiceContext::new(db, llm)
+    }
+
+    #[tokio::test]
+    async fn test_my_action_success() {
+        let action = MyNewAction;
+        let ctx = test_context();
+
+        let result = action
+            .execute(&ctx, serde_json::json!({"arg_name": "test"}))
+            .await
+            .unwrap();
+
+        assert!(result.success);
+        assert!(result.output.unwrap().contains("test"));
+    }
+
+    #[tokio::test]
+    async fn test_my_action_missing_arg() {
+        let action = MyNewAction;
+        let ctx = test_context();
+
+        let result = action
+            .execute(&ctx, serde_json::json!({}))
+            .await;
+
+        assert!(result.is_err());
+    }
+}

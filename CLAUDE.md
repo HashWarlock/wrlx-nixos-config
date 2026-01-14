@@ -16,9 +16,9 @@ https://nixos-and-flakes.thiscute.world/best-practices/intro
 ### Flake-based Configuration
 
 This repository uses NixOS flakes with the following key inputs:
-- `nixpkgs` (24.05 stable)
+- `nixpkgs` (25.11 stable)
 - `nixpkgs-unstable` (for bleeding-edge packages via overlay)
-- `home-manager` (release-24.05)
+- `home-manager` (release-25.11)
 - `catppuccin` (global theming)
 - `spicetify-nix` (Spotify theming)
 
@@ -61,7 +61,7 @@ This repository uses NixOS flakes with the following key inputs:
 
 - **Hostname**: `asus-g512lw` (defined in flake.nix)
 - **Username**: `hashwarlock`
-- **System version**: NixOS 24.05
+- **System version**: NixOS 25.11
 - **Desktop environments**: Hyprland (primary), GNOME (secondary)
 - **Display manager**: GDM
 
@@ -127,9 +127,54 @@ Note: This configuration uses home-manager as a NixOS module, so changes apply v
 4. **Using unstable packages**: Reference as `pkgs.unstable.<package>` (overlay defined in `overlays/default.nix`)
 5. **Testing changes**: Use `nixos-rebuild test` to activate without committing to boot configuration
 
+## CVM Agent Development
+
+The `cvm-agent/` directory contains a Rust-based automation agent for the Phala CVM.
+
+### Quick Commands
+
+```bash
+# Enter development shell
+cd cvm-agent/agent-api
+nix develop .#cvm
+
+# Build and test
+cargo build
+cargo test -- --test-threads=1
+
+# Add new skill action (30 seconds)
+cp src/skills/actions/template.rs.example src/skills/actions/myaction.rs
+# Edit myaction.rs, then register in mod.rs
+```
+
+### Architecture
+
+- **Trait-based skill registry**: Actions implement `SkillAction` trait
+- **Service injection**: Actions receive `ServiceContext` with db/llm access
+- **Centralized config**: `Config::get()` for paths, ports, settings
+- **Modular services**: `files/phala-cvm/services/` for lifecycle scripts
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/skills/actions/` | Skill action implementations |
+| `src/skills/registry.rs` | SkillAction trait & registry |
+| `src/config.rs` | Centralized configuration |
+| `src/context.rs` | Service context for DI |
+| `SKILLS.md` | Skill development guide |
+
+### Ports
+
+| Service | Port | Description |
+|---------|------|-------------|
+| Agent API | 8080 | gRPC services |
+| Web UI | 3000 | Frontend |
+| Whisper | 8082 | Voice transcription |
+
 ## Important Notes
 
-- **State versions**: Current stateVersion is `24.05` - do not change unless migrating
+- **State versions**: Current stateVersion is `25.11` for phala-cvm, `24.05` for asus-g512lw - do not change unless migrating
 - **Trusted users**: User `hashwarlock` is a trusted user (can use additional substituters)
 - **Experimental features**: Flakes and nix-command are enabled globally
 - **Garbage collection**: Automatic weekly GC deletes items older than 365 days

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-echo "=== Phala CVM NixOS Environment Setup ==="
+echo "=== Phala CVM Declarative Environment ==="
 
 # Verify repository was cloned by docker-compose
 if [ ! -d "/app" ]; then
@@ -9,202 +9,53 @@ if [ ! -d "/app" ]; then
     exit 1
 fi
 
-echo "Working directory: $(pwd)"
-echo "Repository cloned at: /app"
+cd /app
 
-# Install necessary packages for VNC/GUI setup
-echo "Installing VNC and GUI components..."
-nix-env -iA \
-    nixpkgs.tigervnc \
-    nixpkgs.xorg.xorgserver \
-    nixpkgs.xfce.xfce4-session \
-    nixpkgs.xfce.xfce4-panel \
-    nixpkgs.xfce.xfwm4 \
-    nixpkgs.xfce.xfdesktop \
-    nixpkgs.xfce.xfce4-settings \
-    nixpkgs.xfce.xfce4-terminal \
-    nixpkgs.xfce.xfce4-appfinder \
-    nixpkgs.xfce.xfconf \
-    nixpkgs.xfce.thunar \
-    nixpkgs.dbus \
-    nixpkgs.openssh \
-    nixpkgs.procps \
-    nixpkgs.which \
-    nixpkgs.bash \
-    nixpkgs.hostname \
-    nixpkgs.fontconfig \
-    nixpkgs.coreutils \
-    nixpkgs.gnused
+# Detect if we're in a Docker container
+# Docker containers already provide isolation, so nix sandbox is redundant
+# and can cause seccomp issues especially on Docker Desktop (macOS/Windows)
+IS_DOCKER_CONTAINER=false
 
-# Install noVNC
-if ! command -v novnc > /dev/null 2>&1; then
-    echo "Installing noVNC..."
-    nix-env -iA nixpkgs.novnc
+# Check for Docker container indicators
+if [ -f /.dockerenv ]; then
+    IS_DOCKER_CONTAINER=true
+elif grep -sq docker /proc/1/cgroup 2>/dev/null; then
+    IS_DOCKER_CONTAINER=true
+elif grep -sq docker /proc/self/cgroup 2>/dev/null; then
+    IS_DOCKER_CONTAINER=true
 fi
 
-# Set VNC password
-VNC_PASSWORD=${VNC_PASSWORD:-"changeme"}
-VNC_RESOLUTION=${VNC_RESOLUTION:-"1920x1080"}
-mkdir -p ~/.vnc
-echo "$VNC_PASSWORD" | vncpasswd -f > ~/.vnc/passwd
-chmod 600 ~/.vnc/passwd
-echo "VNC password configured"
-
-# Start Xvfb (virtual framebuffer)
-echo "Starting Xvfb with resolution ${VNC_RESOLUTION}..."
-Xvfb :1 -screen 0 ${VNC_RESOLUTION}x24 &
-XVFB_PID=$!
-sleep 2
-
-# Export display
-export DISPLAY=:1
-
-# Setup machine-id for D-Bus
-echo "Setting up machine-id..."
-mkdir -p /var/lib/dbus /etc
-if [ ! -f /var/lib/dbus/machine-id ]; then
-    dbus-uuidgen --ensure=/var/lib/dbus/machine-id
-fi
-if [ ! -f /etc/machine-id ]; then
-    ln -s /var/lib/dbus/machine-id /etc/machine-id || cp /var/lib/dbus/machine-id /etc/machine-id
+# Also allow explicit override via environment variable
+if [ "$DISABLE_NIX_SANDBOX" = "true" ]; then
+    IS_DOCKER_CONTAINER=true
 fi
 
-# Setup D-Bus session config
-echo "Setting up D-Bus configuration..."
-mkdir -p /etc/dbus-1/session.d /etc/dbus-1/system.d
-# Always create a minimal session.conf to avoid circular inclusion issues
-cat > /etc/dbus-1/session.conf << 'EOF'
-<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
- "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
-<busconfig>
-  <type>session</type>
-  <listen>unix:tmpdir=/tmp</listen>
-  <policy context="default">
-    <allow send_destination="*" eavesdrop="true"/>
-    <allow eavesdrop="true"/>
-    <allow own="*"/>
-  </policy>
-</busconfig>
-EOF
-
-# Start D-Bus session
-echo "Starting D-Bus session..."
-eval $(dbus-launch --sh-syntax)
-export DBUS_SESSION_BUS_ADDRESS
-export DBUS_SESSION_BUS_PID
-
-# Set XDG environment variables for XFCE
-echo "Setting up XDG environment variables..."
-export XDG_DATA_DIRS="/nix/var/nix/profiles/default/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
-export XDG_CONFIG_DIRS="/nix/var/nix/profiles/default/etc/xdg:${XDG_CONFIG_DIRS:-/etc/xdg}"
-
-# Find and add XFCE session directory to XDG_CONFIG_DIRS
-XFCE_SESSION_DIR=$(find /nix/store -name "xfce4-session-*" -type d 2>/dev/null | head -1)
-if [ -n "$XFCE_SESSION_DIR" ]; then
-    export XDG_CONFIG_DIRS="${XFCE_SESSION_DIR}/etc:${XDG_CONFIG_DIRS}"
-    echo "Added XFCE session directory: ${XFCE_SESSION_DIR}/etc"
-fi
-
-# Start xfconfd (XFCE configuration daemon) if available
-if command -v xfconfd > /dev/null 2>&1; then
-    echo "Starting xfconfd..."
-    xfconfd &
-    sleep 1
+# Set NIX_OPTIONS based on environment
+if [ "$IS_DOCKER_CONTAINER" = "true" ]; then
+    echo "Detected Docker container - disabling nix sandbox (container provides isolation)"
+    NIX_OPTIONS="--option sandbox false --option filter-syscalls false"
 else
-    echo "xfconfd not found, skipping..."
+    echo "Detected native Linux environment - using default nix options"
+    NIX_OPTIONS=""
 fi
 
-# Start window manager first (required for _NET_* properties)
-echo "Starting xfwm4 window manager..."
-xfwm4 --daemon &
-sleep 2
+echo "Using flake-locked packages from flake.lock..."
+echo "All package versions are deterministic and reproducible."
 
-# Start desktop manager
-echo "Starting xfdesktop..."
-xfdesktop &
-sleep 1
+# Ensure nix experimental features are enabled
+mkdir -p ~/.config/nix
+echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
 
-# Start XFCE panel
-echo "Starting xfce4-panel..."
-xfce4-panel &
-sleep 1
-
-# Start VNC server
-echo "Starting VNC server on display :1..."
-x0vncserver -display :1 -passwordfile ~/.vnc/passwd -rfbport 5900 &
-VNC_PID=$!
-
-# Start noVNC websocket proxy
-echo "Starting noVNC..."
-novnc --vnc localhost:5900 --listen 6080 &
-NOVNC_PID=$!
-
-# Start SSH daemon
-echo "Starting SSH daemon..."
-mkdir -p /run/sshd /etc/ssh
-
-# Generate host keys if they don't exist
-if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
-    echo "Generating SSH host keys..."
-    ssh-keygen -A 2>/dev/null || true
+# Allow bypassing nix develop for testing/debugging (docker exec won't work inside sandbox)
+if [ "${RUN_NIX_DEVELOP:-true}" = "false" ]; then
+    echo "Skipping nix develop (RUN_NIX_DEVELOP=false)"
+    echo "Warning: Some packages may not be available without nix develop"
+    exec /app/files/phala-cvm/cvm-start.sh
 fi
 
-# Create sshd_config if it doesn't exist
-if [ ! -f /etc/ssh/sshd_config ]; then
-    echo "Creating sshd_config..."
-    cat > /etc/ssh/sshd_config << 'EOF'
-Port 22
-PermitRootLogin no
-PasswordAuthentication no
-PubkeyAuthentication yes
-UsePAM no
-X11Forwarding yes
-PrintMotd no
-AcceptEnv LANG LC_*
-Subsystem sftp /nix/store/*/libexec/sftp-server
-EOF
-    # Fix sftp-server path
-    SFTP_SERVER=$(find /nix/store -name "sftp-server" 2>/dev/null | head -1)
-    if [ -n "$SFTP_SERVER" ]; then
-        sed -i "s|/nix/store/\*/libexec/sftp-server|$SFTP_SERVER|" /etc/ssh/sshd_config
-    fi
-fi
-
-# Use which to find sshd binary
-SSHD_BIN=$(which sshd)
-if [ -n "$SSHD_BIN" ]; then
-    $SSHD_BIN -D -e &
-    SSH_PID=$!
-else
-    echo "WARNING: sshd not found in PATH"
-    SSH_PID=""
-fi
-
-echo "=== CVM Services Started Successfully ==="
-echo "Repository: $GITHUB_REPO"
-echo "Commit: $GIT_COMMIT_HASH"
-echo "SSH: port 22 (mapped to host port 2222)"
-echo "VNC: port 5900"
-echo "noVNC: http://localhost:6080/vnc.html"
-echo "Display Resolution: $VNC_RESOLUTION"
-if [ -n "$AGENT_DOMAIN" ]; then
-    echo "Phala Cloud Domain: $AGENT_DOMAIN"
-fi
-echo "==="
-
-# Trap signals for graceful shutdown
-cleanup() {
-    echo "Shutting down..."
-    [ -n "$SSH_PID" ] && kill $SSH_PID 2>/dev/null
-    [ -n "$NOVNC_PID" ] && kill $NOVNC_PID 2>/dev/null
-    [ -n "$VNC_PID" ] && kill $VNC_PID 2>/dev/null
-    [ -n "$XVFB_PID" ] && kill $XVFB_PID 2>/dev/null
-    [ -n "$DBUS_SESSION_BUS_PID" ] && kill $DBUS_SESSION_BUS_PID 2>/dev/null
-    exit 0
-}
-trap cleanup SIGTERM SIGINT
-
-# Wait for all processes (only wait for those that exist)
-WAIT_PIDS="$XVFB_PID $VNC_PID $NOVNC_PID"
-[ -n "$SSH_PID" ] && WAIT_PIDS="$WAIT_PIDS $SSH_PID"
-wait $WAIT_PIDS
+# Enter the CVM development shell and run the startup script
+# This loads all packages from the locked nixpkgs version (nixos-25.11)
+# --accept-flake-config trusts the flake's extra-substituters without prompting
+# --verbose shows download progress
+echo "Starting nix develop (this may take several minutes on first run)..."
+exec nix develop --accept-flake-config --verbose $NIX_OPTIONS .#cvm --command /app/files/phala-cvm/cvm-start.sh

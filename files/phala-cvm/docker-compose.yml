@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   phala-nixos-cvm:
     image: nixos/nix:latest
@@ -14,6 +12,9 @@ services:
       - GIT_COMMIT_HASH=${GIT_COMMIT_HASH:-HEAD}
       - UPDATE_CODE=${UPDATE_CODE:-false}
 
+      # Nix develop control (set to false for testing/debugging with docker exec)
+      - RUN_NIX_DEVELOP=${RUN_NIX_DEVELOP:-true}
+
       # Display and VNC configuration
       - DISPLAY=:1
       - VNC_PASSWORD=${VNC_PASSWORD:-changeme}
@@ -22,10 +23,18 @@ services:
       # SSH configuration
       - SSH_PORT=${SSH_PORT:-22}
 
-      # Phala Cloud domain (auto-populated in CVM)
-      - AGENT_DOMAIN=${AGENT_DOMAIN}
-      - DSTACK_APP_ID=${DSTACK_APP_ID}
-      - DSTACK_GATEWAY_DOMAIN=${DSTACK_GATEWAY_DOMAIN}
+      # Redpill API configuration (for LLM features)
+      - REDPILL_API_KEY=${REDPILL_API_KEY}
+      - REDPILL_BASE_URL=${REDPILL_BASE_URL:-https://api.redpill.ai}
+      - REDPILL_MODEL=${REDPILL_MODEL:-z-ai/glm-4.6}
+
+      # Whisper voice transcription configuration
+      - WHISPER_MODEL=${WHISPER_MODEL:-base}
+
+      # Phala Cloud domain (auto-populated in CVM, empty for local dev)
+      - AGENT_DOMAIN=${AGENT_DOMAIN:-}
+      - DSTACK_APP_ID=${DSTACK_APP_ID:-}
+      - DSTACK_GATEWAY_DOMAIN=${DSTACK_GATEWAY_DOMAIN:-}
 
     # Volumes for persistence and dstack socket
     volumes:
@@ -34,12 +43,18 @@ services:
       - nix-store:/nix
       - home-data:/home
       - /var/run/dstack.sock:/var/run/dstack.sock
+      - /var/run/docker.sock:/var/run/docker.sock
 
     # Port mappings
     ports:
       - "2222:22"      # SSH access
       - "6080:6080"    # noVNC web interface
       - "5900:5900"    # VNC direct connection (optional)
+      - "8080:8080"    # Agent API (gRPC)
+      - "3000:3000"    # Web UI (frontend)
+      - "8000:8000"    # Notify service (future)
+      - "8001:8001"    # Backend service (future)
+      - "8082:8082"    # Whisper server (voice)
 
     # Privileged mode may be needed for systemd and full NixOS functionality
     privileged: true

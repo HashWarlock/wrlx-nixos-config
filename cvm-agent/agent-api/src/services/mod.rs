@@ -1,0 +1,23 @@
+pub mod chat;
+pub mod gitops;
+pub mod gui;
+pub mod health;
+pub mod lessons;
+pub mod memory;
+pub mod nixops;
+pub mod setup;
+pub mod shell;
+pub mod skills;
+pub mod voice;
+
+pub use chat::ChatServiceImpl;
+pub use gitops::GitOpsServiceImpl;
+pub use gui::GUIServiceImpl;
+pub use health::HealthServiceImpl;
+pub use lessons::LessonsServiceImpl;
+pub use memory::MemoryServiceImpl;
+pub use nixops::NixOpsServiceImpl;
+pub use setup::SetupServiceImpl;
+pub use shell::ShellServiceImpl;
+pub use skills::SkillsServiceImpl;
+pub use voice::VoiceServiceImpl;
