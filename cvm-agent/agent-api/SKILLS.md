@@ -16,7 +16,7 @@ cp src/skills/actions/template.rs.example src/skills/actions/myaction.rs
 # 3. Register in src/skills/actions/mod.rs:
 #    - Add: mod myaction;
 #    - Add: pub use myaction::MyAction;
-#    - In register_all(): registry.register(MyAction);
+#    - In register_all(): registry.register(MyAction)?;
 
 # 4. Build and test
 cargo build

@@ -9,7 +9,7 @@
 //! 5. In mod.rs:
 //!    - Add: `mod myaction;`
 //!    - Add: `pub use myaction::MyNewAction;`
-//!    - In `register_all()`: `registry.register(MyNewAction);`
+//!    - In `register_all()`: `registry.register(MyNewAction)?;`
 //!
 //! That's it! Your action is now available in workflows.
 

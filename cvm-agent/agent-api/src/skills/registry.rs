@@ -116,14 +116,15 @@ impl SkillRegistry {
     /// # Arguments
     /// * `action` - The action to register
     ///
-    /// # Panics
-    /// Panics if an action with the same name is already registered.
-    pub fn register<T: SkillAction + 'static>(&mut self, action: T) {
+    /// # Errors
+    /// Returns an error if an action with the same name is already registered.
+    pub fn register<T: SkillAction + 'static>(&mut self, action: T) -> Result<()> {
         let name = action.name().to_string();
         if self.actions.contains_key(&name) {
-            panic!("Action '{}' is already registered", name);
+            anyhow::bail!("Action '{}' is already registered", name);
         }
         self.actions.insert(name, Arc::new(action));
+        Ok(())
     }
 
     /// Gets an action by name.
@@ -200,7 +201,7 @@ mod tests {
     #[tokio::test]
     async fn test_register_and_execute() {
         let mut registry = SkillRegistry::new();
-        registry.register(TestAction);
+        registry.register(TestAction).expect("Failed to register action");
 
         assert_eq!(registry.len(), 1);
         assert!(registry.get("test.action").is_some());
@@ -223,10 +224,23 @@ mod tests {
     #[test]
     fn test_list_actions() {
         let mut registry = SkillRegistry::new();
-        registry.register(TestAction);
+        registry.register(TestAction).expect("Failed to register action");
 
         let actions = registry.list_actions();
         assert_eq!(actions.len(), 1);
         assert!(actions.contains(&"test.action"));
+    }
+
+    #[test]
+    fn test_duplicate_registration_returns_error() {
+        let mut registry = SkillRegistry::new();
+        registry.register(TestAction).expect("First registration should succeed");
+
+        let result = registry.register(TestAction);
+        assert!(result.is_err());
+
+        let err = result.unwrap_err();
+        assert!(err.to_string().contains("already registered"));
+        assert!(err.to_string().contains("test.action"));
     }
 }

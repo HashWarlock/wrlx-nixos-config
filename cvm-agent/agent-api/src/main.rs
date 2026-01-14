@@ -67,7 +67,7 @@ async fn main() -> anyhow::Result<()> {
 
     // Initialize skill registry with all built-in actions
     let mut registry = SkillRegistry::new();
-    skills::register_all(&mut registry);
+    skills::register_all(&mut registry)?;
     let registry = Arc::new(registry);
     tracing::info!("Skill registry initialized with {} actions", registry.len());
 

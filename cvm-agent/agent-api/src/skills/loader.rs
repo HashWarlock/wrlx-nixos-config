@@ -20,49 +20,68 @@ impl SkillsLoader {
 
     pub async fn load_all(&mut self) -> Result<()> {
         self.skills.clear();
+        let mut warning_count = 0;
 
         let instructions_dir = format!("{}/instructions", self.skills_dir);
         if Path::new(&instructions_dir).exists() {
-            self.load_instruction_skills(&instructions_dir).await?;
+            warning_count += self.load_instruction_skills(&instructions_dir).await?;
         }
 
         let workflows_dir = format!("{}/workflows", self.skills_dir);
         if Path::new(&workflows_dir).exists() {
-            self.load_workflow_skills(&workflows_dir).await?;
+            warning_count += self.load_workflow_skills(&workflows_dir).await?;
         }
 
-        tracing::info!("Loaded {} skills", self.skills.len());
+        if warning_count > 0 {
+            tracing::info!("Loaded {} skills ({} warnings)", self.skills.len(), warning_count);
+        } else {
+            tracing::info!("Loaded {} skills", self.skills.len());
+        }
         Ok(())
     }
 
-    async fn load_instruction_skills(&mut self, dir: &str) -> Result<()> {
+    async fn load_instruction_skills(&mut self, dir: &str) -> Result<usize> {
         let mut entries = fs::read_dir(dir).await?;
+        let mut warning_count = 0;
 
         while let Some(entry) = entries.next_entry().await? {
             let path = entry.path();
             if path.extension().map(|e| e == "md").unwrap_or(false) {
-                if let Ok(skill) = self.parse_instruction_skill(&path).await {
-                    self.skills.insert(skill.name.clone(), Skill::Instruction(skill));
+                match self.parse_instruction_skill(&path).await {
+                    Ok(skill) => {
+                        self.skills.insert(skill.name.clone(), Skill::Instruction(skill));
+                    }
+                    Err(e) => {
+                        tracing::warn!("Failed to parse instruction skill '{}': {}", path.display(), e);
+                        warning_count += 1;
+                    }
                 }
             }
         }
 
-        Ok(())
+        Ok(warning_count)
     }
 
-    async fn load_workflow_skills(&mut self, dir: &str) -> Result<()> {
+    async fn load_workflow_skills(&mut self, dir: &str) -> Result<usize> {
         let mut entries = fs::read_dir(dir).await?;
+        let mut warning_count = 0;
 
         while let Some(entry) = entries.next_entry().await? {
             let path = entry.path();
             if path.extension().map(|e| e == "yaml" || e == "yml").unwrap_or(false) {
-                if let Ok(skill) = self.parse_workflow_skill(&path).await {
-                    self.skills.insert(skill.name.clone(), Skill::Workflow(skill));
+                match self.parse_workflow_skill(&path).await {
+                    Ok(skill) => {
+                        self.skills.insert(skill.name.clone(), Skill::Workflow(skill));
+                    }
+                    Err(e) => {
+                        tracing::warn!("Failed to parse workflow skill '{}': {}", path.display(), e);
+                        warning_count += 1;
+                    }
                 }
             }
         }
 
-        Ok(())
+        Ok(warning_count)
     }
 
     async fn parse_instruction_skill(&self, path: &Path) -> Result<InstructionSkill> {
