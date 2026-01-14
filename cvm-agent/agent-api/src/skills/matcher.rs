@@ -181,4 +181,156 @@ mod tests {
         assert!(!matches.is_empty());
         assert!(matches[0].relevance > 0.0);
     }
+
+    #[test]
+    fn test_fuzzy_match_levenshtein() {
+        // Test Levenshtein distance function directly
+        assert_eq!(SkillMatcher::levenshtein("deploy", "deploy"), 0);
+        assert_eq!(SkillMatcher::levenshtein("deploye", "deploy"), 1); // 1 char extra
+        assert_eq!(SkillMatcher::levenshtein("dploy", "deploy"), 1); // 1 char missing
+        assert_eq!(SkillMatcher::levenshtein("deplyo", "deploy"), 2); // transposition = 2 ops
+        assert_eq!(SkillMatcher::levenshtein("", "deploy"), 6); // empty to full
+        assert_eq!(SkillMatcher::levenshtein("deploy", ""), 6); // full to empty
+
+        // Test fuzzy matching through match_skills
+        let skills = vec![make_skill("deploy", vec!["deploy"])];
+        let skill_refs: Vec<&Skill> = skills.iter().collect();
+
+        // "deploye" should match "deploy" (1 char typo within threshold)
+        let matches = SkillMatcher::match_skills("deploye", &skill_refs);
+        assert!(!matches.is_empty(), "deploye should fuzzy match deploy");
+        assert!(matches[0].relevance > 0.0);
+
+        // "dploy" should match "deploy" (1 char missing within threshold)
+        let matches = SkillMatcher::match_skills("dploy", &skill_refs);
+        assert!(!matches.is_empty(), "dploy should fuzzy match deploy");
+        assert!(matches[0].relevance > 0.0);
+
+        // "completely different" should NOT match "deploy"
+        let matches = SkillMatcher::match_skills("completely different", &skill_refs);
+        assert!(
+            matches.is_empty(),
+            "completely different should not match deploy"
+        );
+    }
+
+    #[test]
+    fn test_empty_input() {
+        let skills = vec![make_skill("deploy", vec!["deploy", "push changes"])];
+        let skill_refs: Vec<&Skill> = skills.iter().collect();
+
+        // Empty input string should return no matches
+        let matches = SkillMatcher::match_skills("", &skill_refs);
+        assert!(matches.is_empty(), "empty input should return no matches");
+
+        // Whitespace-only input should return no matches
+        let matches = SkillMatcher::match_skills("   ", &skill_refs);
+        assert!(
+            matches.is_empty(),
+            "whitespace-only input should return no matches"
+        );
+
+        // Empty skills list should return no matches
+        let empty_skills: Vec<&Skill> = vec![];
+        let matches = SkillMatcher::match_skills("deploy", &empty_skills);
+        assert!(
+            matches.is_empty(),
+            "empty skills list should return no matches"
+        );
+
+        // Skill with empty triggers should be skipped
+        let skill_empty_triggers = make_skill("empty", vec![]);
+        let skills_with_empty = vec![&skill_empty_triggers];
+        let matches = SkillMatcher::match_skills("deploy", &skills_with_empty);
+        assert!(
+            matches.is_empty(),
+            "skill with empty triggers should not match"
+        );
+    }
+
+    #[test]
+    fn test_unicode_matching() {
+        // Test with accented characters
+        let skills_accent = vec![make_skill("cafe", vec!["cafe", "coffee"])];
+        let skill_refs: Vec<&Skill> = skills_accent.iter().collect();
+
+        // Exact match with accent (cafe matches cafe)
+        let matches = SkillMatcher::match_skills("cafe", &skill_refs);
+        assert!(!matches.is_empty(), "cafe should match cafe trigger");
+
+        // Note: cafe (with accent) won't match cafe (without) unless normalized
+        // This tests current behavior - accent-aware matching would be an enhancement
+        let _matches = SkillMatcher::match_skills("café", &skill_refs);
+        // Current impl treats these as different - fuzzy match may still work
+        // due to Levenshtein distance being 1
+
+        // Test with emoji in input - should not crash
+        let matches = SkillMatcher::match_skills("deploy 🚀", &skill_refs);
+        // Should handle gracefully (emoji won't match, but no panic)
+        assert!(matches.is_empty() || matches[0].relevance >= 0.0);
+
+        // Test with CJK characters
+        let skills_cjk = vec![make_skill("japanese", vec!["日本語", "nihongo"])];
+        let skill_refs_cjk: Vec<&Skill> = skills_cjk.iter().collect();
+
+        // Exact CJK match
+        let matches = SkillMatcher::match_skills("日本語", &skill_refs_cjk);
+        assert!(!matches.is_empty(), "CJK characters should match exactly");
+        assert_eq!(matches[0].relevance, 1.0);
+
+        // Partial CJK should not panic
+        let matches = SkillMatcher::match_skills("日本", &skill_refs_cjk);
+        // May or may not match depending on impl, but should not crash
+        assert!(matches.is_empty() || matches[0].relevance >= 0.0);
+    }
+
+    #[test]
+    fn test_very_long_strings() {
+        use std::time::Instant;
+
+        // Create a skill with reasonable triggers
+        let skills = vec![make_skill("deploy", vec!["deploy", "push changes"])];
+        let skill_refs: Vec<&Skill> = skills.iter().collect();
+
+        // Test with very long input (1000+ chars)
+        let long_input = "deploy ".repeat(200); // 1400 chars
+        let start = Instant::now();
+        let matches = SkillMatcher::match_skills(&long_input, &skill_refs);
+        let duration = start.elapsed();
+
+        assert!(
+            duration.as_secs() < 5,
+            "long input should complete in reasonable time"
+        );
+        assert!(!matches.is_empty(), "long input with deploy should match");
+
+        // Test with many skills (100+)
+        let many_skills: Vec<Skill> = (0..100)
+            .map(|i| make_skill(&format!("skill_{:03}", i), vec![&format!("trigger_{:03}", i)]))
+            .collect();
+        let many_skill_refs: Vec<&Skill> = many_skills.iter().collect();
+
+        let start = Instant::now();
+        let matches = SkillMatcher::match_skills("trigger_050", &many_skill_refs);
+        let duration = start.elapsed();
+
+        assert!(
+            duration.as_secs() < 5,
+            "many skills should complete in reasonable time"
+        );
+        assert!(!matches.is_empty(), "should find skill_050");
+        assert_eq!(matches[0].skill_name, "skill_050");
+
+        // Test with both long input and many skills
+        let start = Instant::now();
+        let matches = SkillMatcher::match_skills(&long_input, &many_skill_refs);
+        let duration = start.elapsed();
+
+        assert!(
+            duration.as_secs() < 10,
+            "long input + many skills should complete in reasonable time"
+        );
+        // May or may not match, but should not timeout
+        assert!(matches.is_empty() || matches[0].relevance >= 0.0);
+    }
 }
