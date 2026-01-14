@@ -266,3 +266,562 @@ impl WorkflowExecutor {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::db::init_memory_db;
+    use crate::llm::RedpillClient;
+    use crate::skills::registry::{ActionResult, SkillAction};
+    use crate::skills::types::{WorkflowSkill, WorkflowStep};
+    use async_trait::async_trait;
+
+    /// Mock action for testing workflow execution.
+    struct MockAction {
+        should_succeed: bool,
+        output: String,
+        data: HashMap<String, serde_json::Value>,
+    }
+
+    impl MockAction {
+        fn new(should_succeed: bool, output: &str) -> Self {
+            Self {
+                should_succeed,
+                output: output.to_string(),
+                data: HashMap::new(),
+            }
+        }
+
+        #[allow(dead_code)]
+        fn with_data(mut self, key: &str, value: serde_json::Value) -> Self {
+            self.data.insert(key.to_string(), value);
+            self
+        }
+    }
+
+    #[async_trait]
+    impl SkillAction for MockAction {
+        fn name(&self) -> &'static str {
+            "mock.action"
+        }
+
+        async fn execute(
+            &self,
+            _ctx: &ServiceContext,
+            _args: serde_json::Value,
+        ) -> Result<ActionResult> {
+            if self.should_succeed {
+                Ok(ActionResult::success_with_data(&self.output, self.data.clone()))
+            } else {
+                Ok(ActionResult::failure("Mock failure"))
+            }
+        }
+    }
+
+    /// Creates a test ServiceContext with in-memory database.
+    fn test_context() -> ServiceContext {
+        let db = init_memory_db().expect("Failed to create test db");
+        let llm = Arc::new(RedpillClient::new_dummy());
+        ServiceContext::new(db, llm)
+    }
+
+    /// Creates a minimal workflow skill for testing.
+    fn create_workflow(steps: Vec<WorkflowStep>) -> WorkflowSkill {
+        WorkflowSkill {
+            name: "test_workflow".to_string(),
+            description: "A test workflow".to_string(),
+            triggers: vec!["test".to_string()],
+            parameters: vec![],
+            steps,
+            source: "test".to_string(),
+        }
+    }
+
+    /// Creates a workflow step with minimal configuration.
+    fn create_step(id: &str, action: &str) -> WorkflowStep {
+        WorkflowStep {
+            id: id.to_string(),
+            action: action.to_string(),
+            description: Some(format!("Step {}", id)),
+            condition: None,
+            args: None,
+            stream: None,
+            message: None,
+        }
+    }
+
+    // =========================================================================
+    // Test 1: test_execute_empty_workflow
+    // =========================================================================
+    #[tokio::test]
+    async fn test_execute_empty_workflow() {
+        // Create registry with mock action (not used but needed)
+        let mut registry = SkillRegistry::new();
+        registry
+            .register(MockAction::new(true, "success"))
+            .expect("Failed to register mock action");
+
+        let ctx = test_context();
+        let executor = WorkflowExecutor::new(Arc::new(registry), ctx);
+
+        // Create workflow with zero steps
+        let workflow = create_workflow(vec![]);
+
+        // Create channel for progress updates
+        let (tx, mut rx) = mpsc::channel(10);
+
+        // Execute workflow
+        let result = executor
+            .execute(&workflow, HashMap::new(), tx)
+            .await;
+
+        assert!(result.is_ok(), "Empty workflow should complete without error");
+
+        // Collect all messages
+        let mut messages = vec![];
+        while let Ok(msg) = rx.try_recv() {
+            messages.push(msg);
+        }
+
+        // Should receive exactly one completion message
+        assert_eq!(messages.len(), 1, "Should receive exactly one message for empty workflow");
+
+        let (step_num, total_steps, description, output, error, is_complete) = &messages[0];
+        assert_eq!(*step_num, 0, "Step number should be 0 for empty workflow");
+        assert_eq!(*total_steps, 0, "Total steps should be 0");
+        assert_eq!(description, "Workflow complete");
+        assert!(output.is_none());
+        assert!(error.is_none());
+        assert!(*is_complete, "Completion flag should be true");
+    }
+
+    // =========================================================================
+    // Test 2: test_execute_single_step
+    // =========================================================================
+    #[tokio::test]
+    async fn test_execute_single_step() {
+        // Create registry with mock action
+        let mut registry = SkillRegistry::new();
+        registry
+            .register(MockAction::new(true, "Step executed successfully"))
+            .expect("Failed to register mock action");
+
+        let ctx = test_context();
+        let executor = WorkflowExecutor::new(Arc::new(registry), ctx);
+
+        // Create workflow with single step
+        let workflow = create_workflow(vec![create_step("step1", "mock.action")]);
+
+        let (tx, mut rx) = mpsc::channel(10);
+
+        let result = executor
+            .execute(&workflow, HashMap::new(), tx)
+            .await;
+
+        assert!(result.is_ok(), "Single step workflow should complete");
+
+        // Collect messages
+        let mut messages = vec![];
+        while let Ok(msg) = rx.try_recv() {
+            messages.push(msg);
+        }
+
+        // Should have: progress update, result update, completion
+        assert!(messages.len() >= 2, "Should have at least 2 messages (step + completion)");
+
+        // Verify step execution message
+        let step_msg = messages.iter().find(|(_, _, _, output, _, _)| output.is_some());
+        assert!(step_msg.is_some(), "Should have a message with output");
+        let (step_num, total, _, output, error, _) = step_msg.unwrap();
+        assert_eq!(*step_num, 1);
+        assert_eq!(*total, 1);
+        assert_eq!(output.as_ref().unwrap(), "Step executed successfully");
+        assert!(error.is_none());
+
+        // Verify completion message
+        let completion = messages.last().unwrap();
+        assert!(completion.5, "Last message should be completion");
+        assert_eq!(completion.2, "Workflow complete");
+    }
+
+    // =========================================================================
+    // Test 3: test_condition_evaluation
+    // =========================================================================
+    #[test]
+    fn test_condition_evaluation() {
+        // Test steps.X.success when success=true
+        {
+            let mut context = ExecutionContext {
+                parameters: HashMap::new(),
+                step_results: HashMap::new(),
+            };
+            context.step_results.insert(
+                "check".to_string(),
+                StepResult {
+                    step_id: "check".to_string(),
+                    success: true,
+                    output: Some("done".to_string()),
+                    error: None,
+                    data: HashMap::new(),
+                },
+            );
+
+            assert!(
+                WorkflowExecutor::evaluate_condition("steps.check.success", &context),
+                "steps.check.success should be true when success=true"
+            );
+        }
+
+        // Test steps.X.success when success=false
+        {
+            let mut context = ExecutionContext {
+                parameters: HashMap::new(),
+                step_results: HashMap::new(),
+            };
+            context.step_results.insert(
+                "check".to_string(),
+                StepResult {
+                    step_id: "check".to_string(),
+                    success: false,
+                    output: None,
+                    error: Some("error".to_string()),
+                    data: HashMap::new(),
+                },
+            );
+
+            assert!(
+                !WorkflowExecutor::evaluate_condition("steps.check.success", &context),
+                "steps.check.success should be false when success=false"
+            );
+        }
+
+        // Test steps.X.has_changes with data["has_changes"]=true
+        {
+            let mut context = ExecutionContext {
+                parameters: HashMap::new(),
+                step_results: HashMap::new(),
+            };
+            let mut data = HashMap::new();
+            data.insert("has_changes".to_string(), serde_json::json!(true));
+            context.step_results.insert(
+                "check".to_string(),
+                StepResult {
+                    step_id: "check".to_string(),
+                    success: true,
+                    output: None,
+                    error: None,
+                    data,
+                },
+            );
+
+            assert!(
+                WorkflowExecutor::evaluate_condition("steps.check.has_changes", &context),
+                "steps.check.has_changes should be true when data has has_changes=true"
+            );
+        }
+
+        // Test steps.X.has_changes with data["has_changes"]=false
+        {
+            let mut context = ExecutionContext {
+                parameters: HashMap::new(),
+                step_results: HashMap::new(),
+            };
+            let mut data = HashMap::new();
+            data.insert("has_changes".to_string(), serde_json::json!(false));
+            context.step_results.insert(
+                "check".to_string(),
+                StepResult {
+                    step_id: "check".to_string(),
+                    success: true,
+                    output: None,
+                    error: None,
+                    data,
+                },
+            );
+
+            assert!(
+                !WorkflowExecutor::evaluate_condition("steps.check.has_changes", &context),
+                "steps.check.has_changes should be false when data has has_changes=false"
+            );
+        }
+
+        // Test steps.X.confirmed with data["confirmed"]=true
+        {
+            let mut context = ExecutionContext {
+                parameters: HashMap::new(),
+                step_results: HashMap::new(),
+            };
+            let mut data = HashMap::new();
+            data.insert("confirmed".to_string(), serde_json::json!(true));
+            context.step_results.insert(
+                "confirm".to_string(),
+                StepResult {
+                    step_id: "confirm".to_string(),
+                    success: true,
+                    output: None,
+                    error: None,
+                    data,
+                },
+            );
+
+            assert!(
+                WorkflowExecutor::evaluate_condition("steps.confirm.confirmed", &context),
+                "steps.confirm.confirmed should be true when data has confirmed=true"
+            );
+        }
+
+        // Test unknown step returns true (default behavior)
+        {
+            let context = ExecutionContext {
+                parameters: HashMap::new(),
+                step_results: HashMap::new(),
+            };
+
+            assert!(
+                WorkflowExecutor::evaluate_condition("steps.nonexistent.success", &context),
+                "Unknown step should default to true"
+            );
+        }
+    }
+
+    // =========================================================================
+    // Test 4: test_template_resolution
+    // =========================================================================
+    #[test]
+    fn test_template_resolution() {
+        let mut context = ExecutionContext {
+            parameters: HashMap::new(),
+            step_results: HashMap::new(),
+        };
+
+        // Add parameters
+        context.parameters.insert("name".to_string(), "Alice".to_string());
+        context.parameters.insert("project".to_string(), "TestProject".to_string());
+
+        // Add step result with output and data
+        let mut step_data = HashMap::new();
+        step_data.insert("my_key".to_string(), serde_json::json!("my_value"));
+        step_data.insert("count".to_string(), serde_json::json!(42));
+        context.step_results.insert(
+            "step1".to_string(),
+            StepResult {
+                step_id: "step1".to_string(),
+                success: true,
+                output: Some("Step 1 output".to_string()),
+                error: None,
+                data: step_data,
+            },
+        );
+
+        // Test {{ parameters.name }} resolution
+        let input = serde_json::json!("Hello {{ parameters.name }}!");
+        let result = WorkflowExecutor::resolve_templates(&input, &context);
+        assert_eq!(
+            result,
+            serde_json::json!("Hello Alice!"),
+            "Should resolve parameter reference"
+        );
+
+        // Test {{ steps.X.output }} resolution
+        let input = serde_json::json!("Output was: {{ steps.step1.output }}");
+        let result = WorkflowExecutor::resolve_templates(&input, &context);
+        assert_eq!(
+            result,
+            serde_json::json!("Output was: Step 1 output"),
+            "Should resolve step output reference"
+        );
+
+        // Test {{ steps.X.data_key }} resolution
+        let input = serde_json::json!("Key value: {{ steps.step1.my_key }}");
+        let result = WorkflowExecutor::resolve_templates(&input, &context);
+        assert_eq!(
+            result,
+            serde_json::json!("Key value: \"my_value\""),
+            "Should resolve step data reference"
+        );
+
+        // Test multiple templates in one string
+        let input = serde_json::json!("{{ parameters.name }} working on {{ parameters.project }}");
+        let result = WorkflowExecutor::resolve_templates(&input, &context);
+        assert_eq!(
+            result,
+            serde_json::json!("Alice working on TestProject"),
+            "Should resolve multiple templates"
+        );
+
+        // Test template resolution in nested object
+        let input = serde_json::json!({
+            "greeting": "Hello {{ parameters.name }}",
+            "nested": {
+                "value": "{{ steps.step1.output }}"
+            }
+        });
+        let result = WorkflowExecutor::resolve_templates(&input, &context);
+        assert_eq!(
+            result["greeting"],
+            serde_json::json!("Hello Alice"),
+            "Should resolve templates in objects"
+        );
+        assert_eq!(
+            result["nested"]["value"],
+            serde_json::json!("Step 1 output"),
+            "Should resolve templates in nested objects"
+        );
+
+        // Test template resolution in array
+        let input = serde_json::json!(["{{ parameters.name }}", "{{ parameters.project }}"]);
+        let result = WorkflowExecutor::resolve_templates(&input, &context);
+        assert_eq!(
+            result[0],
+            serde_json::json!("Alice"),
+            "Should resolve templates in arrays"
+        );
+        assert_eq!(
+            result[1],
+            serde_json::json!("TestProject"),
+            "Should resolve templates in arrays"
+        );
+    }
+
+    // =========================================================================
+    // Test 5: test_invalid_condition_defaults_true
+    // =========================================================================
+    #[test]
+    fn test_invalid_condition_defaults_true() {
+        let context = ExecutionContext {
+            parameters: HashMap::new(),
+            step_results: HashMap::new(),
+        };
+
+        // Test completely invalid condition
+        assert!(
+            WorkflowExecutor::evaluate_condition("invalid", &context),
+            "Invalid condition should default to true"
+        );
+
+        // Test partial "steps." without proper format
+        assert!(
+            WorkflowExecutor::evaluate_condition("steps.", &context),
+            "Malformed 'steps.' should default to true"
+        );
+
+        // Test unrelated format
+        assert!(
+            WorkflowExecutor::evaluate_condition("foo.bar.baz", &context),
+            "Unrelated condition format should default to true"
+        );
+
+        // Test empty string
+        assert!(
+            WorkflowExecutor::evaluate_condition("", &context),
+            "Empty condition should default to true"
+        );
+
+        // Test "steps" without dot
+        assert!(
+            WorkflowExecutor::evaluate_condition("steps", &context),
+            "'steps' without dot should default to true"
+        );
+
+        // Test steps.X with only one part after "steps."
+        assert!(
+            WorkflowExecutor::evaluate_condition("steps.onlyid", &context),
+            "steps.X with only step_id should default to true"
+        );
+    }
+
+    // =========================================================================
+    // Test 6: test_progress_channel_communication
+    // =========================================================================
+    #[tokio::test]
+    async fn test_progress_channel_communication() {
+        // Create registry with mock action
+        let mut registry = SkillRegistry::new();
+        registry
+            .register(MockAction::new(true, "Action completed"))
+            .expect("Failed to register mock action");
+
+        let ctx = test_context();
+        let executor = WorkflowExecutor::new(Arc::new(registry), ctx);
+
+        // Create workflow with two steps
+        let workflow = create_workflow(vec![
+            WorkflowStep {
+                id: "step1".to_string(),
+                action: "mock.action".to_string(),
+                description: Some("First step".to_string()),
+                condition: None,
+                args: None,
+                stream: None,
+                message: None,
+            },
+            WorkflowStep {
+                id: "step2".to_string(),
+                action: "mock.action".to_string(),
+                description: Some("Second step".to_string()),
+                condition: None,
+                args: None,
+                stream: None,
+                message: None,
+            },
+        ]);
+
+        let (tx, mut rx) = mpsc::channel(20);
+
+        let result = executor
+            .execute(&workflow, HashMap::new(), tx)
+            .await;
+
+        assert!(result.is_ok(), "Workflow should complete successfully");
+
+        // Collect all messages
+        let mut messages = vec![];
+        while let Ok(msg) = rx.try_recv() {
+            messages.push(msg);
+        }
+
+        // Verify we got the expected number of messages
+        // For 2 steps: 2 progress updates + 2 result updates + 1 completion = 5
+        // Actually: progress update before execution, then result after each step, then completion
+        assert!(
+            messages.len() >= 3,
+            "Should have at least 3 messages for 2-step workflow (got {})",
+            messages.len()
+        );
+
+        // Verify step 1 progress (first message for step 1)
+        let step1_progress = messages.iter().find(|(num, _, desc, _, _, _)| {
+            *num == 1 && desc == "First step"
+        });
+        assert!(step1_progress.is_some(), "Should have progress for step 1");
+
+        // Verify step 2 progress
+        let step2_progress = messages.iter().find(|(num, _, desc, _, _, _)| {
+            *num == 2 && desc == "Second step"
+        });
+        assert!(step2_progress.is_some(), "Should have progress for step 2");
+
+        // Verify completion message is last
+        let completion = messages.last().unwrap();
+        assert_eq!(completion.0, 2, "Completion step_num should equal total_steps");
+        assert_eq!(completion.1, 2, "Completion total_steps should be 2");
+        assert_eq!(completion.2, "Workflow complete");
+        assert!(completion.5, "Completion is_complete should be true");
+
+        // Verify all non-completion messages have correct total_steps
+        for msg in messages.iter().take(messages.len() - 1) {
+            assert_eq!(msg.1, 2, "All messages should have total_steps=2");
+        }
+
+        // Verify step numbers are sequential for step messages
+        let step_nums: Vec<i32> = messages
+            .iter()
+            .filter(|(_, _, _, _, _, complete)| !complete)
+            .map(|(num, _, _, _, _, _)| *num)
+            .collect();
+
+        // Should have step 1 and step 2 messages (may have duplicates for progress + result)
+        assert!(step_nums.contains(&1), "Should have step 1 messages");
+        assert!(step_nums.contains(&2), "Should have step 2 messages");
+    }
+}
