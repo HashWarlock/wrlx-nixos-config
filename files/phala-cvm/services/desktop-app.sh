@@ -1,23 +1,25 @@
 #!/bin/sh
 # CVM Desktop App Service
-# Manages the Tauri desktop application (replaces web-ui)
+# Serves the frontend via HTTP (alternative to Tauri for headless environments)
 
 . "$(dirname "$0")/common.sh"
 
 DESKTOP_DIR="/app/cvm-agent/desktop"
-# Workspace puts binaries in root target directory
-DESKTOP_BIN="/app/cvm-agent/target/release/cvm-desktop"
-DESKTOP_DEV_BIN="/app/cvm-agent/target/debug/cvm-desktop"
 PIDFILE="/tmp/cvm-desktop.pid"
+WEB_PORT=3000
 
-# Build the Tauri desktop app
+# Check if we should use Tauri (native) or HTTP server mode
+# Default to HTTP server for Xvfb/headless environments
+USE_TAURI="${USE_TAURI:-false}"
+
+# Build the frontend
 build() {
     if [ ! -d "$DESKTOP_DIR" ]; then
         log_error "Desktop app source not found at $DESKTOP_DIR"
         return 1
     fi
 
-    log_info "Building Tauri desktop app..."
+    log_info "Building frontend..."
     cd "$DESKTOP_DIR" || return 1
 
     # Install frontend dependencies if needed
@@ -30,24 +32,85 @@ build() {
         }
     fi
 
-    # Build frontend (required for Tauri - creates dist directory)
-    log_info "Building frontend..."
+    # Build frontend (creates dist directory)
     npm run build || {
         log_error "Frontend build failed"
         cd - > /dev/null
         return 1
     }
 
-    # Build with cargo (release mode)
-    log_info "Building Rust backend (this may take a few minutes)..."
-    cd src-tauri || return 1
-    if cargo build --release; then
-        log_success "Desktop app built successfully"
-        cd - > /dev/null
+    log_success "Frontend built successfully"
+    cd - > /dev/null
+    return 0
+}
+
+start_http_server() {
+    log_info "Starting HTTP server for frontend on port $WEB_PORT..."
+
+    cd "$DESKTOP_DIR/dist" || {
+        log_warn "dist directory not found, building frontend first..."
+        build || return 1
+        cd "$DESKTOP_DIR/dist" || return 1
+    }
+
+    # Use Python's built-in HTTP server (available in the nix shell)
+    python3 -m http.server $WEB_PORT > /tmp/cvm-desktop.log 2>&1 &
+    echo $! > "$PIDFILE"
+
+    sleep 2
+    if is_running "$(cat "$PIDFILE")"; then
+        log_success "Frontend server started on http://localhost:$WEB_PORT (PID $(cat "$PIDFILE"))"
+
+        # Open Firefox to the URL automatically (if DISPLAY is set)
+        if [ -n "$DISPLAY" ]; then
+            log_info "Opening Firefox to http://localhost:$WEB_PORT..."
+            firefox "http://localhost:$WEB_PORT" > /dev/null 2>&1 &
+        fi
+
         return 0
     else
-        log_error "Cargo build failed"
-        cd - > /dev/null
+        log_error "Frontend server failed to start. Check /tmp/cvm-desktop.log"
+        return 1
+    fi
+}
+
+start_tauri() {
+    # Original Tauri approach - requires GPU/EGL
+    DESKTOP_BIN="/app/cvm-agent/target/release/cvm-desktop"
+    DESKTOP_DEV_BIN="/app/cvm-agent/target/debug/cvm-desktop"
+
+    # Find the binary
+    local bin=""
+    if [ -x "$DESKTOP_BIN" ]; then
+        bin="$DESKTOP_BIN"
+    elif [ -x "$DESKTOP_DEV_BIN" ]; then
+        bin="$DESKTOP_DEV_BIN"
+        log_warn "Using debug build"
+    else
+        log_warn "Tauri binary not found, falling back to HTTP server..."
+        return 1
+    fi
+
+    log_info "Starting CVM Desktop App (Tauri)..."
+
+    # Environment for X11 and gRPC
+    export DISPLAY="${DISPLAY:-:1}"
+    export AGENT_GRPC_ADDR="${AGENT_GRPC_ADDR:-http://localhost:8080}"
+
+    # Try to force software rendering
+    export LIBGL_ALWAYS_SOFTWARE=1
+    export WEBKIT_DISABLE_COMPOSITING_MODE=1
+    export WEBKIT_DISABLE_DMABUF_RENDERER=1
+
+    "$bin" > /tmp/cvm-desktop.log 2>&1 &
+    echo $! > "$PIDFILE"
+
+    sleep 3
+    if is_running "$(cat "$PIDFILE")"; then
+        log_success "Desktop app started (PID $(cat "$PIDFILE"))"
+        return 0
+    else
+        log_warn "Tauri app crashed, check /tmp/cvm-desktop.log"
         return 1
     fi
 }
@@ -58,55 +121,20 @@ start() {
         return 0
     fi
 
-    # Find the binary (prefer release, fall back to debug)
-    local bin=""
-    if [ -x "$DESKTOP_BIN" ]; then
-        bin="$DESKTOP_BIN"
-    elif [ -x "$DESKTOP_DEV_BIN" ]; then
-        bin="$DESKTOP_DEV_BIN"
-        log_warn "Using debug build"
-    else
-        log_warn "Desktop app not built, attempting to build..."
-        if build; then
-            # Try again after build
-            if [ -x "$DESKTOP_BIN" ]; then
-                bin="$DESKTOP_BIN"
-            elif [ -x "$DESKTOP_DEV_BIN" ]; then
-                bin="$DESKTOP_DEV_BIN"
-            else
-                log_error "Build succeeded but binary not found"
-                return 1
-            fi
-        else
-            log_error "Failed to build desktop app"
-            return 1
-        fi
-    fi
-
-    log_info "Starting CVM Desktop App..."
-
-    # Ensure DISPLAY is set for X11
+    # Ensure DISPLAY is set
     export DISPLAY="${DISPLAY:-:1}"
     export AGENT_GRPC_ADDR="${AGENT_GRPC_ADDR:-http://localhost:8080}"
 
-    # Force software rendering for Xvfb (no GPU available)
-    # Without this, WebKitGTK crashes with "Could not create default EGL display"
-    export LIBGL_ALWAYS_SOFTWARE=1
-    export WEBKIT_DISABLE_COMPOSITING_MODE=1
-    export WEBKIT_DISABLE_DMABUF_RENDERER=1
-    export GDK_RENDERING=image  # Force GDK to use image backend instead of GL
-
-    "$bin" > /tmp/cvm-desktop.log 2>&1 &
-    echo $! > "$PIDFILE"
-
-    sleep 2
-    if is_running "$(cat "$PIDFILE")"; then
-        log_success "Desktop app started (PID $(cat "$PIDFILE"))"
-        return 0
-    else
-        log_error "Desktop app failed to start. Check /tmp/cvm-desktop.log"
-        return 1
+    if [ "$USE_TAURI" = "true" ]; then
+        # Try Tauri first, fall back to HTTP server if it fails
+        if start_tauri; then
+            return 0
+        fi
+        log_info "Falling back to HTTP server mode..."
     fi
+
+    # Use HTTP server mode (works in headless/Xvfb environments)
+    start_http_server
 }
 
 stop() {
