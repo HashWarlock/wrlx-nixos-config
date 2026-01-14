@@ -208,3 +208,258 @@ impl SkillsLoader {
             .collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    /// Test 1: Handle missing/empty skills directory gracefully
+    #[tokio::test]
+    async fn test_load_empty_directory() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut loader = SkillsLoader::new(temp_dir.path().to_str().unwrap());
+
+        // Should succeed with no skills loaded (no instructions/ or workflows/ subdirs)
+        let result = loader.load_all().await;
+        assert!(result.is_ok(), "load_all should succeed on empty directory");
+        assert_eq!(loader.list().len(), 0, "Should have 0 skills loaded");
+
+        // Create empty subdirectories
+        let instructions_dir = temp_dir.path().join("instructions");
+        let workflows_dir = temp_dir.path().join("workflows");
+        fs::create_dir_all(&instructions_dir).await.unwrap();
+        fs::create_dir_all(&workflows_dir).await.unwrap();
+
+        // Should still succeed with 0 skills
+        let result = loader.load_all().await;
+        assert!(result.is_ok(), "load_all should succeed with empty subdirs");
+        assert_eq!(loader.list().len(), 0, "Should have 0 skills loaded");
+    }
+
+    /// Test 2: Valid markdown with frontmatter parses correctly
+    #[tokio::test]
+    async fn test_parse_instruction_skill_valid() {
+        let temp_dir = TempDir::new().unwrap();
+        let instructions_dir = temp_dir.path().join("instructions");
+        fs::create_dir_all(&instructions_dir).await.unwrap();
+
+        let valid_skill = r#"---
+name: test-skill
+description: A test skill for validation
+triggers:
+  - test this
+  - run test
+---
+
+# Test Skill Instructions
+
+This is the body content of the skill.
+
+## Steps
+
+1. Do something
+2. Do something else
+"#;
+
+        let skill_path = instructions_dir.join("test-skill.md");
+        fs::write(&skill_path, valid_skill).await.unwrap();
+
+        let mut loader = SkillsLoader::new(temp_dir.path().to_str().unwrap());
+        let result = loader.load_all().await;
+        assert!(result.is_ok(), "load_all should succeed");
+        assert_eq!(loader.list().len(), 1, "Should have 1 skill loaded");
+
+        let skill = loader.get("test-skill");
+        assert!(skill.is_some(), "Should find skill by name");
+
+        let skill = skill.unwrap();
+        assert_eq!(skill.name(), "test-skill");
+        assert_eq!(skill.description(), "A test skill for validation");
+        assert_eq!(skill.triggers(), &["test this", "run test"]);
+
+        // Verify content body
+        if let Skill::Instruction(inst) = skill {
+            assert!(inst.content.contains("# Test Skill Instructions"));
+            assert!(inst.content.contains("Do something else"));
+        } else {
+            panic!("Expected Instruction skill");
+        }
+    }
+
+    /// Test 3: Malformed frontmatter handling
+    #[tokio::test]
+    async fn test_parse_instruction_skill_malformed() {
+        let temp_dir = TempDir::new().unwrap();
+        let instructions_dir = temp_dir.path().join("instructions");
+        fs::create_dir_all(&instructions_dir).await.unwrap();
+
+        // Case 1: No frontmatter at all
+        let no_frontmatter = r#"# Just Markdown
+
+No frontmatter here, just content.
+"#;
+        fs::write(instructions_dir.join("no-frontmatter.md"), no_frontmatter)
+            .await
+            .unwrap();
+
+        // Case 2: Frontmatter without closing ---
+        let no_closing = r#"---
+name: incomplete
+description: Missing closing delimiter
+triggers:
+  - trigger
+
+This content looks like body but frontmatter never closed.
+"#;
+        fs::write(instructions_dir.join("no-closing.md"), no_closing)
+            .await
+            .unwrap();
+
+        // Case 3: Valid frontmatter structure but missing required field (name)
+        let missing_name = r#"---
+description: Has description but no name
+triggers:
+  - trigger
+---
+
+Body content here.
+"#;
+        fs::write(instructions_dir.join("missing-name.md"), missing_name)
+            .await
+            .unwrap();
+
+        // Case 4: Valid frontmatter structure but missing required field (triggers)
+        let missing_triggers = r#"---
+name: no-triggers
+description: Has name but no triggers
+---
+
+Body content here.
+"#;
+        fs::write(instructions_dir.join("missing-triggers.md"), missing_triggers)
+            .await
+            .unwrap();
+
+        let mut loader = SkillsLoader::new(temp_dir.path().to_str().unwrap());
+        let result = loader.load_all().await;
+
+        // Should succeed overall but with warnings for each malformed file
+        assert!(result.is_ok(), "load_all should succeed despite malformed files");
+        assert_eq!(loader.list().len(), 0, "No valid skills should be loaded");
+    }
+
+    /// Test 4: Edge cases for split_frontmatter function
+    #[tokio::test]
+    async fn test_split_frontmatter_edge_cases() {
+        // Case 1: Empty string
+        let result = SkillsLoader::split_frontmatter("");
+        assert!(result.is_err(), "Empty string should error");
+        assert!(
+            result.unwrap_err().to_string().contains("No frontmatter found"),
+            "Should indicate no frontmatter"
+        );
+
+        // Case 2: Only opening "---"
+        let result = SkillsLoader::split_frontmatter("---");
+        assert!(result.is_err(), "Only opening --- should error");
+        assert!(
+            result.unwrap_err().to_string().contains("No frontmatter end"),
+            "Should indicate no end delimiter"
+        );
+
+        // Case 3: "---\n---" - empty frontmatter and body (valid structure)
+        let result = SkillsLoader::split_frontmatter("---\n---");
+        assert!(result.is_ok(), "Empty frontmatter should be valid structure");
+        let (frontmatter, body) = result.unwrap();
+        assert_eq!(frontmatter, "", "Frontmatter should be empty");
+        assert_eq!(body, "", "Body should be empty");
+
+        // Case 4: Content without any "---"
+        let result = SkillsLoader::split_frontmatter("Just plain text without delimiters");
+        assert!(result.is_err(), "No delimiters should error");
+        assert!(
+            result.unwrap_err().to_string().contains("No frontmatter found"),
+            "Should indicate no frontmatter"
+        );
+
+        // Case 5: Valid frontmatter with content
+        let result = SkillsLoader::split_frontmatter("---\nkey: value\n---\nBody text");
+        assert!(result.is_ok(), "Valid frontmatter should parse");
+        let (frontmatter, body) = result.unwrap();
+        assert_eq!(frontmatter, "key: value");
+        assert_eq!(body, "Body text");
+
+        // Case 6: Frontmatter with leading whitespace (trim() handles this)
+        // The function trims input first, so "  ---\nkey: value\n---" becomes "---\nkey: value\n---"
+        let result = SkillsLoader::split_frontmatter("  ---\nkey: value\n---\nBody");
+        assert!(result.is_ok(), "Leading whitespace should be trimmed and parse OK");
+        let (frontmatter, body) = result.unwrap();
+        assert_eq!(frontmatter, "key: value");
+        assert_eq!(body, "Body");
+
+        // Case 7: Multiple --- in body (should only split on first closing ---)
+        let result = SkillsLoader::split_frontmatter("---\nfm: data\n---\nBody with --- in it");
+        assert!(result.is_ok());
+        let (frontmatter, body) = result.unwrap();
+        assert_eq!(frontmatter, "fm: data");
+        assert_eq!(body, "Body with --- in it");
+    }
+
+    /// Test 5: Duplicate skill names - HashMap behavior (last one wins)
+    #[tokio::test]
+    async fn test_duplicate_skill_names() {
+        let temp_dir = TempDir::new().unwrap();
+        let instructions_dir = temp_dir.path().join("instructions");
+        fs::create_dir_all(&instructions_dir).await.unwrap();
+
+        // Create two files with the same skill name
+        let skill_v1 = r#"---
+name: duplicate-skill
+description: Version 1 of the skill
+triggers:
+  - trigger v1
+---
+
+Content version 1
+"#;
+
+        let skill_v2 = r#"---
+name: duplicate-skill
+description: Version 2 of the skill
+triggers:
+  - trigger v2
+---
+
+Content version 2
+"#;
+
+        // Use different filenames but same skill name in frontmatter
+        fs::write(instructions_dir.join("skill-a.md"), skill_v1)
+            .await
+            .unwrap();
+        fs::write(instructions_dir.join("skill-b.md"), skill_v2)
+            .await
+            .unwrap();
+
+        let mut loader = SkillsLoader::new(temp_dir.path().to_str().unwrap());
+        let result = loader.load_all().await;
+        assert!(result.is_ok(), "load_all should succeed");
+
+        // HashMap means only one skill with that name is stored (the last one processed)
+        assert_eq!(loader.list().len(), 1, "Should have only 1 skill (duplicates overwritten)");
+
+        let skill = loader.get("duplicate-skill");
+        assert!(skill.is_some(), "Should find the skill by name");
+
+        // Note: The order of file processing is not guaranteed, so we just verify
+        // that one of the two versions is present, not which specific one
+        let skill = skill.unwrap();
+        assert_eq!(skill.name(), "duplicate-skill");
+        let desc = skill.description();
+        assert!(
+            desc == "Version 1 of the skill" || desc == "Version 2 of the skill",
+            "Should have one of the two descriptions"
+        );
+    }
+}
